@@ -146,6 +146,8 @@ transport and already-bound request overrides remain the application's choice.
 | [config/records.php](../../example/sdk/config/records.php) | Defaults, environment, and optional publishing |
 | [bootstrap.php](../../example/sdk/bootstrap.php) | Autoloading the example namespace |
 | [run.php](../../example/sdk/run.php) | DTO graph, serialization, standalone, defaults and failures |
+| [demo/hydration-errors.php](../../example/sdk/demo/hydration-errors.php) | Table of twelve malformed responses and their diagnostics through the client |
+| [demo/output.php](../../example/sdk/demo/output.php) | Output helpers showing typed object access and default values |
 | [DemoClient](../../example/sdk/src/DemoClient.php) | The `records()` entry point |
 | [ClientConfigFactory](../../example/sdk/src/Config/ClientConfigFactory.php) | Shared runtime defaults and standalone config creation |
 | [HydrationConfigFactory](../../example/sdk/src/Config/HydrationConfigFactory.php) | Strict types and collection of unknown fields in `_extra` |
@@ -161,6 +163,11 @@ transport and already-bound request overrides remain the application's choice.
 | [Laravel provider](../../example/sdk/src/Laravel/DemoServiceProvider.php) | Lazy client, overrides, and request registration |
 | [LaravelClientConfigFactory](../../example/sdk/src/Laravel/LaravelClientConfigFactory.php) | Application defaults and auth without pinning the container |
 | [Success](../../example/sdk/fixtures/record.json), [error](../../example/sdk/fixtures/error.json) | Synthetic local responses |
+
+`run.php` keeps the usage sequence visible; `demo/` contains response preparation and
+output helpers, separate from the SDK classes in `src/`. Object access and serialization
+are shown separately: `describeRecord()` selects values for display, while `toArray()`
+applies the DTO serialization rules to the whole graph.
 
 `run.php` neither loads Laravel nor makes real HTTP calls. Checks execute this published
 file, including after installation without dev dependencies. The three environments above

@@ -151,6 +151,8 @@ containerProvider остаётся null, поэтому конфигурация
 | [config/records.php](../../example/sdk/config/records.php) | Defaults, environment и необязательный publish |
 | [bootstrap.php](../../example/sdk/bootstrap.php) | Автозагрузка пространства имён примера |
 | [run.php](../../example/sdk/run.php) | Граф DTO, сериализация, standalone, defaults и отказы |
+| [demo/hydration-errors.php](../../example/sdk/demo/hydration-errors.php) | Таблица двенадцати некорректных ответов и их диагностика через клиент |
+| [demo/output.php](../../example/sdk/demo/output.php) | Вывод значений типизированных объектов и значений по умолчанию |
 | [DemoClient](../../example/sdk/src/DemoClient.php) | Вход `records()` |
 | [ClientConfigFactory](../../example/sdk/src/Config/ClientConfigFactory.php) | Общие настройки времени выполнения и создание standalone-конфига |
 | [HydrationConfigFactory](../../example/sdk/src/Config/HydrationConfigFactory.php) | Строгие типы и сбор неизвестных полей в `_extra` |
@@ -166,6 +168,11 @@ containerProvider остаётся null, поэтому конфигурация
 | [Laravel provider](../../example/sdk/src/Laravel/DemoServiceProvider.php) | Ленивый клиент, overrides и регистрация запросов |
 | [LaravelClientConfigFactory](../../example/sdk/src/Laravel/LaravelClientConfigFactory.php) | Defaults приложения и auth без закрепления контейнера |
 | [Успех](../../example/sdk/fixtures/record.json), [ошибка](../../example/sdk/fixtures/error.json) | Вымышленные локальные ответы |
+
+В `run.php` видна последовательность использования; в `demo/` — подготовка ответов и
+вспомогательные функции вывода, отдельно от классов SDK в `src/`. Работа с объектами и
+сериализация показаны отдельно: `describeRecord()` выбирает значения для показа, а
+`toArray()` применяет правила сериализации DTO ко всему графу.
 
 `run.php` не загружает Laravel и не обращается к сети. Проверки выполняют именно этот
 опубликованный файл, в том числе после установки без dev-зависимостей. Установка проверяется
