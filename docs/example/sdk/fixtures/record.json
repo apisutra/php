@@ -1,1 +1,40 @@
-{"data":{"record_id":7,"title":"Первая запись","created_at":"2026-09-15T10:30:00+00:00","author":{"name":"Анна"},"description":"   ","future_flag":false}}
+{
+  "data": {
+    "kind": "record",
+    "record_id": 7,
+    "title": "Первая запись",
+    "created_at": "2026-09-15T13:30:00+03:00",
+    "updated_at": null,
+    "state": "published",
+    "author": {
+      "id": 9,
+      "first_name": "Анна",
+      "last_name": "Петрова",
+      "contact": {"email": "anna@example.test", "phone": "   ", "verified": false},
+      "role": "editor"
+    },
+    "tags": [
+      {"id": 1, "label": "php", "color": "blue"},
+      {"id": 2, "label": "sdk"}
+    ],
+    "assets": [
+      {
+        "value": {"type": "image", "url": "https://assets.example.test/cover.png", "width": 640, "height": 480, "alt": "Обложка"},
+        "rank": 1
+      },
+      {
+        "value": {"type": "document", "url": "https://assets.example.test/manual.pdf", "pages": 2, "preview_file": "data:text/plain;base64,U0RLIG1hbnVhbA==", "checksum": "demo"},
+        "rank": 2
+      }
+    ],
+    "related_ids": [11, 12],
+    "metrics": {"rating": 4.8, "votes": 0},
+    "reading_time": "03:05",
+    "external_id": "18446744073709551616",
+    "featured": false,
+    "description": "   ",
+    "future_flag": false,
+    "future_null": null,
+    "future_list": []
+  }
+}

@@ -1,6 +1,14 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.1.2
+
+- Expanded the runnable Records SDK with six related DTOs, typed collections, enum and
+  discriminator variants, a bidirectional cast, inline Base64 and nested extra fields.
+- Demonstrated recursive serialization, immutable copies, standalone hydration,
+  missing/null/default rules and twelve invalid responses with field-level diagnostics.
+- Updated the English and Russian walkthroughs and installation checks. No core runtime API changes.
+
 ## 0.1.1
 
 - Expanded the English and Russian capability maps with grouped features and reference links.

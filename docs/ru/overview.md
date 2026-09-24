@@ -57,7 +57,7 @@ final class GetRecordRequest extends AbstractRequest
 Сокращённая версия [DTO ответа](../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php):
 
 ```php
-final readonly class GetRecordResponseDto extends AbstractResponseDto
+final readonly class GetRecordResponseDto extends AbstractDto
 {
     public function __construct(
         #[From('record_id', fallback: ['id'])]

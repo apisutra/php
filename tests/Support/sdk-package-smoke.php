@@ -21,15 +21,18 @@ if (
 }
 $transport = new MockTransport();
 $transport->preventStrayRequests();
-$transport->fake([GetRecordRequest::class => MockResponse::success(['data' => [
-    'record_id' => 7, 'title' => 'Composer', 'created_at' => '2026-09-16T12:00:00+00:00', 'new_field' => false,
-]])]);
+$sdk = InstalledVersions::getInstallPath('example/records-sdk');
+$payload = json_decode((string) file_get_contents($sdk . '/fixtures/record.json'), true, flags: JSON_THROW_ON_ERROR);
+$payload['data']['new_field'] = false;
+$transport->fake([GetRecordRequest::class => MockResponse::success($payload)]);
 $client = new DemoClient(ClientConfigFactory::create(), $transport);
 $record = $client->records()->get(7)->send()->dataOrFail();
-if (!$record instanceof GetRecordResponseDto || $record->id !== 7 || $record->_extra !== ['new_field' => false]) {
+if (
+    !$record instanceof GetRecordResponseDto || $record->id !== 7 || $record->_extra['new_field'] !== false
+    || $record->author->contact->email !== 'anna@example.test' || $record->tags->count() !== 2
+) {
     throw new RuntimeException('Установленный SDK потерял клиент или DTO');
 }
-$sdk = InstalledVersions::getInstallPath('example/records-sdk');
 $class = new ReflectionClass(DemoClient::class);
 if (realpath((string) $class->getFileName()) !== realpath($sdk . '/src/DemoClient.php')) {
     throw new RuntimeException('Пример подключён не через установленный SDK');
@@ -38,7 +41,7 @@ if (realpath((string) $class->getFileName()) !== realpath($sdk . '/src/DemoClien
 ob_start();
 require $sdk . '/run.php';
 $output = json_decode((string) ob_get_clean(), true, flags: JSON_THROW_ON_ERROR);
-if ($output['id'] !== 7 || $output['status'] !== 404) {
+if ($output['dto']['id'] !== 7 || $output['httpError']['status'] !== 404 || !$output['standalone']['sameData']) {
     throw new RuntimeException('Не работает run.php установленного SDK');
 }
 echo "Installed SDK without Laravel — OK.\n";

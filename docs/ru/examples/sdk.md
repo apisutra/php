@@ -14,14 +14,14 @@ Records — небольшой запускаемый пример **для ав
 | Часть | Контракт примера |
 | --- | --- |
 | Операция | GET /records/{id}; id — параметр пути |
-| Успех | Объект data содержит record_id, title, created_at и необязательный вложенный author.name |
-| DTO | Целочисленный ID, строковый title, дата DateTimeImmutable, nullable authorName/description; неизвестные поля в _extra |
-| Ошибка | HTTP 404; тот же скрипт читает её через resolved() |
+| Успех | Объект data содержит поля записи, author/contact, tags, assets и метаданные |
+| DTO | Граф readonly DTO, enum, даты, типизированная коллекция и варианты по discriminator; неизвестные поля в _extra |
+| Ошибка | HTTP 404 через resolved(); двенадцать некорректных HTTP 200 через raw() с диагностикой полей |
 | Авторизация | Необязательный Bearer token; локальный пример работает без него |
 
 [Фикстуры](../../example/sdk/fixtures/record.json) задают этот учебный контракт,
 а не описывают реального провайдера. В SDK один ресурс и одна операция;
-дополнительные механизмы разобраны в [тематических примерах](README.md).
+возможности DTO разобраны ниже, остальные механизмы — в [тематических примерах](README.md).
 
 ## В каком порядке изучать <a id="learning-path"></a>
 
@@ -69,11 +69,61 @@ php vendor/apisutra/php/docs/example/sdk/run.php
 php vendor/example/records-sdk/run.php
 ```
 
-Ожидаемый результат:
+Вывод — форматированный JSON с семью разделами:
 
-```json
-{"id":7,"title":"Первая запись","createdAt":"2026-09-15T10:30:00+00:00","authorName":"Анна","description":null,"extra":{"future_flag":false},"failed":true,"status":404}
+| Раздел | Что посмотреть |
+| --- | --- |
+| dto | Автор/контакты, значение и название enum, метки, типы вложений, 185 секунд из `03:05`, точный большой ID и файловое превью |
+| serialized | Настоящий `toArray()` всего графа: имена полей, даты в UTC, значение enum, обратный cast в `03:05`, Base64 и неизвестные данные |
+| copy | Новый заголовок через `with()` рядом с неизменившимся исходным |
+| standalone | Равенство с явным Hydrator; `from()` небольшой отдельной атрибутной модели |
+| defaults | Запасной ID, отсутствующий/null заголовок, отсутствующая коллекция, nullable-дата, revision 0 и явное имя автора вместо default provider |
+| httpError | `failed: true`, `status: 404` |
+| hydrationErrors | Двенадцать отказов: code/reason, путь DTO, исходный sourcePath/kind и HTTP-статус 200 |
+
+## Возможности DTO в этом SDK <a id="dto-features"></a>
+
+Начните с [модели ответа](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php)
+и [JSON-фикстуры](../../example/sdk/fixtures/record.json). Все вспомогательные типы
+принадлежат `Resources/Records/Get/`; вложенные модели лежат в `Dto/`.
+
+| Возможность | Где показана |
+| --- | --- |
+| From + fallback, To, Map | record_id/id, state/status и выходные имена полей |
+| Вложенный путь | metrics.rating становится rating; непрочитанный metrics.votes остаётся в _extra |
+| Readonly и ConstructorValue | kind=record; типы вложений сверяются со значениями, заданными конструктором |
+| Граф вложенных DTO | AuthorDto → ContactDto, включая extras обоих уровней |
+| Default provider | Отсутствующий display_name вычисляется из first_name/last_name; явное значение имеет приоритет |
+| Типизированная коллекция | TagCollection проверяет TagDto и даёт first/count/mapToArray; отсутствующие tags становятся пустой коллекцией |
+| ListShape и варианты | related_ids требует int; assets[*].value.type выбирает DTO изображения или документа |
+| Без тихой потери элементов | Неизвестный вариант вложения даёт ошибку; rank обёртки и дополнительные поля вариантов сохраняются в _extra |
+| Даты и выходной часовой пояс | DateTimeFrom проверяет DATE_ATOM; DateTimeTo сериализует тот же момент в UTC |
+| Enum | RecordStatus даёт типизированное значение и title(); DtoSerialize выбирает значение для toArray() |
+| Свой двусторонний cast | ReadingTimeCast преобразует MM:SS ↔ секунды с проверкой формата и границ |
+| Файл внутри JSON | DataUriBase64FileCast создаёт Base64File; toArray() возвращает чистый Base64. Маленькое превью загружается целиком, не потоком |
+| Отсутствие/null/defaults | DefaultValue для title, EmptyStringAsNull для description/phone, nullable updatedAt, ForbidExplicitNull для revision |
+| Строгие скаляры и точные ID | Числовая строка не проходит в int; external_id остаётся строкой со всеми цифрами |
+| Сохранение дополнительных данных | Корень, автор, контакты, метки, варианты и остатки each-обёрток сохраняют false, ноль, null и пустые списки |
+| Сериализация и копии | toArray() рекурсивно применяет атрибуты; with() создаёт поверхностную неизменяемую копию |
+| Диагностика | data.author.contact.email указывает на /data/author/contact/email; пути вложений учитывают исходную обёртку value |
+
+Например, после получения `$record` в run.php:
+
+```php
+$name = $record->author->displayName;
+$email = $record->author->contact->email;
+$firstTag = $record->tags->first()?->name;
+$statusTitle = $record->status->title();
+$array = $record->toArray();
+$renamed = $record->with(title: 'Обновлённая запись');
 ```
+
+`toArray()` — объявленное представление DTO, а не побайтовое восстановление ответа:
+входные обёртки проецируются в DTO, имена и форматы следуют правилам вывода,
+неизвестные значения остаются в `_extra`. Это не автоматически готовое тело запроса:
+[у HTTP-сериализации свои правила](../reference/serialization/dto-output.md).
+Главный README сохраняет сокращённую модель; [другие примеры DTO](../guides/dto/showcase.md)
+показывают иные стили моделей и сериализацию запросов.
 
 ## Один SDK, три окружения <a id="environments"></a>
 
@@ -100,13 +150,18 @@ containerProvider остаётся null, поэтому конфигурация
 | [composer.json](../../example/sdk/composer.json) | Установка, PSR-4 и Laravel package discovery |
 | [config/records.php](../../example/sdk/config/records.php) | Defaults, environment и необязательный publish |
 | [bootstrap.php](../../example/sdk/bootstrap.php) | Автозагрузка пространства имён примера |
-| [run.php](../../example/sdk/run.php) | Явная сборка, два вызова и чтение результата |
+| [run.php](../../example/sdk/run.php) | Граф DTO, сериализация, standalone, defaults и отказы |
 | [DemoClient](../../example/sdk/src/DemoClient.php) | Вход `records()` |
 | [ClientConfigFactory](../../example/sdk/src/Config/ClientConfigFactory.php) | Общие настройки времени выполнения и создание standalone-конфига |
 | [HydrationConfigFactory](../../example/sdk/src/Config/HydrationConfigFactory.php) | Строгие типы и сбор неизвестных полей в `_extra` |
 | [RecordsResource](../../example/sdk/src/Resources/Records/RecordsResource.php) | Создание привязанного запроса |
 | [GetRecordRequest](../../example/sdk/src/Resources/Records/Get/GetRecordRequest.php) | GET, параметр пути, типизированный ответ и повторы при временных ошибках |
-| [GetRecordResponseDto](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php) | Наследник AbstractResponseDto: From с fallback и вложенным путём, DateTimeFrom, EmptyStringAsNull |
+| [GetRecordResponseDto](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php) | Корень DTO: маппинг, даты, shapes, extras и правила вывода |
+| [AuthorDto](../../example/sdk/src/Resources/Records/Get/Dto/AuthorDto.php), [ContactDto](../../example/sdk/src/Resources/Records/Get/Dto/ContactDto.php) | Вложенные модели, defaults и extras |
+| [TagDto](../../example/sdk/src/Resources/Records/Get/Dto/TagDto.php), [TagCollection](../../example/sdk/src/Resources/Records/Get/Dto/TagCollection.php) | Элементы и контейнер типизированной коллекции |
+| [ImageAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/ImageAttachmentDto.php), [DocumentAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/DocumentAttachmentDto.php) | Варианты по discriminator, фиксированные типы и Base64 |
+| [RecordStatus](../../example/sdk/src/Resources/Records/Get/RecordStatus.php) | Backed enum с понятным названием |
+| [ReadingTimeCast](../../example/sdk/src/Resources/Records/Get/ReadingTimeCast.php), [AuthorDisplayNameProvider](../../example/sdk/src/Resources/Records/Get/AuthorDisplayNameProvider.php) | Своё преобразование и производное значение по умолчанию |
 | [RecordDto с атрибутом](../../example/sdk/src/AttributeExample/RecordDto.php) | Создание DTO через from() без клиента и внешних правил |
 | [Laravel provider](../../example/sdk/src/Laravel/DemoServiceProvider.php) | Ленивый клиент, overrides и регистрация запросов |
 | [LaravelClientConfigFactory](../../example/sdk/src/Laravel/LaravelClientConfigFactory.php) | Defaults приложения и auth без закрепления контейнера |

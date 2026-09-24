@@ -14,14 +14,14 @@ calls. It does not require credentials, a server, a database or a queue worker.
 | Part | Example contract |
 | --- | --- |
 | Operation | GET /records/{id}; id is a path parameter |
-| Success | The data object contains record_id, title, created_at and optional nested author.name |
-| DTO | Integer ID, string title, DateTimeImmutable date, nullable authorName/description; unknown fields in _extra |
-| Error | HTTP 404; inspected through resolved() in the same runnable script |
+| Success | The data object contains record fields, author/contact, tags, assets and metadata |
+| DTO | Readonly DTO graph, enum, dates, typed collection and discriminator variants; unknown fields in _extra |
+| Error | HTTP 404 via resolved(); twelve malformed HTTP 200 responses via raw() with field diagnostics |
 | Authentication | Optional Bearer token; the local example uses none |
 
 The [fixtures](../../example/sdk/fixtures/record.json) are the source for this teaching
 contract, not evidence about a real provider. The SDK has one resource and one operation;
-advanced mechanisms remain in their [topic examples](README.md).
+DTO features are covered below; other mechanisms have [topic examples](README.md).
 
 ## Read it in this order <a id="learning-path"></a>
 
@@ -64,11 +64,61 @@ If the example is installed as a separate package:
 php vendor/example/records-sdk/run.php
 ```
 
-Expected output:
+The output is formatted JSON with seven sections:
 
-```json
-{"id":7,"title":"Первая запись","createdAt":"2026-09-15T10:30:00+00:00","authorName":"Анна","description":null,"extra":{"future_flag":false},"failed":true,"status":404}
+| Section | What to inspect |
+| --- | --- |
+| dto | Author/contact objects, enum value/title, tag names, attachment types, 185 seconds from `03:05`, exact large ID and file preview |
+| serialized | Actual `toArray()` of the entire graph: mapped names, UTC dates, enum value, cast back to `03:05`, Base64 and unknown fields |
+| copy | A new title from `with()` alongside the unchanged original |
+| standalone | Equality with explicit Hydrator output; the small attribute-only model's `from()` |
+| defaults | Fallback ID, missing/null title, absent collection, nullable date, revision 0 and an explicit author name overriding its default provider |
+| httpError | `failed: true`, `status: 404` |
+| hydrationErrors | Twelve failures: code/reason, DTO path, original sourcePath/kind and HTTP status 200 |
+
+## DTO features in this SDK <a id="dto-features"></a>
+
+Start with the [response model](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php)
+and its [JSON fixture](../../example/sdk/fixtures/record.json). All its supporting types
+belong to `Resources/Records/Get/`; nested models are in `Dto/`.
+
+| Feature | Where it is visible |
+| --- | --- |
+| From + fallback, To, Map | record_id/id, state/status and outgoing field names |
+| Nested path | metrics.rating becomes rating; unread metrics.votes remains in _extra |
+| Readonly and ConstructorValue | kind=record; attachment types are checked against constructor-assigned values |
+| Nested DTO graph | AuthorDto → ContactDto, including extras at both levels |
+| Default provider | Missing display_name is built from first_name/last_name; explicit input wins |
+| Typed collection | TagCollection validates TagDto items and provides first/count/mapToArray; missing tags becomes an empty collection |
+| ListShape and variants | related_ids requires integers; assets[*].value.type selects an image or document DTO |
+| No silent item loss | Unknown attachment variants fail; wrapper rank and extra variant fields survive in _extra |
+| Dates and output timezone | DateTimeFrom validates DATE_ATOM; DateTimeTo serializes the same instant in UTC |
+| Enum | RecordStatus provides a typed value and title(); DtoSerialize selects the raw value for toArray() |
+| Custom bidirectional cast | ReadingTimeCast converts MM:SS ↔ seconds with bounds and format checks |
+| Inline file | DataUriBase64FileCast creates Base64File; toArray() returns plain Base64. This small preview is materialized, not streamed |
+| Missing/null/defaults | DefaultValue for title, EmptyStringAsNull for description/phone, nullable updatedAt, ForbidExplicitNull for revision |
+| Strict scalars and exact IDs | Numeric strings fail for int fields; external_id stays a string with all digits |
+| Preserved extra data | Root, author, contacts, tags, variants and each-wrapper remainders retain false, zero, null and empty lists |
+| Serialization and copies | toArray() applies attributes recursively; with() creates a shallow immutable copy |
+| Diagnostics | data.author.contact.email points to /data/author/contact/email; attachment paths include their original value wrapper |
+
+For example, after extracting `$record` in run.php:
+
+```php
+$name = $record->author->displayName;
+$email = $record->author->contact->email;
+$firstTag = $record->tags->first()?->name;
+$statusTitle = $record->status->title();
+$array = $record->toArray();
+$renamed = $record->with(title: 'Обновлённая запись');
 ```
+
+`toArray()` is the declared DTO representation, not a byte-for-byte reconstruction
+of the response: input wrappers are projected into DTOs, names/formats follow output
+rules, and unknown values are retained in `_extra`. It is not automatically a request
+body. [HTTP serialization has its own rules](../reference/serialization/dto-output.md).
+The main README keeps a shortened model; [additional DTO examples](../guides/dto/showcase.md)
+cover other model styles and request serialization.
 
 ## One SDK, three environments <a id="environments"></a>
 
@@ -95,13 +145,18 @@ transport and already-bound request overrides remain the application's choice.
 | [composer.json](../../example/sdk/composer.json) | Installation, PSR-4, and Laravel package discovery |
 | [config/records.php](../../example/sdk/config/records.php) | Defaults, environment, and optional publishing |
 | [bootstrap.php](../../example/sdk/bootstrap.php) | Autoloading the example namespace |
-| [run.php](../../example/sdk/run.php) | Explicit construction, two calls, and reading results |
+| [run.php](../../example/sdk/run.php) | DTO graph, serialization, standalone, defaults and failures |
 | [DemoClient](../../example/sdk/src/DemoClient.php) | The `records()` entry point |
 | [ClientConfigFactory](../../example/sdk/src/Config/ClientConfigFactory.php) | Shared runtime defaults and standalone config creation |
 | [HydrationConfigFactory](../../example/sdk/src/Config/HydrationConfigFactory.php) | Strict types and collection of unknown fields in `_extra` |
 | [RecordsResource](../../example/sdk/src/Resources/Records/RecordsResource.php) | Bound request creation |
 | [GetRecordRequest](../../example/sdk/src/Resources/Records/Get/GetRecordRequest.php) | GET, path parameter, typed response, and retries on temporary errors |
-| [GetRecordResponseDto](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php) | AbstractResponseDto subclass: From with fallback and nested path, DateTimeFrom, EmptyStringAsNull |
+| [GetRecordResponseDto](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php) | Root DTO with mapping, dates, shapes, extras and output rules |
+| [AuthorDto](../../example/sdk/src/Resources/Records/Get/Dto/AuthorDto.php), [ContactDto](../../example/sdk/src/Resources/Records/Get/Dto/ContactDto.php) | Nested models, defaults and extras |
+| [TagDto](../../example/sdk/src/Resources/Records/Get/Dto/TagDto.php), [TagCollection](../../example/sdk/src/Resources/Records/Get/Dto/TagCollection.php) | Typed collection items and container |
+| [ImageAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/ImageAttachmentDto.php), [DocumentAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/DocumentAttachmentDto.php) | Discriminator variants, fixed types and inline Base64 |
+| [RecordStatus](../../example/sdk/src/Resources/Records/Get/RecordStatus.php) | Backed enum with a readable title |
+| [ReadingTimeCast](../../example/sdk/src/Resources/Records/Get/ReadingTimeCast.php), [AuthorDisplayNameProvider](../../example/sdk/src/Resources/Records/Get/AuthorDisplayNameProvider.php) | Explicit custom conversion and derived default |
 | [RecordDto with an attribute](../../example/sdk/src/AttributeExample/RecordDto.php) | DTO creation through from() without a client or external rules |
 | [Laravel provider](../../example/sdk/src/Laravel/DemoServiceProvider.php) | Lazy client, overrides, and request registration |
 | [LaravelClientConfigFactory](../../example/sdk/src/Laravel/LaravelClientConfigFactory.php) | Application defaults and auth without pinning the container |

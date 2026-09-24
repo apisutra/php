@@ -57,7 +57,7 @@ The [request](docs/en/reference/request/declaration.md) declares its route, up t
 A shortened version of the [response DTO](docs/example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php):
 
 ```php
-final readonly class GetRecordResponseDto extends AbstractResponseDto
+final readonly class GetRecordResponseDto extends AbstractDto
 {
     public function __construct(
         #[From('record_id', fallback: ['id'])]

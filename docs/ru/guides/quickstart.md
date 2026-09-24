@@ -22,11 +22,11 @@ php docs/example/sdk/run.php
 
 Обе команды выполняют [один и тот же файл](../../example/sdk/run.php). Он использует
 локальные фикстуры и `MockTransport`: ключи API и сетевой доступ для запуска не нужны.
-Результат:
-
-```json
-{"id":7,"title":"Первая запись","createdAt":"2026-09-15T10:30:00+00:00","authorName":"Анна","description":null,"extra":{"future_flag":false},"failed":true,"status":404}
-```
+Форматированный вывод разделён на объекты (`dto`), `toArray()` (`serialized`),
+неизменяемую копию (`copy`), standalone-гидратацию, defaults, HTTP 404 и двенадцать
+некорректных ответов (`hydrationErrors`). Фикстура содержит автора с контактами, метки,
+варианты изображения/документа, enum, даты, свой cast и файловое превью внутри JSON.
+Поля и правила разобраны в [руководстве примера](../examples/sdk.md#dto-features).
 
 ## Как устроен пример <a id="section-3"></a>
 
@@ -40,14 +40,16 @@ php docs/example/sdk/run.php
    объявляет GET, параметр пути, `Returns` с `unwrap: 'data'` и
    [повторы при временных ошибках](../reference/execution/retry.md) через `Retry`.
 5. [GetRecordResponseDto](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php)
-   наследует `AbstractResponseDto`: `From` берёт `record_id` или запасной `id`,
-   читает имя из `author.name`, а `From` и `DateTimeFrom` преобразуют `created_at`
-   в `DateTimeImmutable`. `EmptyStringAsNull(blank: true)` заменяет пустое или
-   состоящее из пробелов описание на `null`.
-   [Правила](../../example/sdk/src/Config/HydrationConfigFactory.php) проверяют строгие скаляры
-   и сохраняют неизвестные поля в `_extra`; маппинг свойств остаётся в атрибутах.
-6. `dataOrFail()` возвращает DTO или выбрасывает исключение. Второй вызов использует
-   `resolved()` и показывает проверку HTTP-ошибки без извлечения данных.
+   описывает весь граф: `From`/`Map`/`To`, вложенные DTO, типизированную коллекцию,
+   варианты по discriminator, даты и двусторонний cast. Клиент задаёт Strict;
+   `Extras` каждой модели сохраняет неизвестные данные. Атрибуты и вспомогательные
+   классы лежат рядом с единственной операцией, которой принадлежат.
+6. `dataOrFail()` возвращает готовый DTO; `resolved()` читает HTTP-ошибку без извлечения
+   данных. `raw()` раскрывает ошибку гидратации даже при HTTP 200: путь DTO и
+   JSON Pointer к проблемному полю исходного ответа.
+7. `toArray()` рекурсивно применяет правила вывода. `with()` меняет копию. Та же
+   фикстура гидратируется без HTTP с явным HydrationConfig SDK; отдельно показаны
+   отсутствие, null и некорректные значения.
 
 Исходники лежат рядом с пояснениями; их можно скопировать в собственный SDK и
 зарегистрировать свой namespace в Composer. `bootstrap.php` нужен только для
