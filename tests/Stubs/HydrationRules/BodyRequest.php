@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ApiSutra\Tests\Stubs\HydrationRules;
+
+use ApiSutra\Attributes\Http\Post;
+use ApiSutra\Attributes\Request\Body;
+use ApiSutra\Core\AbstractRequest;
+
+#[Post('/wire')]
+final class BodyRequest extends AbstractRequest
+{
+    public function __construct(#[Body] public mixed $payload)
+    {
+    }
+}

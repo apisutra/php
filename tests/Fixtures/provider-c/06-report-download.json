@@ -1,0 +1,13 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderC\\Requests\\ProviderCReportDownloadRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "attachment; filename=\"report.pdf\""
+    },
+    "body": "file-content"
+  }
+}

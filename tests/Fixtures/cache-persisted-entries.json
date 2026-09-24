@@ -1,0 +1,33 @@
+{
+    "unixTime": 1800000000,
+    "entries": {
+        "d35e070511d5fa6d6ee3c847aad49c9fd3f9dd78f13c478e575b4360aefc17e1": {
+            "value": "f060ed9eb46ed0ac3e2f1a2f19b9ed7b",
+            "expires": null
+        },
+        "8cbcc3d5764730a8fa65c10466d221de824aa4a8514c608c0301cd58e491c115": {
+            "value": "eef96cdd3df2f8edb7a6ad5c0fb8eba0",
+            "expires": 1800000060
+        },
+        "b9c2aa28e949eac70a4f05794676e2dfc1f9d237733c19f5e1f13abbcbb61458": {
+            "value": {
+                "token": "synthetic-fixture-token",
+                "expires_at": 1800000600
+            },
+            "expires": 1800000600
+        },
+        "26cbbdde98b9b6dc5afc622bc86813256ff7d19e2f27b73bbbc9170296cbf8d0": {
+            "value": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": [
+                        "application\/json"
+                    ]
+                },
+                "body": "{\"id\":7,\"name\":\"baseline\"}"
+            },
+            "expires": 1800000060
+        }
+    },
+    "httpCount": 2
+}

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBStatusRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "failed",
+      "operation_id": "op-200",
+      "error_code": "provider_error"
+    }
+  }
+}

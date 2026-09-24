@@ -1,0 +1,19 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderA\\Requests\\ProviderABasicCheckRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "result_code": "ok",
+      "operation_token": "op-001",
+      "data": {
+        "id": "123",
+        "score": 0.93
+      }
+    }
+  }
+}

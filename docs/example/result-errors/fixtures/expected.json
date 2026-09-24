@@ -1,0 +1,9 @@
+{
+    "success": [7, 8],
+    "default": "response_type_mismatch",
+    "custom": {
+        "account": "Получен неожиданный результат чтения аккаунта.",
+        "owner": "Получен неожиданный результат чтения владельца."
+    },
+    "fallback": {"status": 403, "original": true}
+}

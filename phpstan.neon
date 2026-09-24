@@ -1,0 +1,12 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    reportUnmatchedIgnoredErrors: true
+    phpVersion: 80400
+    paths:
+        - src
+    tmpDir: .phpstan-cache
+    parallel:
+        maximumNumberOfProcesses: 2

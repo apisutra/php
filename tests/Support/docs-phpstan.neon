@@ -1,0 +1,13 @@
+parameters:
+    level: 5
+    phpVersion: 80400
+    paths:
+        - ../../docs/example
+    excludePaths:
+        analyse:
+            - ../../docs/example/sdk/src/Laravel
+    bootstrapFiles:
+        - ../../docs/example/sdk/bootstrap.php
+    tmpDir: ../../.phpstan-cache/docs
+    parallel:
+        maximumNumberOfProcesses: 1

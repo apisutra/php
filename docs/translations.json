@@ -1,0 +1,2401 @@
+{
+  "version": 1,
+  "default_language": "en",
+  "languages": {
+    "en": {
+      "label": "English",
+      "required": true
+    },
+    "ru": {
+      "label": "Русский",
+      "required": true
+    }
+  },
+  "pages": [
+    {
+      "id": "changelog",
+      "kind": "changelog",
+      "scope": "public",
+      "paths": {
+        "en": "CHANGELOG.md",
+        "ru": "docs/ru/changelog.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "3a657e991f91413ed1e696d7987ed7c078d0cda748b5f48ac2881ce0ebd25480",
+          "translation_sha256": "701b8def018288d38b14b2fda54f0d8bae340ace95498ad4f7cf43e91e5f3989"
+        }
+      }
+    },
+    {
+      "id": "development/contributing",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "CONTRIBUTING.md",
+        "ru": "docs/ru/development/contributing.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "c8b437cf8db3b4240628cd55aec94292b5fc2dd931dee1c50cfebe4b1258eb4a",
+          "translation_sha256": "a201d35af6309522987fc92c9d0c45f8b3c50ad8d9bce49a96263055e0682cbd"
+        }
+      }
+    },
+    {
+      "id": "overview",
+      "kind": "overview",
+      "scope": "public",
+      "paths": {
+        "en": "README.md",
+        "ru": "docs/ru/overview.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a5548169d743a89b0b133f725e97a44ec8f85341e809975c37db274800e407e2",
+          "translation_sha256": "d6c916f5c87e4a8efa2e899e157ebc7ef1f53c00ad6b6b13a795454b193fb1c9"
+        }
+      }
+    },
+    {
+      "id": "README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/README.md",
+        "ru": "docs/ru/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "4a65722d1f236a3510bdf7c5ef4b34287a693a01c9ce292165def6940f3cc474",
+          "translation_sha256": "6c88554d5f093efa2d9d8a0f4e4b0c98277091750f61e0e7646995dfc33aa3de"
+        }
+      }
+    },
+    {
+      "id": "development/README",
+      "kind": "index",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/README.md",
+        "ru": "docs/ru/development/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "50ccf45e1343c6c333914196abb7e830d54267893b368dcd7b3ff59aebdb5648",
+          "translation_sha256": "e308492dcee37a1b02f5fc5f431f8541105e40c21a425020b1917c1270987879"
+        }
+      }
+    },
+    {
+      "id": "development/architecture",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/architecture.md",
+        "ru": "docs/ru/development/architecture.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8e8e56f8db9ca790ed5c4e58b1ab64891c6030bfb62e4438dfca4c3f4cedd6f9",
+          "translation_sha256": "c9327f5dba2fba730505c4fb58da7f94999d6c8e5a7de43102c4aae73c332ce5"
+        }
+      }
+    },
+    {
+      "id": "development/attributes",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/attributes.md",
+        "ru": "docs/ru/development/attributes.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "20f5cfd8319a367cfc9eb812ab94c51f31aa819aa83cd1a4e372bd3b89399f0f",
+          "translation_sha256": "56ae5633e45e3a92186e13e1a15c6ebb153be64184b5e8ee4a5c2e2cc55ae44e"
+        }
+      }
+    },
+    {
+      "id": "development/caching-retry",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/caching-retry.md",
+        "ru": "docs/ru/development/caching-retry.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "5c23352cd722d206c2303eb87d275b27ec4fb48077cd9259a2e39d425b9674ec",
+          "translation_sha256": "dcbab296f47ea0304ca9060fb6cde4501ac005b6b9088573e2602b6e8cd70217"
+        }
+      }
+    },
+    {
+      "id": "development/documentation",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/documentation.md",
+        "ru": "docs/ru/development/documentation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d49ff923cf139594656884d8d05c519ec0243230eb9d6e4bd51bfdaeea94a5ee",
+          "translation_sha256": "0acacf509e80c1eb0fa5d73355d2219a0e4930b5442723605ed9e827a9e865ef"
+        }
+      }
+    },
+    {
+      "id": "development/error-handling",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/error-handling.md",
+        "ru": "docs/ru/development/error-handling.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "de605b2a4be6edfbd115111690aec552b893841fb2cd7be9b3f1155442867478",
+          "translation_sha256": "4da3ab541b840ef17ac113e8cd6d34b3b6b530b10e92dfccf852da68c034475a"
+        }
+      }
+    },
+    {
+      "id": "development/execution",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/execution.md",
+        "ru": "docs/ru/development/execution.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ae2838f31174f1ed69f122ff96e9c3548abea24aa6064acc2294d362d96e31ad",
+          "translation_sha256": "f2c645566534668d0260ba06677f52b36bd73ad4597a23790de82f2a937b81e4"
+        }
+      }
+    },
+    {
+      "id": "development/hydration",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/hydration.md",
+        "ru": "docs/ru/development/hydration.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "bfeb702613777e403a5c5c6e594c4c4438d8b64ec94882117f90359c797f591f",
+          "translation_sha256": "70f88d1c601bf7ba882f1f2bf8fb348a016022820b49683e74e3e5749e4b5383"
+        }
+      }
+    },
+    {
+      "id": "development/pipeline",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/pipeline.md",
+        "ru": "docs/ru/development/pipeline.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a81f82f2e1f59f208978d19d69f974489c0d1d0ed1ad6d77093e1d413f041f18",
+          "translation_sha256": "639bd56dd6b8d96493443b9c893232d1d8dfc75f84a404bae64d4ac99cdb8a1c"
+        }
+      }
+    },
+    {
+      "id": "development/request-serialization",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/request-serialization.md",
+        "ru": "docs/ru/development/request-serialization.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "bf2803356bd70fb6cff9c2c32fb780150171b7200c2e8bf68f5763607df85afd",
+          "translation_sha256": "20412f24abe5d1d08ab0266c432a17f60d1093694a6721c022518dbec24b02b4"
+        }
+      }
+    },
+    {
+      "id": "development/serialization",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/serialization.md",
+        "ru": "docs/ru/development/serialization.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "5908b286c23b60b3a3e8c914f7b0de7c39700068e65d93e3d1939754c084c019",
+          "translation_sha256": "78d4d514b02201fdbb12022d8d842ccc54a859442ef64763ff18cb6b3709675c"
+        }
+      }
+    },
+    {
+      "id": "development/testing",
+      "kind": "development",
+      "scope": "development",
+      "paths": {
+        "en": "docs/en/development/testing.md",
+        "ru": "docs/ru/development/testing.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d26e499cf5ff871fd3af3ef444a5b94dc2416f823c77c359d6ed5321856333f7",
+          "translation_sha256": "b6f4b140ff476719f5687eeaaec4cebc84f19f0ec60f0628aed8e477dc525828"
+        }
+      }
+    },
+    {
+      "id": "examples/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/README.md",
+        "ru": "docs/ru/examples/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ab06c38954f68c3382e1c7e01798dd53948451b5da85a21d9368f9def24587fb",
+          "translation_sha256": "a5c8c8ad171ae7a259f91f57024e9d86428f45ea973d5082c7a3bb5229f4e72a"
+        }
+      }
+    },
+    {
+      "id": "examples/client-showcase",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/client-showcase.md",
+        "ru": "docs/ru/examples/client-showcase.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8f771027a0be76e3faa96da6355f8d37144e6270b432332b950f4d30b43f871a",
+          "translation_sha256": "31cd0916205b6c87049ee0c74d56a8a50f76c1e910ee5976f6c6df6416c92bb5"
+        }
+      }
+    },
+    {
+      "id": "examples/continuation",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/continuation.md",
+        "ru": "docs/ru/examples/continuation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "b9fc5a1aa3c3191eb0769e4c67926de14d1e3ef9920dfcddb13a1cb8858b2330",
+          "translation_sha256": "358f6097e5477b7001a1dd34ae28ee068fcf59252ebea467bdb86894f9c11754"
+        }
+      }
+    },
+    {
+      "id": "examples/custom-result",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/custom-result.md",
+        "ru": "docs/ru/examples/custom-result.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "be388616598197355dc3d7071508c28212e9f46e7f6df786a920abf148b0b42e",
+          "translation_sha256": "c78fcbe959158a24128ca6e6c1df6dd8b19d612ec229bc0e37c407b74500a192"
+        }
+      }
+    },
+    {
+      "id": "examples/dto-showcase",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/dto-showcase.md",
+        "ru": "docs/ru/examples/dto-showcase.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "3090f7bb5dc5ca992ac4c18286c8c42cf10baf5775abab1b9952c00582beff42",
+          "translation_sha256": "73a3e3db3bedb2121d832c90c78547c7f80bf8f07fed222ca7afef44f1516ec0"
+        }
+      }
+    },
+    {
+      "id": "examples/files",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/files.md",
+        "ru": "docs/ru/examples/files.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "193aff872071f834b02da9e1cebf8df8cfaf9906df86f7c78fbbfaaf9f703300",
+          "translation_sha256": "cc23bc270c24cf97ae21cee3876dc5ecc77c647cb53fc7dfc1d8f0cc389a9b76"
+        }
+      }
+    },
+    {
+      "id": "examples/hydration-rules",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/hydration-rules.md",
+        "ru": "docs/ru/examples/hydration-rules.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "2d6ac784a428abb6c59fc7ade9aefd75e1e99b374427e0d571d316b30cbf0820",
+          "translation_sha256": "ecb7ff4a3c38a2d95c0f2a1fef7129e674f5b696789b16a60dbc606de1490f10"
+        }
+      }
+    },
+    {
+      "id": "examples/localization",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/localization.md",
+        "ru": "docs/ru/examples/localization.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "34dce9e2c0af2e156df219c61ce3ccae87f358918e7371c7285337274a90bbcc",
+          "translation_sha256": "f59b46e0ec910168e9b14a04090fe8df8f985f58ab639458b08440985b86d2a6"
+        }
+      }
+    },
+    {
+      "id": "examples/sdk",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/sdk.md",
+        "ru": "docs/ru/examples/sdk.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ee88f7adbe6283df7ca006d386a27502e62444e517f7818400dc2377362b79be",
+          "translation_sha256": "3bd16d8ce5e7fb6b7b6a4e9bd168347f0cde54eae827cdf2313b3c61bbbab776"
+        }
+      }
+    },
+    {
+      "id": "glossary/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/README.md",
+        "ru": "docs/ru/glossary/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6927fcbcda779fad937cf464da30d4ff8836df70c678d532adc3ca94165a1e51",
+          "translation_sha256": "bb9a3fc3aac5d6e308a7400e1f74fad1a183209af08c5ae8c9cc0bf357959741"
+        }
+      }
+    },
+    {
+      "id": "glossary/architecture",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/architecture.md",
+        "ru": "docs/ru/glossary/architecture.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8f8f8a3bb1f25d1f8ada2f6097051b4956298b65590edd2bb90e78b21a652c6a",
+          "translation_sha256": "d02b06751614c111174b4abd27ccf614856d02e93338e5c85ae4dc9331d9f0f3"
+        }
+      }
+    },
+    {
+      "id": "glossary/attributes",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/attributes.md",
+        "ru": "docs/ru/glossary/attributes.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "b64fdcb68773e5c51aa6ec32428bb3e9d41d8dfa726b8c95cd684741bb8ba85c",
+          "translation_sha256": "d95472189e4f427b3dc510a37adb9ab8d32b1d2d8c8e3cf8533f838110e65512"
+        }
+      }
+    },
+    {
+      "id": "glossary/auth",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/auth.md",
+        "ru": "docs/ru/glossary/auth.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d182c9890932c51021ae1e6eb57baf7f2fe165d20e08f20e12d10f1db7c593cc",
+          "translation_sha256": "ef85b8c0d7542c245aa12b1e38bf91db3ebb2cac2463f0fdb3d92317e569f4b3"
+        }
+      }
+    },
+    {
+      "id": "glossary/client",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/client.md",
+        "ru": "docs/ru/glossary/client.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "bd908a492240ce216fb7faf9f17811a41a5f9ddab2e2cca1e7288869e6a978e7",
+          "translation_sha256": "0a87fd8929eb1cd1c50daf8b1318faf8ab91cd3c9d89428a281fce888bb48775"
+        }
+      }
+    },
+    {
+      "id": "glossary/collections",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/collections.md",
+        "ru": "docs/ru/glossary/collections.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d2886e52f2eb2aac015aaef292b4a5ce2408be97e1d6889701e3ab1e680d9599",
+          "translation_sha256": "8803df48f9c8f259898fa835a813cf62104e25e8598efbbf5c0ea249fb1929c3"
+        }
+      }
+    },
+    {
+      "id": "glossary/dto",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/dto.md",
+        "ru": "docs/ru/glossary/dto.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "33991b3830b4a0c35026f3d8953bce8131b092b35b6d4664cbc916d81eecf49d",
+          "translation_sha256": "3185bf6fd740982c362e03b64f497d006d72d59ece40e1e93372d50e6308b2f1"
+        }
+      }
+    },
+    {
+      "id": "glossary/execution",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/execution.md",
+        "ru": "docs/ru/glossary/execution.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f9f063b55adb384aa79c95c0a6831b6f13f779f8168a5deb872dd7e47cc34862",
+          "translation_sha256": "7f3cfe45e24ba4c268e9376aee986f54d2c1914a43a14d046ada93a67f7c8776"
+        }
+      }
+    },
+    {
+      "id": "glossary/extensions",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/extensions.md",
+        "ru": "docs/ru/glossary/extensions.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "1bd325f53fd232f22755ba62329c939bfdd7122a0a2b0d62d87b22a32170b286",
+          "translation_sha256": "94ba316518d649562fca2ac1ef9d7b66bfe818e4044dbade6c4ca3d16d4dd50d"
+        }
+      }
+    },
+    {
+      "id": "glossary/files",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/files.md",
+        "ru": "docs/ru/glossary/files.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ab58f994dc1e144ef7a8ca5a17b92a8e8b37f0960170e0b9de06fd686f560788",
+          "translation_sha256": "6635618e47e55184f11eab2ed40159df78dddfe21eefb6be57c365cd65f3c204"
+        }
+      }
+    },
+    {
+      "id": "glossary/pagination",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/pagination.md",
+        "ru": "docs/ru/glossary/pagination.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e499d168bf0516f003d2f35fb5a5364a1c9ed90d982db90b6e5baf8ee7f894a2",
+          "translation_sha256": "d02e806e332fc9289cc2532d99bd3f39b369b92e3b6bd0123534f8fa4565507b"
+        }
+      }
+    },
+    {
+      "id": "glossary/pipeline",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/pipeline.md",
+        "ru": "docs/ru/glossary/pipeline.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "dafee1c6da68ebdb07cf49c1769784c934cae549304995a1107850988d7cbef1",
+          "translation_sha256": "a0f94fa4f6ab9c2756561b84ce071878f6604ad1d8753aa73529c6f765a04a2a"
+        }
+      }
+    },
+    {
+      "id": "glossary/requests",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/requests.md",
+        "ru": "docs/ru/glossary/requests.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "bb1a7aaa9a51aafe0e769944da911d2ec0929c1658237a189282ae58b853a2af",
+          "translation_sha256": "e49a1f88f509db62d601123729dccabe153fbcfabe444c1a515b1e30efb5f647"
+        }
+      }
+    },
+    {
+      "id": "glossary/results",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/results.md",
+        "ru": "docs/ru/glossary/results.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "371132d5424d8f84a2049dc656679ac4515e5c05e67d6b5c410b864501fbc10e",
+          "translation_sha256": "91f96f04a1f53e30e36845a1d91bb50910451488145a00366c1c64c881bc2aac"
+        }
+      }
+    },
+    {
+      "id": "glossary/testing",
+      "kind": "glossary",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/glossary/testing.md",
+        "ru": "docs/ru/glossary/testing.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "06eec539a753d6788ad497bb99d4e1b0035e31060b00eda420266a385bdbb008",
+          "translation_sha256": "7316dd7336821aad83c682640bb013ef72469bd41ec562bebbc4c79d97e48f04"
+        }
+      }
+    },
+    {
+      "id": "guides/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/README.md",
+        "ru": "docs/ru/guides/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "87f95c281cf51d05c01f493861b3dca22a53eef82ce00aa97bbc7e3d74e738d9",
+          "translation_sha256": "0bfab1b4e37407273f3be5bfebfbc5e2d77f053b81bbe99f03ced63a70f595a8"
+        }
+      }
+    },
+    {
+      "id": "guides/client/showcase",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/client/showcase.md",
+        "ru": "docs/ru/guides/client/showcase.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "0b9fbadf1b562e352b5527e4c44a6157edab931e0954165e88086247888253bb",
+          "translation_sha256": "7640ae279942ae903dba68c75283c7182b805f6ecd45ee7de3f6e09956536b22"
+        }
+      }
+    },
+    {
+      "id": "guides/dto/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/dto/README.md",
+        "ru": "docs/ru/guides/dto/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ecad82da58f7627724033252d59d0a7c71707fafed3b7f0e1bbfc583f3c7cf0b",
+          "translation_sha256": "b5c4bbfc8fe681c17dccd238ad4d2a4956722acece23dbf58312d3feeddfe0da"
+        }
+      }
+    },
+    {
+      "id": "guides/dto/attribute-models",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/dto/attribute-models.md",
+        "ru": "docs/ru/guides/dto/attribute-models.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "4395a84fcd8ec1b82d2d9f436e8e215a78ff495d1013a225842bba40160bd1c7",
+          "translation_sha256": "9973e12bcf7468b4ca13a58420ba567d523e678330b404fd54b9d9155e2fc511"
+        }
+      }
+    },
+    {
+      "id": "guides/dto/plain-models",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/dto/plain-models.md",
+        "ru": "docs/ru/guides/dto/plain-models.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8d8365c20435531ed33b3d67d4bac497496895d89dcd74c28e3d8fbd84a26891",
+          "translation_sha256": "2dea93995d938d84b35be000e5a526e26e5bfa2212101f0423fa965216ce371f"
+        }
+      }
+    },
+    {
+      "id": "guides/dto/showcase",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/dto/showcase.md",
+        "ru": "docs/ru/guides/dto/showcase.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "54500fa2157436b31cdc624ab8f0564e3f177f2649021fa74a41714de5861d55",
+          "translation_sha256": "37099638e0f17a9e071428065a14f831432a88ff30d784451e11ee01158678c7"
+        }
+      }
+    },
+    {
+      "id": "guides/integration/multi-service",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/integration/multi-service.md",
+        "ru": "docs/ru/guides/integration/multi-service.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "9dbcb9ecbe387868845ebe16f81e2eb479091db2728048b2e0dd669f94cd1aea",
+          "translation_sha256": "02ee313aa671a1148fa0532f61c6a2f6c5343747c75488d0386e149242e7122d"
+        }
+      }
+    },
+    {
+      "id": "guides/integration/standalone",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/integration/standalone.md",
+        "ru": "docs/ru/guides/integration/standalone.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a74961e863f9831263b38e556b857e69f9e159d3f7aee08a3d086a8e99bbdfec",
+          "translation_sha256": "7a22b8973e8c6eae2ad78b70eef65f55ec7cfe907a43c11ab96760c40de19a33"
+        }
+      }
+    },
+    {
+      "id": "guides/quickstart",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/quickstart.md",
+        "ru": "docs/ru/guides/quickstart.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "4fd1c5234f507655c351b11a25b53f8be2b637c8a99cea3d647fc7e62a5c2cf3",
+          "translation_sha256": "4aa18cd989d7184a8c362a6238d715c10229e5b5ec85c1f29573941172e838db"
+        }
+      }
+    },
+    {
+      "id": "guides/recipes/continuation",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/recipes/continuation.md",
+        "ru": "docs/ru/guides/recipes/continuation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "5c28fb752590430436c31a51a3d50928c867e1af0d636f36fc69ea62ff0f9f46",
+          "translation_sha256": "0c09ff0b898db0106db1ddede2339000c98efb8959c029862b73457729d5f15c"
+        }
+      }
+    },
+    {
+      "id": "guides/recipes/custom-result",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/recipes/custom-result.md",
+        "ru": "docs/ru/guides/recipes/custom-result.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "09dd98f0425e89d8e6cc8da04687bfb63a42d68d88e9dd4c7b01cff9e313aaa8",
+          "translation_sha256": "c9a168d76e42124b81699f1e5537e7378a3b36039df47475639627148e263b8c"
+        }
+      }
+    },
+    {
+      "id": "guides/recipes/extensions",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/recipes/extensions.md",
+        "ru": "docs/ru/guides/recipes/extensions.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "62d984a1c2d7d9fb4f485adcdbbf596749e790ee7d18f9be672ee0ef7b51bb23",
+          "translation_sha256": "4f2a4de4cfbd0adff2596f1e85005e0306fb09cab17a42b71e17188e70e421ad"
+        }
+      }
+    },
+    {
+      "id": "guides/recipes/files",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/recipes/files.md",
+        "ru": "docs/ru/guides/recipes/files.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "23a7fd106f7241e6e9d473017b6a72f5551c45764d21b4f05bdf704c5ff041fa",
+          "translation_sha256": "d5f77725404b90290987877f0bb55b2e580f315b728b0c14e156f76281c108a9"
+        }
+      }
+    },
+    {
+      "id": "guides/recipes/pagination",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/recipes/pagination.md",
+        "ru": "docs/ru/guides/recipes/pagination.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "7c7b3cdcc93fed425a815ff2c55b915db953118b3864d5badcea62b75fd2c3c2",
+          "translation_sha256": "3fef411443eac1f92fe604a075d621ba322dc72e1d1880bd9b850f107f8f0c8c"
+        }
+      }
+    },
+    {
+      "id": "guides/requests",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/requests.md",
+        "ru": "docs/ru/guides/requests.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "05b5cb980dad24fbd7e0d9ac74fb495ff19ea31eef4be0c38e711f4d98893d1f",
+          "translation_sha256": "9b093941500e801b9ef6a297f2bfbf0b313390a74276ec72d46e416b7d634588"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/README.md",
+        "ru": "docs/ru/guides/sdk/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d7d26f4d959f8961d57c1ffb9deec7cf7a6dd142304a4eaed5c4b1b0167723a6",
+          "translation_sha256": "22caab764c141bdf45850156d501cd25c254967533d5f8ce54ed467314b47467"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/analysis",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/analysis.md",
+        "ru": "docs/ru/guides/sdk/analysis.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d08e4bb35e170e75567464915072cf4c85e048ce1de2f36611dabad652decaae",
+          "translation_sha256": "b18552ceb65066ce5c4a04a142bf6e627f5e66a923d3ed005da904c30d3a8e2f"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/coverage",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/coverage.md",
+        "ru": "docs/ru/guides/sdk/coverage.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "b53dd56fd1043219c1b373f84003af8e7a15f89d5a0368c5c90cc30bc37443ea",
+          "translation_sha256": "10a5923d97f56d334e5c6dac04176883acc6c3b30eaf2c2e96c66912ea6ae1d6"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/design",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/design.md",
+        "ru": "docs/ru/guides/sdk/design.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "5bdc21e4f10a3178846f865f93913d23b951d3431c312c79499e07015d8c3412",
+          "translation_sha256": "73fcc79c112012a618240eddf174dca664d6e9e713457fb3c73d7940bdc61694"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/first-operation",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/first-operation.md",
+        "ru": "docs/ru/guides/sdk/first-operation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "dfbaabd298231a1abeb6e4bc03803a1751eaeb40c7be09fdf56c25dec510a459",
+          "translation_sha256": "8ab3c32e6af4b536f7a13b2ccf8ce850b91f3329e83abd2566b5010ae630be03"
+        }
+      }
+    },
+    {
+      "id": "guides/sdk/release",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/sdk/release.md",
+        "ru": "docs/ru/guides/sdk/release.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "fca1f22ddedfe6f38c547584b4e8ee4ea36a97a713cf0ec0cc5bea9023f14da4",
+          "translation_sha256": "c11533376538c8928d23561bf1176f1b1ed9610ecc53532678153fc14a4e2c53"
+        }
+      }
+    },
+    {
+      "id": "guides/testing/live",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/testing/live.md",
+        "ru": "docs/ru/guides/testing/live.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "9a165046867dd04ce265f31ba10a9b0125e74fdecbb46ac956327a92cb7fad65",
+          "translation_sha256": "63f993baa5a3c8c7131433cb8f745e5e043aa187f6cc7199ebb2728388cb62a6"
+        }
+      }
+    },
+    {
+      "id": "guides/testing/unit",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/testing/unit.md",
+        "ru": "docs/ru/guides/testing/unit.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "96e8f7ac077e29a7e99e2625ce6088e0536c5d5ae88e3f2d480dd1bc7739047a",
+          "translation_sha256": "1d2212306dae295f119831551ced53c2128a8d445fdf98394bb6aba7d33b74c8"
+        }
+      }
+    },
+    {
+      "id": "guides/troubleshooting",
+      "kind": "guide",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/guides/troubleshooting.md",
+        "ru": "docs/ru/guides/troubleshooting.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "db09dbe6b4c1a64f0f36a06c326d338d4b43cf2d56b3af937fbf86dd61777074",
+          "translation_sha256": "31777f723698245280144d3eec7f87c96262b59cb5dee1230b0200c6d4753820"
+        }
+      }
+    },
+    {
+      "id": "reference/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/README.md",
+        "ru": "docs/ru/reference/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "be836193924243dfc15b92d2324e6508f66a236e08e74d7a06d87e37a31e2dbc",
+          "translation_sha256": "b29c0b6cd555312161930179f1efc10aa068f603d33e23246316b4fa17702bf7"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/README.md",
+        "ru": "docs/ru/reference/attributes/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "14db122f6343038dc980d5bf1feb53cce45b57ee442b54dfbc03a55a5d8ce789",
+          "translation_sha256": "45cf95e9fa8230dc709fe1a3a22a8e9e36347c8a7fe37c5bd0b0347d8e535d6e"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/behavior",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/behavior.md",
+        "ru": "docs/ru/reference/attributes/behavior.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6ddaf46d96c858b72044e9e12f3173170352e11c9d74394fc75069b20407eb2e",
+          "translation_sha256": "2c2a84c17e402d8477c7bb0745853f4aa529277e8ddf72bb2de30d985ec40c45"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/hooks",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/hooks.md",
+        "ru": "docs/ru/reference/attributes/hooks.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "819954363c2f393c9a3b87216b293a3d4b2db167a8198f8e6cde0e684f5afa68",
+          "translation_sha256": "d9200b02d55016196b4776b87504cd7b4d399f00ad4cec008855f74a54047a25"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/http",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/http.md",
+        "ru": "docs/ru/reference/attributes/http.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e604a86fb794148d19fd4555cbb49f4eacfc28b2a11b7d2ecfbc99cfcddad3cc",
+          "translation_sha256": "9ea8a7a3cfeda74593746d480b0aed921c8bc6929658cdbbd810f4a130e133c0"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/hydration",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/hydration.md",
+        "ru": "docs/ru/reference/attributes/hydration.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "978906a2c4bc57ab5f050fc198a0be69db8127094146dbc375300dcd96102e90",
+          "translation_sha256": "90df4308b4028f981206434024262cbf87b037c3cce5f377db6eb7b3219add8f"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/request",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/request.md",
+        "ru": "docs/ru/reference/attributes/request.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "0ee0340cb003785f4f7e402d6880928d2375cc6f6b0ecd40a5e5f58c30c3c6c1",
+          "translation_sha256": "7d646e44cf14a30d153737742a1cbc012226ee4f49ec2c1e0232646644352e29"
+        }
+      }
+    },
+    {
+      "id": "reference/attributes/response",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/attributes/response.md",
+        "ru": "docs/ru/reference/attributes/response.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e95c1f23cfab8cde5b0319e11c32e4bc16cb359ecbb92358cc10b4a83f0a777f",
+          "translation_sha256": "f0868fc1be7995043e6632dfb9dac262c19f235c90a13b4a082002fbaa08ce41"
+        }
+      }
+    },
+    {
+      "id": "reference/auth/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/auth/README.md",
+        "ru": "docs/ru/reference/auth/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "1d1ff018abc3e1d2ff3dd5d2306d04e33abdcfca3641354b5b303b07f7cc759c",
+          "translation_sha256": "8a0027abcbbe459f6ec7328e3986f7298345fd207096def918362d141344591a"
+        }
+      }
+    },
+    {
+      "id": "reference/auth/credentials",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/auth/credentials.md",
+        "ru": "docs/ru/reference/auth/credentials.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "75b77fdd58db192aa177b36f1896748ed5a85726b85f55cbbdfee5e6a69bfc8a",
+          "translation_sha256": "1880cac4fa9a1a43beab9a8c0fffcfabe450d82335c179477f149f2cdd3f8e3c"
+        }
+      }
+    },
+    {
+      "id": "reference/auth/strategies",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/auth/strategies.md",
+        "ru": "docs/ru/reference/auth/strategies.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "261a899fd3f511c4d6bfaadac60f4be7fbc1530aa94958de11f14ce89fb725b1",
+          "translation_sha256": "75bf4d4d62a072f90077f13ae363a966c6d7709bde3b34095599070ff59dc8a0"
+        }
+      }
+    },
+    {
+      "id": "reference/auth/tokens",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/auth/tokens.md",
+        "ru": "docs/ru/reference/auth/tokens.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "89cc961331504f7ae98b813d6fbebbf0338fb2f801a36643c0ebf83e4292f76c",
+          "translation_sha256": "ee806a14b496514b7d1489b39f44e6a81f7e5f91beaea8fdccb59a2d9a907a5c"
+        }
+      }
+    },
+    {
+      "id": "reference/client/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/README.md",
+        "ru": "docs/ru/reference/client/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "fa72b122737f12864459c3087fac748a7c031215316232e382ecd997051de6d6",
+          "translation_sha256": "b5616c8e12f5439d5eee7019960b2c5425d679d04b779cc345ece5ab46de3116"
+        }
+      }
+    },
+    {
+      "id": "reference/client/catalogs",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/catalogs.md",
+        "ru": "docs/ru/reference/client/catalogs.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e48e14073646291dcd3008c42d05674712363a556c81e9e53cf51dfb6100f196",
+          "translation_sha256": "ece266544db2071fa878577c11cf355b840d6e60c8c5195e4ab21c28f8cdd7b3"
+        }
+      }
+    },
+    {
+      "id": "reference/client/configuration",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/configuration.md",
+        "ru": "docs/ru/reference/client/configuration.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f8c7e51c36b6b0e1017a73bece6b3cddd00822129a744cd9d3ce62fd95ba93be",
+          "translation_sha256": "3bcf2610ab9501eeff0b61b5a74f6f50553c7776e8c374e364e480f315f45fe1"
+        }
+      }
+    },
+    {
+      "id": "reference/client/construction",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/construction.md",
+        "ru": "docs/ru/reference/client/construction.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ee5b16d454c0d44e133fb45fccb6e81867fa32f341f79fe56f5f68bc5a3245d2",
+          "translation_sha256": "1851afa71344bc07e18fc501b75b99f6b8aaf80eed0b652061bb49da6ff645c7"
+        }
+      }
+    },
+    {
+      "id": "reference/client/discovery",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/discovery.md",
+        "ru": "docs/ru/reference/client/discovery.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e73b73d776cd39a12db86d767d7a5a6c2a9724d27561c18b99a334ae7d983b2a",
+          "translation_sha256": "f8d667a88e8e4058ec3ad3a4c3ea2e877b62de79036747fe653a331424f3c457"
+        }
+      }
+    },
+    {
+      "id": "reference/client/localization",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/localization.md",
+        "ru": "docs/ru/reference/client/localization.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8c6abe178697f0fe0b4d6ac149bb626083393eb57219aac5dfaedf5255bf045c",
+          "translation_sha256": "391109ae2e40286fd627330f51323c797576de4c72fc03a0ae78fefcfe673988"
+        }
+      }
+    },
+    {
+      "id": "reference/client/operation-inventory",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/operation-inventory.md",
+        "ru": "docs/ru/reference/client/operation-inventory.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "0b9b0fa6a717113a04d774e5855950ae94ea7d456be022cb601ba1535a745f96",
+          "translation_sha256": "ad15594cbfbb3afcccaebeff95fe7f8b31f61f3825a83c9c67e24505e3dab8fe"
+        }
+      }
+    },
+    {
+      "id": "reference/client/resources",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/resources.md",
+        "ru": "docs/ru/reference/client/resources.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8bce3bd89df1de391512ad883985ef0e6c4216615713dc4140cc63bc7f23b71d",
+          "translation_sha256": "214253c8365c40028f75ec66e58d26cb75a6633e7d108a749bea54daa3ace871"
+        }
+      }
+    },
+    {
+      "id": "reference/client/response-dto-catalog",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/response-dto-catalog.md",
+        "ru": "docs/ru/reference/client/response-dto-catalog.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ff091d36a2bcdc79623715397b5da94150d37cab011b0161bd6d5f31739946dd",
+          "translation_sha256": "e87df215aefdd5985a2a5879abf955cd942fed82dd67e7dec43e4ece8f0f37df"
+        }
+      }
+    },
+    {
+      "id": "reference/client/validation",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/validation.md",
+        "ru": "docs/ru/reference/client/validation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "eda3a4cbcefb20626be494e34c7cce1b0e45b1bdd4a5bbd0f899296748771400",
+          "translation_sha256": "b67890fd03e5e9ec58cf34bc53e1ef96f4d983bc1b13ab2f88514c14e5d2acbc"
+        }
+      }
+    },
+    {
+      "id": "reference/client/versioning",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/versioning.md",
+        "ru": "docs/ru/reference/client/versioning.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6d07cf67e708768a2cd43e57607ce1b7dcfda443a40dc6dd6c5affe1840e3fae",
+          "translation_sha256": "d9574802bff5a488c9a75693abb969fdcad41ba6a889d21e4f98b6e95ccab749"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/README.md",
+        "ru": "docs/ru/reference/dto/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f8c83d33a8af994d3250106bbf0453fdcd1078901f058996f70eaa46e0b703e3",
+          "translation_sha256": "39352dacc6f2349f3b2dd4fae26eb9df5529ebe4d404baa34813f18cd8b8323d"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/collections",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/collections.md",
+        "ru": "docs/ru/reference/dto/collections.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "7b59bd0e25c43c960a7ac788de15ae4441483240c7135b50c0139bd5d5f5b563",
+          "translation_sha256": "3c86027fc6726e0d4f392e37faa5a9865d79b6686daa2724690b1c1b43eff9f0"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/configuration",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/configuration.md",
+        "ru": "docs/ru/reference/dto/configuration.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d65cc06ad40bba0b101aed4120178a2b36ab9253477d0686b1e914b22b809b07",
+          "translation_sha256": "e87ed34adc6f3b208c097abb5135e2f15ace9fd3c7fd97862fe9257ff7ef7789"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/constructor-values",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/constructor-values.md",
+        "ru": "docs/ru/reference/dto/constructor-values.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "3678e78980a23bdd14f3dd9709dea00d296ad39830c132c38385a80d5da7a076",
+          "translation_sha256": "6ccc5ab562ed5478f2360a240b9fa3ed0188ee641c3c9afdd35fc162881b696a"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/declarations",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/declarations.md",
+        "ru": "docs/ru/reference/dto/declarations.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "2a7a21b396d8193e61fd7422cb9e92bc6f733eda37a250e138e42866f876b71a",
+          "translation_sha256": "26a5c14df86085a6772ceb333a0cdb220dd0083bfee7dd29ff2f2ebfb9801bc2"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/defaults",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/defaults.md",
+        "ru": "docs/ru/reference/dto/defaults.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "c1078fdba111c85e050b7e53db9f734092ec2b9f04b212c5c420a027aaf6a2eb",
+          "translation_sha256": "2bfbc65b35282cda1cb01b575753053a0561fd9aab890ec6f5e20d2238c6073b"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/diagnostics",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/diagnostics.md",
+        "ru": "docs/ru/reference/dto/diagnostics.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "7662756e10a56a2ef092de5fb8877afe13a1f7ceb3a111d71592c216211ac2f6",
+          "translation_sha256": "1c598e09d5676b0c0bf1189e0b295cac8f72ed6e5dc49cabc8683afe94b7f2b3"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/extras",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/extras.md",
+        "ru": "docs/ru/reference/dto/extras.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "969df258c22a43948370a8a9e6bcca81f0ba2a57a635685b2c2099d1134fd863",
+          "translation_sha256": "bcf7869ff96c5cf979d4f02256d622515b23ff10c15a70a9413ea255e5051560"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/field-rules",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/field-rules.md",
+        "ru": "docs/ru/reference/dto/field-rules.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "b1adaa9766a674d6227938a0d62f67af4415dbd1ba22152918cc352ef34a6012",
+          "translation_sha256": "1da849c08b7bf132a9084f0daa87a127ccd1e264a2d4ccb5b9ccf4f5869465f0"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/lifecycle",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/lifecycle.md",
+        "ru": "docs/ru/reference/dto/lifecycle.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "96662a2a01a25cb366f087ffb4fe29544c868b99946e5b7d04fc77db43b95a2d",
+          "translation_sha256": "17abce46fdc005440d00af762bb2d1c4b1c3bc44cd66dedd3237448a0ef89612"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/models",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/models.md",
+        "ru": "docs/ru/reference/dto/models.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d26ecb38544de032fbf261cb7e62f802cf44057b9e344a3f72f31d75569085d7",
+          "translation_sha256": "3ee15c5396452e4d05477544550d0c7423efb693f72493603543276b3cacf4bf"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/profiles",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/profiles.md",
+        "ru": "docs/ru/reference/dto/profiles.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "60a0a8cc225f0f304727ead3f1ab548fb50efedb808aec922d5b977de1d73e91",
+          "translation_sha256": "c75bc5e32e8635200e49855839b0f0c6c0fbd2eacf6c256a51462fdc5a38275c"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/scalars",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/scalars.md",
+        "ru": "docs/ru/reference/dto/scalars.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a1443f1523db79cbe76ad85d3b44a008b1a226a21d75fbfcfe8d5658a56c3071",
+          "translation_sha256": "0c5e04a5fc4de88dcc86a24b0c0223691290bf7203e150048a34016da3a6d8b8"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/scope",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/scope.md",
+        "ru": "docs/ru/reference/dto/scope.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "72dc2f9948ac626f3baeddfae91c20527c7b58272248b8e7d9fdc2ed4579ddfc",
+          "translation_sha256": "b8236a2b252d09c7cfaaa8dd12af5d9e81e5481bcd86be53203e45de8372457a"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/shapes",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/shapes.md",
+        "ru": "docs/ru/reference/dto/shapes.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d6563e52c87a4b635fbbb71680951c95239241e41b6a2cb1775528ca24a3f3e5",
+          "translation_sha256": "3c6d7f9d0ed4198047dd3eaf44c9505f36a58a0292004f0e03b8c1f8174399f1"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/variants",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/variants.md",
+        "ru": "docs/ru/reference/dto/variants.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d985a96178d98dbaa7a8aff86d5ad27804b64250775d20f298b034ab148d565f",
+          "translation_sha256": "73c9f5b7d9f70b4c0dc80add6a2a8a40a2d2b8d8e66ef22ee0c4c9088d541e1c"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/README.md",
+        "ru": "docs/ru/reference/execution/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d6bf78aa736d8c5e5892cf458ba7a8fa832f0ce92ea1c7709042ab52bec0c60d",
+          "translation_sha256": "3f9fb50a5eecdc5dfc1b2a50dc2b867073199a945a4219e2622609eeeebe271e"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/batch-pool",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/batch-pool.md",
+        "ru": "docs/ru/reference/execution/batch-pool.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "8b141f53e8c9376f9dda971686f5635127a82fca64e99c93f9e949a715fac9ab",
+          "translation_sha256": "b4e6d7c6007bf0f3743049a63694cb8ba581fa6ad693e94969d5c2b7924a5374"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/cache",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/cache.md",
+        "ru": "docs/ru/reference/execution/cache.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "d2ac7c1049580c474285e947f98640dacf783986109f12b7aece352e5c4ee99c",
+          "translation_sha256": "0062427ed574e6ab6ec89d66bbe10e6025f09696171b120625f4cfa4d2833557"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/continuation-await",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/continuation-await.md",
+        "ru": "docs/ru/reference/execution/continuation-await.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e11dd0145cbdfb42de7b6dba4ebdd782ec0cdc51fd3bc9245fadc7e29a1ff54f",
+          "translation_sha256": "34b08c914e0b86d6cd83bfbbdaa872c18f33bc6060cd4d6bce63e2000e0af826"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/continuation-state",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/continuation-state.md",
+        "ru": "docs/ru/reference/execution/continuation-state.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "846d993edcca11dad606d356470d9703959c15bd69a70a0edf0a8830b1c302f3",
+          "translation_sha256": "5b7c234e08ef3ca7bdebfedbcd62751b72b3c44727ce06065cc31d03f02eb186"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/deadlines",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/deadlines.md",
+        "ru": "docs/ru/reference/execution/deadlines.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "3e30edd93c0e58f58965ebdef8b783b4bfc4a93e48caf1814acdecb584ecb770",
+          "translation_sha256": "dfec6034ab95ba358c578a36808abca746087e6eaa283b156eb4498c5d000a53"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/pagination",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/pagination.md",
+        "ru": "docs/ru/reference/execution/pagination.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "fa1fd1da250505aca29e3052827847d4d32a0d85b61111d5d0e01b7b515f5f55",
+          "translation_sha256": "49f0ebeb6bf26474b01e28d1a5bccab582656de93d79f596546b915e04960ee9"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/rate-limit",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/rate-limit.md",
+        "ru": "docs/ru/reference/execution/rate-limit.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "db845ace31288bab562d6ec168121a4fb71f4d68f1808aa6bbb4075ad6ead6c3",
+          "translation_sha256": "ca4a3abb02875f4c0da19d3d94761407129f582509403b3f73ec4ef54c5813ae"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/retry",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/retry.md",
+        "ru": "docs/ru/reference/execution/retry.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f57440c2a412a78f9bec13bf691769a9681793cb43ea550fb38b40ad78ac2806",
+          "translation_sha256": "a1940c9511ae09916d0ad7a7c90c2b8bbfce76a253f8bdbc8dd4df23198a9bfc"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/transport",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/transport.md",
+        "ru": "docs/ru/reference/execution/transport.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f3d5079bb76665474f0b365860de082dd87e789f2fa42a597fe601d4359ac34b",
+          "translation_sha256": "31b4b1d9ef4df75ec73abe79decb4785873b7e030e5c37bfcdc116c168c28708"
+        }
+      }
+    },
+    {
+      "id": "reference/extensions/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/extensions/README.md",
+        "ru": "docs/ru/reference/extensions/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "35fe17f2e26aea3218864c7be8f03a04edc65c59dcd2958543a84fe9d3ead74a",
+          "translation_sha256": "0e3a10a7af3e330512f8538024d482181c8b62227dc34eea1b30b01f40b6f44f"
+        }
+      }
+    },
+    {
+      "id": "reference/extensions/extensions",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/extensions/extensions.md",
+        "ru": "docs/ru/reference/extensions/extensions.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "9f926a9231e3fd0aed28f22db44aadfaf81170c04b1c2086dacdae01acdfe80f",
+          "translation_sha256": "188d6ee4c82a861b4dd099f931193499f321f984b869bb1bffdd2da7d2b08f76"
+        }
+      }
+    },
+    {
+      "id": "reference/extensions/hooks",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/extensions/hooks.md",
+        "ru": "docs/ru/reference/extensions/hooks.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "340578ec97e799faa607c30fdeaffa3d3ca3ecb44de4e2c09016bd7b0450b3fb",
+          "translation_sha256": "ed03e4264c2aa3472ff862921a62cdd3bd25ba6cc87f8473b4f98759da1777cc"
+        }
+      }
+    },
+    {
+      "id": "reference/files/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/files/README.md",
+        "ru": "docs/ru/reference/files/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ddeb655c6cfdf71ccf825f8b2d4680e564cb70ae4572641909066ff7c973574c",
+          "translation_sha256": "2a83de76cbaf92d43b1c0ab48b7c13e31ec89b278ad62ec85e0c27e004076178"
+        }
+      }
+    },
+    {
+      "id": "reference/files/archives",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/files/archives.md",
+        "ru": "docs/ru/reference/files/archives.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "24235ab7ec808cbc50f30325faaa05a33817b4fc48e20deac0e2a66af2cd2f25",
+          "translation_sha256": "f42139ffbf537685069f9326c521f9b15321c82f3bcf023c710575408335501d"
+        }
+      }
+    },
+    {
+      "id": "reference/files/downloads",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/files/downloads.md",
+        "ru": "docs/ru/reference/files/downloads.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "4c46d8dabd1e22abbcde4990226612986ccb04a63a18e7d45f548187227c59fb",
+          "translation_sha256": "1da4a1badb3ce08ab81b4631907b4e1efd6bf106a709e4cbbeae319890c3a062"
+        }
+      }
+    },
+    {
+      "id": "reference/files/uploads",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/files/uploads.md",
+        "ru": "docs/ru/reference/files/uploads.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "cd34bb5978a01e98385c18fede42c49b4f8b57b7674b721d4af88c262bda23af",
+          "translation_sha256": "6f2c69a2d13b1ae0751ced97f6d6d87b2c3db3f45f6c0eb633f8188be10a7b31"
+        }
+      }
+    },
+    {
+      "id": "reference/integrations/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/integrations/README.md",
+        "ru": "docs/ru/reference/integrations/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a1e211dc800dfd43a9bbe1e3e3897349efd495c3eeb67d026bec9276632476ec",
+          "translation_sha256": "6168a0156af5c793969ccc6bdac748d51ed4af8be6babcb233f7cc5de3748a77"
+        }
+      }
+    },
+    {
+      "id": "reference/integrations/redis",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/integrations/redis.md",
+        "ru": "docs/ru/reference/integrations/redis.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "9d0dd1d72ada4d0c5e5f154230e3b4029946a3b81a395eb0e705d5d668b97cca",
+          "translation_sha256": "dc8126ffb4a56d03acaa3b97e179b6b0e9e5f4b4a6b19b3cbbdce52c261a123f"
+        }
+      }
+    },
+    {
+      "id": "reference/request/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/request/README.md",
+        "ru": "docs/ru/reference/request/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "0fe7a8d790f76c669046bc1980a0302c90e7bd0c51ba19153f974fc557239a8d",
+          "translation_sha256": "c99b9aa347c017c85426545685d393ccbdf5b143d8930df4407a069f6ea2db00"
+        }
+      }
+    },
+    {
+      "id": "reference/request/composition",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/request/composition.md",
+        "ru": "docs/ru/reference/request/composition.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "23fc44f899f79cda1625294ef9896869837aee89834e982e8f9bd2f17f7dfeee",
+          "translation_sha256": "d3a2ba03df64a40811394adc28dc9edce98c01892c990a1c7eb27bb8078429ea"
+        }
+      }
+    },
+    {
+      "id": "reference/request/declaration",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/request/declaration.md",
+        "ru": "docs/ru/reference/request/declaration.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6a4cd24bd12da736caea5b76d99be7c0b57591a4187d5ca56ca3bea9217e2350",
+          "translation_sha256": "774970c1359c2c4850b280317273cad6d4218de91a6b71dda1f54543ac6657b5"
+        }
+      }
+    },
+    {
+      "id": "reference/results/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/README.md",
+        "ru": "docs/ru/reference/results/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "90d9d7023542a8c6635fd0beb51ea25e6c0fb1955c198e5eefa29afdaf48fbaf",
+          "translation_sha256": "31ce105f43c15215f6e498e5356a40b0c10b9b9e6df1c2adced9856a6e65f1f9"
+        }
+      }
+    },
+    {
+      "id": "reference/results/errors",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/errors.md",
+        "ru": "docs/ru/reference/results/errors.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "33ae64b70909a7980b19678a5c24011921f249c790948165a503279ba32c4021",
+          "translation_sha256": "8f51a41537fdb2bfa8a5a4f1ee67e5eb8817f8b1680ce698e808c4bb0668b110"
+        }
+      }
+    },
+    {
+      "id": "reference/results/handles",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/handles.md",
+        "ru": "docs/ru/reference/results/handles.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "02c0acd8c1cce760212e47dfbc1e85a783b81eaa597959f2461d2af97e3ee593",
+          "translation_sha256": "acaecd0e1d306410b2d6024ead28aa3b3e83cf1e36fcff68d6ca7a54f9e951c6"
+        }
+      }
+    },
+    {
+      "id": "reference/results/observability",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/observability.md",
+        "ru": "docs/ru/reference/results/observability.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "912610166a256b3302ba140ae73d105814501a64a14bd47cba628b04ecf88a4c",
+          "translation_sha256": "329799a00a8703a746ee76ba321d918ed11ddb7be96c1ab38ee222ebffd17fd2"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/README.md",
+        "ru": "docs/ru/reference/serialization/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "e2075002f0fa790a37e43948ff1546ff04e506c6598a0d4877c25c804d7ab6b3",
+          "translation_sha256": "06cdfcb4143318897c1bb568b400fb937694a055d5feee6ebaedf204f385e6bd"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/body",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/body.md",
+        "ru": "docs/ru/reference/serialization/body.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "eb4ba22ff5cd93fc8171aac5504393a913b057730bb0d72cb4657489a3c450d6",
+          "translation_sha256": "6e3d152128e223ef5df551b0692e4467004ab2f1bc05aedc5e7f8734bb1e530f"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/casts",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/casts.md",
+        "ru": "docs/ru/reference/serialization/casts.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "48bdc09a505f05320f3e8756db9184dd12b8c358d75d258d1021e8f784cbe9c2",
+          "translation_sha256": "825dc4214ac924b49d624b36d53c189f874ad7659587fa019c0027154dd26f52"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/dto-output",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/dto-output.md",
+        "ru": "docs/ru/reference/serialization/dto-output.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "97f5e3954bbfb9190006475913b56d19b413cdfc39a413c4e320aca257b3c6b8",
+          "translation_sha256": "6fb9df25270fca6195ffc464d675264dbb1b5cb1b36e13aeeab7431a68db17c7"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/receiver-output",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/receiver-output.md",
+        "ru": "docs/ru/reference/serialization/receiver-output.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "61c5638bb52cf35cef8395b64bd591edd498eb92aab758abe6771bbdfe141d86",
+          "translation_sha256": "031b0627be07e939897af524e60897f682a118a8634ef3a6dfc9ab8a5ef8e8cd"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/request-parts",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/request-parts.md",
+        "ru": "docs/ru/reference/serialization/request-parts.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "20784278ed8e7323c7ea9c36d3077a6dc6791a68dd247b7af78e3601351e4460",
+          "translation_sha256": "6e9200f958f8ec2336ca6c5cde7c51a4db910c02665ed15080e5460609c95dc7"
+        }
+      }
+    },
+    {
+      "id": "reference/serialization/uri-query",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/serialization/uri-query.md",
+        "ru": "docs/ru/reference/serialization/uri-query.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "45a92bbbbb69366bff17c26d27ca0ef311b8d070e3ef0d7944011f72a1912a48",
+          "translation_sha256": "9d2b209408e07a40067aaae8fc37a7be85e9f01730616b315da490ddca148674"
+        }
+      }
+    },
+    {
+      "id": "reference/testing/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/testing/README.md",
+        "ru": "docs/ru/reference/testing/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "fe645a558bc9ca8a39ff306cee5c7dab3667d615f15200f19590dc54a97657de",
+          "translation_sha256": "db8829a5c8c7471f2b13c9de8b9b31218644b8267ca9b73dae87b44ae9b47cd4"
+        }
+      }
+    },
+    {
+      "id": "reference/testing/fixtures",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/testing/fixtures.md",
+        "ru": "docs/ru/reference/testing/fixtures.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "82334e02163df01f1cc438f52917406571f92265ea329bfa0927bdba3bd09d73",
+          "translation_sha256": "2ea056e6f65ccdf6aaa5725124ffce95d11675bd79d2199cef726a4ad6062d36"
+        }
+      }
+    },
+    {
+      "id": "reference/testing/live",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/testing/live.md",
+        "ru": "docs/ru/reference/testing/live.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "597fc2f23480c8053042b6fb826f560e37f202d4a2eb0a35893059c85b2ee7d9",
+          "translation_sha256": "e702ecbbfa901f66d57496abdb2c2a0e701557712f41557d4272366423a1d203"
+        }
+      }
+    },
+    {
+      "id": "reference/testing/mocking",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/testing/mocking.md",
+        "ru": "docs/ru/reference/testing/mocking.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "70e2025431597a6558014a964a526a6aa36e538ce135f7f6853ec74a3faa78b9",
+          "translation_sha256": "671666ae588139df9de9ee3f2dd83577f7b8e0b8f1aa144fd50516ce14c97977"
+        }
+      }
+    },
+    {
+      "id": "start/README",
+      "kind": "index",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/README.md",
+        "ru": "docs/ru/start/README.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "08837ebf448c2c6220229990f675d9cc4047adc8365767a833c2d4e9d7ca1987",
+          "translation_sha256": "4b10053fa68d1a9af4cb9a481b053c0084f53a686f386f7596a9e918b18ee199"
+        }
+      }
+    },
+    {
+      "id": "start/add-operation",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/add-operation.md",
+        "ru": "docs/ru/start/add-operation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6b515c62b34a2cccab252552e8793d4ee5f778e3be060cea2544391d682f980b",
+          "translation_sha256": "cf1a1eebf1719e6d33a0e55d800584f7e7764ea54aa4f8f52d0c754898e34b0c"
+        }
+      }
+    },
+    {
+      "id": "start/agent-capabilities",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/agent-capabilities.md",
+        "ru": "docs/ru/start/agent-capabilities.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "39a0cbc0583c0bd6e0a72ce559ff2c055c0f280b11782d165dda5a11350edcb9",
+          "translation_sha256": "219110c4e2a316035c49742183c5a201165d7598e28c3003ed370ab687f4439e"
+        }
+      }
+    },
+    {
+      "id": "start/agent",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/agent.md",
+        "ru": "docs/ru/start/agent.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "1f7f3f82c93c8bda0f59ee4cb3397fb0b8c14e21b4abfa1ac75b8b28aa19b8b0",
+          "translation_sha256": "7de089b1cc38ffd5c7daf66b9f435574426d485a1d439caeb2a5d9879e68bd2f"
+        }
+      }
+    },
+    {
+      "id": "start/create-sdk",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/create-sdk.md",
+        "ru": "docs/ru/start/create-sdk.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "32d103df9c22e47de126b0ec2e6c7a01efaf601a01f6624082c34462070921da",
+          "translation_sha256": "0ff8eef3b3683d7ce6be4f6461e57236b08459be27fb61ee4f26187d48619ec3"
+        }
+      }
+    },
+    {
+      "id": "start/describe-dto",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/describe-dto.md",
+        "ru": "docs/ru/start/describe-dto.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "5de8fb7497c58f19cac9d8795d474f7d10734f6c6f62dbe474fe681e43f273ab",
+          "translation_sha256": "140baf426e1d6fcd9a2828e63f1252f769160cbac458862f788e202d8da9622c"
+        }
+      }
+    },
+    {
+      "id": "start/diagnose",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/diagnose.md",
+        "ru": "docs/ru/start/diagnose.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "04be0ab5d174656bf6363ff9674fa49056428ce4c2f3818ff3077c2a83db6768",
+          "translation_sha256": "795cd442b6cf37de91da44e30e3c28979d04f5c2fd3621704c8d82548e4205b0"
+        }
+      }
+    },
+    {
+      "id": "start/use-sdk",
+      "kind": "start",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/start/use-sdk.md",
+        "ru": "docs/ru/start/use-sdk.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "9232f1fbe66922eafa695a07a6a56aaf7d63bccfb1adff09e03e47c044304e88",
+          "translation_sha256": "10d8bffb6c8e5d8680af29028e5c9b5b932cb8432a552b8d670dd1bd42c87c72"
+        }
+      }
+    },
+    {
+      "id": "reference/results/exceptions",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/exceptions.md",
+        "ru": "docs/ru/reference/results/exceptions.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "10c4b4961f4dbea875210cb2ea2a50d1a00a35a2cf7ac106e81328b711fe219a",
+          "translation_sha256": "430dbfb9fc65d1ab9f0882150da473b9d382dc9b192510f0ddd4350ce9c8073c"
+        }
+      }
+    },
+    {
+      "id": "examples/result-errors",
+      "kind": "page",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/examples/result-errors.md",
+        "ru": "docs/ru/examples/result-errors.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ec5c45cf5628a01cbc10c05ba4e49b5f72e047429a6f647c24dd93dc43502a3d",
+          "translation_sha256": "c73388f65e994989577680f22f98e4a4c873bdbc1998d89c2f171db917daddb3"
+        }
+      }
+    },
+    {
+      "id": "reference/extensions/execution",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/extensions/execution.md",
+        "ru": "docs/ru/reference/extensions/execution.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "ea8aa43430a3fefadb3f0f9826e1916df2f14491d08fbd92052b8f81258da195",
+          "translation_sha256": "a7043ffe22b12bf094891fac277377f07d5b2ec72824696ad45ebf7e67f4cc0b"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/pool-consumption",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/pool-consumption.md",
+        "ru": "docs/ru/reference/execution/pool-consumption.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "dbf2db5e0cb40220b7b3a5ca267c1c5c73978603cbe1b977f7fb05f2297a2a7f",
+          "translation_sha256": "5c031f0c40b45539030d5bd69fac025b0e6279ca33aa80aef963325206453ddc"
+        }
+      }
+    },
+    {
+      "id": "reference/results/promises",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/promises.md",
+        "ru": "docs/ru/reference/results/promises.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "438ad3a390145435addc9c0c5422fb5161aebdf13f9ffaf5d327972a3e9f16cd",
+          "translation_sha256": "ee15b876294c228d574d125c996486695a4637781e2dd91bb39be75a76b83834"
+        }
+      }
+    },
+    {
+      "id": "reference/auth/oauth2",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/auth/oauth2.md",
+        "ru": "docs/ru/reference/auth/oauth2.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "f3214cef324393b7fbaf1090d78679fd3a5f9196ee040bedad402f039ed7fd46",
+          "translation_sha256": "606d7370b4ddc1d3b5092a5540c07213a3c03281cce8812d083f36fa1a8cdd24"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/cooldown",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/cooldown.md",
+        "ru": "docs/ru/reference/execution/cooldown.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "0d24789d99c7752f5b4dddd5984462fbc20821e9bb3ab44764b5a9b6597a943a",
+          "translation_sha256": "59d005f63d1cd0a8d285ca562a9bca376d8c57cf2aef16ce51e2642552b79f5a"
+        }
+      }
+    },
+    {
+      "id": "reference/dto/hydrators",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/dto/hydrators.md",
+        "ru": "docs/ru/reference/dto/hydrators.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "63370f283521229eeb8b2d996dc3318081068fde1a5a254150dcaf1661705131",
+          "translation_sha256": "dbf3c4f423344999010558960219292927fa3cd24bf0500df6b8831820f7ccac"
+        }
+      }
+    },
+    {
+      "id": "reference/execution/pagination-items",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/execution/pagination-items.md",
+        "ru": "docs/ru/reference/execution/pagination-items.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "3f0af08cce54bdba6c8f28c9c03b4b713a89c89a8a66fa60dda6e2d2993a8460",
+          "translation_sha256": "82342a402c7e33b577910d963d5abc3345592a17f17d0de43478f9fe4f12082f"
+        }
+      }
+    },
+    {
+      "id": "reference/client/generation",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/client/generation.md",
+        "ru": "docs/ru/reference/client/generation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "6077c9d4b1970909aca87b9e0afbdc7bfdc4f7b1f608445b1342558fabe7353a",
+          "translation_sha256": "e474b7142906c33fb83f3e934c3b9e0333ef30856a47978bd5ba306c13f77ae4"
+        }
+      }
+    },
+    {
+      "id": "reference/results/observation",
+      "kind": "reference",
+      "scope": "public",
+      "paths": {
+        "en": "docs/en/reference/results/observation.md",
+        "ru": "docs/ru/reference/results/observation.md"
+      },
+      "reviewed": {
+        "ru": {
+          "source_sha256": "a1c58de85637e784df62b69cdd751716189a7e643b32528625fb1a218c210f86",
+          "translation_sha256": "75d1a9840a3c68c826b684f5a1ddf86d88442c75ce0eabdb3c659d1324720987"
+        }
+      }
+    }
+  ]
+}

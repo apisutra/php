@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'continuation.await_did_not_receive_a_continuation_token' => 'Await did not receive a continuation token',
+    'continuation.await_requires_unwrap_or_continuationstateresolver' => 'Await requires unwrap or continuationStateResolver',
+    'continuation.continuation_protocol_reported_a_failure' => 'Continuation protocol reported a failure',
+    'continuation.continuation_token_must_not_be_empty' => 'Continuation token must not be empty',
+    'continuation.continuationawaitoptions_intervalms_must_be_0' => 'ContinuationAwaitOptions.intervalMs must be >= 0',
+    'continuation.continuationawaitoptions_maxattempts_must_be_1' => 'ContinuationAwaitOptions.maxAttempts must be >= 1',
+    'continuation.continuationresult_is_not_declared_for_sourcerequestclass' => 'ContinuationResult is not declared for sourceRequestClass: {sourceClass}',
+    'continuation.continuationtokenextractor_is_required_to_continue_awaiting' => 'continuationTokenExtractor is required to continue awaiting',
+    'continuation.failed_to_convert_token_to_bool_for_parameter' => 'Failed to convert token to bool for parameter: {parameter}',
+    'continuation.failed_to_convert_token_to_float_for_parameter' => 'Failed to convert token to float for parameter: {parameter}',
+    'continuation.failed_to_convert_token_to_int_for_parameter' => 'Failed to convert token to int for parameter: {parameter}',
+    'continuation.failed_to_hydrate_the_ready_continuation_result' => 'Failed to hydrate the ready continuation result',
+    'continuation.failed_to_prepare_poll_request_constructor_arguments' => 'Failed to prepare poll request constructor arguments: {class}',
+    'continuation.final_dto_class_not_found' => 'Final DTO class not found: {type}',
+    'continuation.final_result_is_not_ready_in_sync_mode' => 'Final result is not ready in Sync mode',
+    'continuation.finalpathstateresolver_requires_a_non_empty_unwrap' => 'FinalPathStateResolver requires a non-empty unwrap',
+    'continuation.invalid_stateresolver_class' => 'Invalid stateResolver class: {class}',
+    'continuation.poll_request_class_must_implement_requestinterface' => 'Poll request class must implement RequestInterface: {class}',
+    'continuation.poll_request_class_not_found' => 'Poll request class not found: {class}',
+    'continuation.poll_request_constructor_must_have_exactly_one_required_parameter' => 'Poll request constructor must have exactly one required parameter: {class}',
+    'continuation.poll_request_constructor_must_require_a_token_parameter' => 'Poll request constructor must require a token parameter: {class}',
+    'continuation.poll_request_is_not_specified_set_continuationresult_pollrequest_or' => 'Poll request is not specified: set ContinuationResult.pollRequest or ClientConfig.defaultPollRequest',
+    'continuation.polling_limit_must_be_positive' => 'Polling limit must be positive',
+    'continuation.polling_request_limit_exhausted' => 'Polling request limit exhausted',
+    'continuation.pollrequestclass_must_not_be_empty' => 'pollRequestClass must not be empty',
+    'continuation.required_token_parameter_must_have_a_scalar_type' => 'Required token parameter must have a scalar type: {value0}',
+    'continuation.source_request_class_not_found' => 'Source request class not found: {sourceRequestClass}',
+    'continuation.sourcerequestclass_must_not_be_empty' => 'sourceRequestClass must not be empty',
+    'continuation.stateresolver_must_be_constructible_without_arguments' => 'stateResolver must be constructible without arguments: {class}',
+];

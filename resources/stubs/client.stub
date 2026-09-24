@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use ApiSutra\Core\AbstractClient as {{base}};
+
+/** Конфиг, credentials и транспорт передаются при создании клиента. */
+final class {{class}} extends {{base}}
+{
+}

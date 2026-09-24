@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderC\\Requests\\ProviderCSystemOrgCheckRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": -3,
+      "query_type": 2,
+      "uuid": "uuid-err-1"
+    }
+  }
+}

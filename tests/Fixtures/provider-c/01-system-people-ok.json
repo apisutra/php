@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderC\\Requests\\ProviderCSystemPeopleCheckRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": 0,
+      "query_type": 1,
+      "uuid": "uuid-100"
+    }
+  }
+}

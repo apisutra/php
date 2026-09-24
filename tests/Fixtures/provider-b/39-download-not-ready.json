@@ -1,0 +1,15 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBDownloadRequest"
+  },
+  "response": {
+    "status": 202,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "accepted",
+      "message": "Not ready"
+    }
+  }
+}

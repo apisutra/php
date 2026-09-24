@@ -1,0 +1,27 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBEventsRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "events": [
+        {
+          "status": "accepted",
+          "at": "2026-01-28T10:00:00Z"
+        },
+        {
+          "status": "in_progress",
+          "at": "2026-01-28T10:00:05Z"
+        },
+        {
+          "status": "ready",
+          "at": "2026-01-28T10:00:10Z"
+        }
+      ]
+    }
+  }
+}

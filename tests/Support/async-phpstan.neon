@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    phpVersion: 80400
+    paths:
+        - ../Fixtures/StaticAnalysis/ExecutionApiTypes.php
+    tmpDir: ../../.phpstan-cache/async-types
+    parallel:
+        maximumNumberOfProcesses: 1

@@ -1,0 +1,18 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderA\\Requests\\ProviderABasicCheckRequest"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "result_code": "warning",
+      "error_code": "provider_error",
+      "data": {
+        "message": "Provider error"
+      }
+    }
+  }
+}

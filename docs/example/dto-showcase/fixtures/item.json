@@ -1,0 +1,21 @@
+{
+  "kind": "catalog_item",
+  "product_id": 7,
+  "vendor_code": "BK-7",
+  "title": null,
+  "description": "   ",
+  "available": true,
+  "metrics": {"rating": 4.8, "votes": 12},
+  "created_at": "2026-09-15T10:30:00+00:00",
+  "state": "active",
+  "price": "12.34",
+  "manual_file": "data:text/plain;base64,U0RLIG1hbnVhbA==",
+  "seller": {"id": 9, "name": "Книжная лавка", "tier": "gold"},
+  "tags": [{"name": "php"}, {"name": "sdk"}],
+  "related_ids": [11, 12],
+  "assets": [
+    {"value": {"type": "image", "url": "https://assets.example.test/cover.png", "width": 640}, "rank": 1},
+    {"value": {"type": "video", "url": "https://assets.example.test/demo.mp4", "duration": 30}, "rank": 2}
+  ],
+  "future_flag": false
+}

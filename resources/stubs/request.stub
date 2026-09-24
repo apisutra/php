@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use ApiSutra\Attributes\Http\Get as {{get}};
+use ApiSutra\Core\AbstractRequest as {{base}};
+{{responseImports}}
+/** Укажите путь API и поля запроса по контракту провайдера. */
+#[{{get}}({{endpoint}})]
+{{responseAttribute}}final class {{class}} extends {{base}}
+{
+}

@@ -1,0 +1,25 @@
+{
+    "name": "example/records-sdk",
+    "description": "Installable Records SDK example built with ApiSutra",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "apisutra/php": "^0.1"
+    },
+    "suggest": {
+        "apisutra/laravel": "Optional Laravel 13 integration: configuration, client and request DI"
+    },
+    "autoload": {
+        "psr-4": {
+            "Example\\Records\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Example\\Records\\Laravel\\DemoServiceProvider"
+            ]
+        }
+    }
+}

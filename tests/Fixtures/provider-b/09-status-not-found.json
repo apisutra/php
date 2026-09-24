@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBStatusRequest"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "not_found",
+      "operation_id": "op-205",
+      "error_code": "not_found"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBStatusRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "canceled",
+      "operation_id": "op-207"
+    }
+  }
+}

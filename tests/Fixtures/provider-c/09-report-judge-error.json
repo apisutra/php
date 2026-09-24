@@ -1,0 +1,14 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderC\\Requests\\ProviderCReportJudgePreviewRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": -2
+    }
+  }
+}

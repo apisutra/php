@@ -1,0 +1,15 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderA\\Requests\\ProviderABasicCheckRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "result_code": "no_data",
+      "data": []
+    }
+  }
+}

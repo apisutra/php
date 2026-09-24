@@ -1,0 +1,18 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderA\\Requests\\ProviderABasicCheckRequest"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "result_code": "warning",
+      "error_code": "invalid_input",
+      "data": {
+        "message": "Invalid input"
+      }
+    }
+  }
+}

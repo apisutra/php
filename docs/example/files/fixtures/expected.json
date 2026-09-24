@@ -1,0 +1,37 @@
+{
+  "uploads": {
+    "multipart": {
+      "id": 7,
+      "contentType": "multipart/form-data; boundary=EXAMPLE_BOUNDARY",
+      "streamed": true,
+      "body": "--EXAMPLE_BOUNDARY\r\nContent-Disposition: form-data; name=\"description\"\r\nContent-Length: 14\r\n\r\nMonthly report\r\n--EXAMPLE_BOUNDARY\r\nContent-Type: text/plain\r\nContent-Disposition: form-data; name=\"document\"; filename=\"report.txt\"\r\nContent-Length: 10\r\n\r\nReport #7\n\r\n--EXAMPLE_BOUNDARY--\r\n"
+    },
+    "binary": {
+      "id": 7,
+      "contentType": "text/plain",
+      "streamed": true,
+      "body": "Report #7\n"
+    },
+    "base64": {
+      "id": 7,
+      "contentType": "application/json",
+      "streamed": false,
+      "body": {"document": "UmVwb3J0ICM3Cg=="}
+    }
+  },
+  "downloads": {
+    "filename": "report.txt",
+    "mimeType": "text/plain",
+    "size": 10,
+    "savedContent": "Report #7\n",
+    "sinkContent": "Report #7\n",
+    "sinkStillOpen": true
+  },
+  "archive": {
+    "isArchive": true,
+    "format": "tar",
+    "entryName": "report.txt",
+    "entryContent": "Report #7\n",
+    "savedContent": "Report #7\n"
+  }
+}

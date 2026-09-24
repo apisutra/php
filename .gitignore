@@ -1,0 +1,9 @@
+/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/.idea
+/.temp
+/.laravel-integration/
+/.phpstan-cache/
+
+__pycache__/

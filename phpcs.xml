@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="ApiSutra">
+    <description>PSR-12 для исходников пакета.</description>
+    <file>src</file>
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <!-- PSR-12 рекомендует 120 символов; предупреждения видны, ошибки блокируют gate. -->
+    <config name="ignore_warnings_on_exit" value="1"/>
+    <rule ref="PSR12"/>
+</ruleset>

@@ -1,0 +1,205 @@
+name: Tests
+
+on:
+  push:
+    branches-ignore: ['badges']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} / ${{ matrix.dependencies }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+        dependencies: ['locked', 'lowest', 'latest']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, fileinfo, intl, mbstring, xml, xmlwriter, :redis
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        if: matrix.dependencies == 'locked'
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Resolve lowest compatible dependencies
+        if: matrix.dependencies == 'lowest'
+        run: composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist --no-progress
+
+      - name: Resolve latest compatible dependencies
+        if: matrix.dependencies == 'latest'
+        run: composer update --prefer-stable --no-interaction --prefer-dist --no-progress
+
+      - name: Run tests
+        id: run-tests
+        if: matrix.dependencies != 'lowest'
+        run: composer test -- --fail-on-deprecation --fail-on-warning --log-junit "${{ runner.temp }}/junit.xml"
+
+      - name: Run tests with legacy dependency diagnostics
+        if: matrix.dependencies == 'lowest'
+        run: composer test -- --display-deprecations --fail-on-warning
+
+      - name: Record test outcome
+        if: >-
+          !cancelled() && matrix.php == '8.4' && matrix.dependencies == 'locked'
+          && github.ref == 'refs/heads/master'
+          && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        env:
+          TEST_OUTCOME: ${{ steps.run-tests.outcome }}
+        run: printf '%s\n' "$TEST_OUTCOME" > "${{ runner.temp }}/test-outcome.txt"
+
+      - name: Upload core test report
+        if: >-
+          !cancelled() && matrix.php == '8.4' && matrix.dependencies == 'locked'
+          && github.ref == 'refs/heads/master'
+          && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-count-core
+          path: |
+            ${{ runner.temp }}/junit.xml
+            ${{ runner.temp }}/test-outcome.txt
+          if-no-files-found: error
+          retention-days: 7
+
+  test-count:
+    name: Publish test count badge
+    needs: [tests, redis]
+    if: >-
+      !cancelled() && github.ref == 'refs/heads/master'
+      && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: test-count-badge
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: test-count-core
+          path: ${{ runner.temp }}/test-count-core
+      - uses: actions/download-artifact@v8
+        with:
+          name: test-count-redis
+          path: ${{ runner.temp }}/test-count-redis
+      - name: Generate combined test count badge
+        env:
+          TEST_OUTCOME: ${{ needs.tests.result == 'success' && needs.redis.result == 'success' && 'success' || 'failure' }}
+        run: >-
+          python3 .github/scripts/test-count-badge.py
+          "${{ runner.temp }}/test-count-core/junit.xml"
+          "${{ runner.temp }}/test-count.json"
+          "$TEST_OUTCOME"
+          "${{ runner.temp }}/test-count-redis/junit.xml"
+      - uses: actions/github-script@v9
+        env:
+          BADGE_PATH: ${{ runner.temp }}/test-count.json
+        with:
+          script: |
+            const publish = require('./.github/scripts/publish-test-count.cjs');
+            await publish({ github, context, core });
+
+  quality:
+    name: Quality and distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, dom, fileinfo, intl, mbstring, xml, xmlwriter, :redis
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer validate --strict
+      - run: composer dump-autoload --optimize --strict-psr
+      - run: composer lint
+      - run: composer analyse
+      - run: python3 .github/scripts/test_test_count_badge.py
+      - run: node --test .github/scripts/publish-test-count.test.cjs
+      - run: composer check-package
+
+  redis:
+    name: Redis ${{ matrix.redis }} / PHP ${{ matrix.php }} / phpredis ${{ matrix.phpredis }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {php: '8.4', phpredis: '6.2.0', redis: '7.0'}
+          - {php: '8.5', phpredis: '6.3.0', redis: '8.2'}
+    services:
+      redis:
+        image: redis:${{ matrix.redis }}-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    env:
+      APISUTRA_TEST_REDIS: '1'
+      APISUTRA_REDIS_HOST: '127.0.0.1'
+      APISUTRA_REDIS_PORT: '6379'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, fileinfo, intl, mbstring, xml, xmlwriter, redis-${{ matrix.phpredis }}
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Run Redis tests
+        id: run-tests
+        run: vendor/bin/pest tests/Integration/Redis --fail-on-warning --fail-on-skipped --log-junit "${{ runner.temp }}/junit.xml"
+      - name: Record Redis test outcome
+        if: >-
+          !cancelled() && matrix.php == '8.4'
+          && github.ref == 'refs/heads/master'
+          && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        env:
+          TEST_OUTCOME: ${{ steps.run-tests.outcome }}
+        run: printf '%s\n' "$TEST_OUTCOME" > "${{ runner.temp }}/test-outcome.txt"
+      - name: Upload Redis test report
+        if: >-
+          !cancelled() && matrix.php == '8.4'
+          && github.ref == 'refs/heads/master'
+          && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-count-redis
+          path: |
+            ${{ runner.temp }}/junit.xml
+            ${{ runner.temp }}/test-outcome.txt
+          if-no-files-found: error
+          retention-days: 7

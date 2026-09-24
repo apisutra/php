@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'continuation.await_did_not_receive_a_continuation_token' => 'Ожидание не получило token для продолжения',
+    'continuation.await_requires_unwrap_or_continuationstateresolver' => 'Для ожидания требуется unwrap или continuationStateResolver',
+    'continuation.continuation_protocol_reported_a_failure' => 'Протокол завершил ожидание ошибкой',
+    'continuation.continuation_token_must_not_be_empty' => 'Continuation token не должен быть пустым',
+    'continuation.continuationawaitoptions_intervalms_must_be_0' => 'ContinuationAwaitOptions.intervalMs должен быть >= 0',
+    'continuation.continuationawaitoptions_maxattempts_must_be_1' => 'ContinuationAwaitOptions.maxAttempts должен быть >= 1',
+    'continuation.continuationresult_is_not_declared_for_sourcerequestclass' => 'Для sourceRequestClass не задан атрибут ContinuationResult: {sourceClass}',
+    'continuation.continuationtokenextractor_is_required_to_continue_awaiting' => 'Для продолжения ожидания требуется continuationTokenExtractor',
+    'continuation.failed_to_convert_token_to_bool_for_parameter' => 'Не удалось привести token к bool для параметра: {parameter}',
+    'continuation.failed_to_convert_token_to_float_for_parameter' => 'Не удалось привести token к float для параметра: {parameter}',
+    'continuation.failed_to_convert_token_to_int_for_parameter' => 'Не удалось привести token к int для параметра: {parameter}',
+    'continuation.failed_to_hydrate_the_ready_continuation_result' => 'Не удалось преобразовать готовый результат ожидания',
+    'continuation.failed_to_prepare_poll_request_constructor_arguments' => 'Не удалось подготовить аргументы конструктора poll request: {class}',
+    'continuation.final_dto_class_not_found' => 'Класс финального DTO не найден: {type}',
+    'continuation.final_result_is_not_ready_in_sync_mode' => 'Финальный результат ещё не готов в режиме Sync',
+    'continuation.finalpathstateresolver_requires_a_non_empty_unwrap' => 'FinalPathStateResolver требует непустой unwrap',
+    'continuation.invalid_stateresolver_class' => 'Неверный класс stateResolver: {class}',
+    'continuation.poll_request_class_must_implement_requestinterface' => 'Класс poll request должен реализовывать RequestInterface: {class}',
+    'continuation.poll_request_class_not_found' => 'Класс poll request не найден: {class}',
+    'continuation.poll_request_constructor_must_have_exactly_one_required_parameter' => 'Poll request должен иметь ровно один обязательный параметр конструктора: {class}',
+    'continuation.poll_request_constructor_must_require_a_token_parameter' => 'Poll request должен иметь конструктор с обязательным token-параметром: {class}',
+    'continuation.poll_request_is_not_specified_set_continuationresult_pollrequest_or' => 'Не задан poll request: укажите ContinuationResult.pollRequest или ClientConfig.defaultPollRequest',
+    'continuation.polling_limit_must_be_positive' => 'Лимит polling должен быть положительным',
+    'continuation.polling_request_limit_exhausted' => 'Исчерпан лимит polling-запросов',
+    'continuation.pollrequestclass_must_not_be_empty' => 'pollRequestClass не должен быть пустым',
+    'continuation.required_token_parameter_must_have_a_scalar_type' => 'Тип обязательного token-параметра должен быть scalar: {value0}',
+    'continuation.source_request_class_not_found' => 'Класс source request не найден: {sourceRequestClass}',
+    'continuation.sourcerequestclass_must_not_be_empty' => 'sourceRequestClass не должен быть пустым',
+    'continuation.stateresolver_must_be_constructible_without_arguments' => 'stateResolver должен создаваться без аргументов: {class}',
+];

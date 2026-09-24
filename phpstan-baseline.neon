@@ -1,0 +1,365 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method ApiSutra\\Auth\\ApiKeyAuthenticator\:\:getCacheIdentity\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Auth/ApiKeyAuthenticator.php
+
+		-
+			message: '#^Method ApiSutra\\Auth\\BasicAuthenticator\:\:getCacheIdentity\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Auth/BasicAuthenticator.php
+
+		-
+			message: '#^Method ApiSutra\\Auth\\BearerAuthenticator\:\:getCacheIdentity\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Auth/BearerAuthenticator.php
+
+		-
+			message: '#^Method ApiSutra\\Auth\\HmacAuthenticator\:\:getCacheIdentity\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Auth/HmacAuthenticator.php
+
+		-
+			message: '#^Method ApiSutra\\Casts\\DateTimeCast\:\:handleInvalid\(\) never returns DateTimeInterface so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Casts/DateTimeCast.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 13
+			path: src/Collections/AbstractCollection.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between class\-string\<T of object \(class ApiSutra\\Collections\\AbstractTypedCollection, argument\)\> and '''' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Collections/AbstractTypedCollection.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Config\\CredentialsScopeConfig and ApiSutra\\Config\\CredentialsScopeConfig will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Config/ClientConfig.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Serialization\\RequestPartsEnricherInterface and ApiSutra\\Contracts\\Interfaces\\Serialization\\RequestPartsEnricherInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Config/ClientConfig.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: src/Config/ClientConfig.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Config/OriginPolicy.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Enums\\Http\\HttpMethod and ApiSutra\\Enums\\Http\\HttpMethod will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Config/RetryConfig.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Core\\RequestInterface and ApiSutra\\Contracts\\Interfaces\\Core\\RequestInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Continuation/ContinuationService.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Extensions\\ExtensionInterface and ApiSutra\\Contracts\\Interfaces\\Extensions\\ExtensionInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Core/AbstractClient.php
+
+		-
+			message: '#^Call to an undefined method ApiSutra\\Contracts\\Interfaces\\Core\\ClientInterface\:\:clearCacheForRequest\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Core/AbstractRequest.php
+
+		-
+			message: '#^Method ApiSutra\\DataTransfer\\AbstractDto\:\:from\(\) should return static\(ApiSutra\\DataTransfer\\AbstractDto\) but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: src/DataTransfer/AbstractDto.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 3
+			path: src/DataTransfer/AbstractDto.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/DataTransfer/AbstractPaginationContainerDto.php
+
+
+		-
+			message: '#^Method ApiSutra\\Execution\\Batch\\Resolvers\\ClassStringRequestResolver\:\:resolve\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Execution/Batch/Resolvers/ClassStringRequestResolver.php
+
+		-
+			message: '#^Parameter \$request of class ApiSutra\\Request\\RequestExecution constructor expects ApiSutra\\Core\\AbstractRequest, ApiSutra\\Contracts\\Interfaces\\Core\\RequestInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Execution/BatchExecutor.php
+
+		-
+			message: '#^Call to function method_exists\(\) with PharFileInfo and ''getCompressedSize'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Extensions/Archive/Response/ArchiveResponse.php
+
+		-
+			message: '#^Offset ''comp_size'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Extensions/Archive/Response/ArchiveResponse.php
+
+		-
+			message: '#^Offset ''mtime'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Extensions/Archive/Response/ArchiveResponse.php
+
+		-
+			message: '#^Offset ''name'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: src/Extensions/Archive/Response/ArchiveResponse.php
+
+		-
+			message: '#^Offset ''size'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Extensions/Archive/Response/ArchiveResponse.php
+
+		-
+			message: '#^Property ApiSutra\\Files\\BorrowedStream\:\:\$stream is never written, only read\.$#'
+			identifier: property.onlyRead
+			count: 1
+			path: src/Files/BorrowedStream.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: src/Files/StreamCopy.php
+
+		-
+			message: '#^Property ApiSutra\\Files\\TemporaryFileStream\:\:\$stream in isset\(\) is not nullable nor uninitialized\.$#'
+			identifier: isset.initializedProperty
+			count: 1
+			path: src/Files/TemporaryFileStream.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, 65535\> and 65535 is always false\.$#'
+			identifier: greater.alwaysFalse
+			count: 1
+			path: src/Http/Origin.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/OperationInventory/Catalog/Export/ResponseDtoCatalogWriter.php
+
+		-
+			message: '#^Parameter \#1 \$array \(non\-empty\-list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/OperationInventory/ResourceNameResolver.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/OperationInventory/SdkCallPathMethodAnalyzer.php
+
+		-
+			message: '#^Offset ''value'' on array\{0\: non\-falsy\-string, value\: string, 1\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/OperationInventory/SdkCallPathMethodAnalyzer.php
+
+		-
+			message: '#^Parameter &\$paths by\-ref type of method ApiSutra\\OperationInventory\\SdkCallPathResolver\:\:appendPath\(\) expects array\<class\-string, array\<int, string\>\>, array\<string, array\<int, string\>\> given\.$#'
+			identifier: parameterByRef.type
+			count: 2
+			path: src/OperationInventory/SdkCallPathResolver.php
+
+
+		-
+			message: '#^Method ApiSutra\\Pipeline\\Error\\ErrorPolicy\:\:shouldRetryInternal\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Pipeline/Error/ErrorPolicy.php
+
+		-
+			message: '#^Method ApiSutra\\Pipeline\\Flow\\RequestContractFieldResolver\:\:resolveObjectAsArray\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Pipeline/Flow/RequestContractFieldResolver.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Pipeline/Flow/RequestContractFieldResolver.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Pipeline/Flow/RequestContractValidator.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: ApiSutra\\Enums\\Hooks\\Hook\:\:BeforeHydrate$#'
+			identifier: match.unhandled
+			count: 1
+			path: src/Pipeline/Hooks/HookRunner.php
+
+		-
+			message: '#^Offset 1 on array\{non\-falsy\-string, non\-empty\-string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Pipeline/Hydration/ResponseHydrator.php
+
+		-
+			message: '#^Property ApiSutra\\Pipeline\\Pipeline\:\:\$logger is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Pipeline/Pipeline.php
+
+		-
+			message: '#^Call to an undefined method ApiSutra\\Contracts\\Interfaces\\Core\\ClientInterface\:\:clearCacheForRequest\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Request/RequestExecution.php
+
+
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<mixed\>&callable\(string\)\: void on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Resolver/ClassMapProvider.php
+
+		-
+			message: '#^Property ApiSutra\\Config\\ClientConfig\:\:\$environment \(ApiSutra\\Enums\\Configuration\\Environment\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Resolver/ClientDiscoveryService.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Core\\ClientInterface and ApiSutra\\Contracts\\Interfaces\\Core\\ClientInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Resolver/ServiceRegistrar.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Serialization\\DtoHydrationProfileInterface and ApiSutra\\Contracts\\Interfaces\\Serialization\\DtoHydrationProfileInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Serialization/DtoHydrationProfileResolver.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Serialization\\DtoSerializationProfileInterface and ApiSutra\\Contracts\\Interfaces\\Serialization\\DtoSerializationProfileInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Serialization/DtoSerializationProfileResolver.php
+
+		-
+			message: '#^Property ApiSutra\\Serialization\\DtoSerializer\:\:\$casts is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Serialization/DtoSerializer.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: src/Serialization/Enrichment/CredentialsEnricher.php
+
+		-
+			message: '#^Right side of \|\| is always false\.$#'
+			identifier: booleanOr.rightAlwaysFalse
+			count: 1
+			path: src/Serialization/Enrichment/CredentialsEnricher.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\VO\\Files\\FileInput and ApiSutra\\VO\\Files\\FileInput will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: src/Serialization/FilePayloadPreparer.php
+
+		-
+			message: '#^Offset ''file'' on array\{name\: string, file\: ApiSutra\\VO\\Files\\FileInput\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: src/Serialization/FilePayloadPreparer.php
+
+		-
+			message: '#^Property ApiSutra\\Serialization\\Hydrator\:\:\$casts is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Serialization/Hydrator.php
+
+		-
+			message: '#^Offset 1 on array\{list\<string\>, list\<non\-empty\-string\>\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Serialization/RequestUrlBuilder.php
+
+		-
+			message: '#^Instanceof between ApiSutra\\Contracts\\Interfaces\\Serialization\\RequestPartsEnricherInterface and ApiSutra\\Contracts\\Interfaces\\Serialization\\RequestPartsEnricherInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Serialization/Serializer.php
+
+		-
+			message: '#^Trait ApiSutra\\Traits\\ProvidesMultiServiceResponseDtoCatalogTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/ProvidesMultiServiceResponseDtoCatalogTrait.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''GuzzleHttp\\\\Utils'' and ''isUriInNoProxy'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Transport/ExactTargetCurlFactory.php
+
+		-
+			message: '#^Method ApiSutra\\Transport\\MockTransport\:\:resolveFixture\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Transport/MockTransport.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/VO/Validation/Validator.php
+
+		-
+			message: '#^Trait ApiSutra\\Versioning\\VersionedResourceTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Versioning/VersionedResourceTrait.php

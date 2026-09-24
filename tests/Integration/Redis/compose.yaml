@@ -1,0 +1,24 @@
+services:
+  redis:
+    image: redis:7.0-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  tests:
+    image: apisutra-redis-tests:php84
+    build:
+      context: .
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../../..:/app:ro
+    environment:
+      APISUTRA_TEST_REDIS: "1"
+      APISUTRA_REDIS_HOST: redis
+      APISUTRA_REDIS_PORT: "6379"
+    entrypoint: ["php", "vendor/bin/pest", "tests/Integration/Redis", "--fail-on-warning", "--cache-directory=/tmp/apisutra-pest-cache"]

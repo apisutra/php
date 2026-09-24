@@ -1,0 +1,30 @@
+{
+    "success": {
+        "resultClass": "Example\\CustomResult\\SdkResult",
+        "dtoClass": "Example\\ClientShowcase\\Resources\\Records\\RecordDto",
+        "id": 7,
+        "title": "Первая запись",
+        "isSuccess": true,
+        "needsLogin": false,
+        "sameExecution": true,
+        "sameData": true,
+        "sameTrace": true,
+        "token": "demo-operation-7",
+        "httpCalls": 1
+    },
+    "failure": {
+        "isFailed": true,
+        "needsLogin": true,
+        "httpStatus": 401,
+        "errorCode": "401",
+        "sameErrors": true,
+        "sameExecution": true,
+        "throwsOnFailure": true
+    },
+    "otherOperation": {
+        "isSuccess": true,
+        "data": {"saved": true},
+        "rejectsWrongDto": true
+    },
+    "totalHttpCalls": 3
+}

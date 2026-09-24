@@ -1,0 +1,27 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderC\\Requests\\ProviderCReportJudgeRoleDataRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": 1,
+      "response": {
+        "count": 3,
+        "page": 1,
+        "rows": 2,
+        "result": [
+          {
+            "id": "r-1"
+          },
+          {
+            "id": "r-2"
+          }
+        ]
+      }
+    }
+  }
+}

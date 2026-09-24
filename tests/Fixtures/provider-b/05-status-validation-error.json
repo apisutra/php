@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBStatusRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "validation_error",
+      "operation_id": "op-201",
+      "error_code": "invalid_input"
+    }
+  }
+}

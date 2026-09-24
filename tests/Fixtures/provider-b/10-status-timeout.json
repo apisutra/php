@@ -1,0 +1,16 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBStatusRequest"
+  },
+  "response": {
+    "status": 504,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "status": "timeout",
+      "operation_id": "op-206",
+      "error_code": "provider_error"
+    }
+  }
+}

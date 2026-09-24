@@ -1,0 +1,38 @@
+name: Docs CI
+
+on:
+  push:
+    branches-ignore: ['badges']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: Documentation and PHP examples
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, dom, fileinfo, intl, mbstring, xml, xmlwriter, :redis
+          coverage: none
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Check documentation and examples
+        run: composer check-docs
+      - name: Analyse PHP examples
+        run: composer analyse-docs

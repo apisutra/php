@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use ApiSutra\Exceptions\Configuration\ConfigurationException;
+use ApiSutra\Tooling\Generation\GenerationCommand;
+
+require $GLOBALS['_composer_autoload_path'] ?? dirname(__DIR__) . '/vendor/autoload.php';
+try {
+    fwrite(STDOUT, new GenerationCommand()->execute(array_slice($argv, 1), getcwd() ?: '.') . PHP_EOL);
+} catch (ConfigurationException $exception) {
+    fwrite(STDERR, $exception->getMessage() . PHP_EOL);
+    exit(1);
+}

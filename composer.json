@@ -1,0 +1,104 @@
+{
+    "name": "apisutra/php",
+    "description": "API Core SDK for declarative API clients",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "guzzlehttp/promises": "^2.0",
+        "guzzlehttp/psr7": "^2.0",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0",
+        "revolt/event-loop": "^1.0.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "ApiSutra\\": "src/"
+        },
+        "classmap": [
+            "src/Attributes",
+            "src/VO",
+            "src/Testing"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApiSutra\\Tests\\Stubs\\": "tests/Stubs/",
+            "ApiSutra\\Tests\\Support\\": "tests/Support/",
+            "Acme\\Blank\\": "tests/Fixtures/Acme/Blank/",
+            "Acme\\Discovery\\": "tests/Fixtures/Acme/Discovery/",
+            "Acme\\Fallback\\": "tests/Fixtures/Acme/Fallback/"
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "test:redis": [
+            "Composer\\Config::disableProcessTimeout",
+            "sh tests/Support/test-redis.sh"
+        ],
+        "lint": "phpcs --report=summary",
+        "analyse": [
+            "phpstan analyse --no-progress --memory-limit=1G",
+            "phpstan analyse -c tests/Support/async-phpstan.neon --no-progress --memory-limit=1G"
+        ],
+        "analyse-docs": "phpstan analyse -c tests/Support/docs-phpstan.neon --no-progress --memory-limit=1G",
+        "check-docs": [
+            "python3 tests/Support/check-docs.py",
+            "python3 tests/Support/test-check-docs.py",
+            "python3 tests/Support/test-doc-translations.py"
+        ],
+        "check-package": "python3 tests/Support/check-package.py"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/container": "^13.0",
+        "illuminate/translation": "^13.0",
+        "illuminate/validation": "^13.0",
+        "pestphp/pest": "^3.8",
+        "phpstan/phpstan": "^2.1",
+        "squizlabs/php_codesniffer": "^4.0"
+    },
+    "archive": {
+        "exclude": [
+            "/vendor",
+            "/.laravel-integration",
+            "/.agents",
+            "/AGENTS.md",
+            "/CONTRIBUTING.md",
+            "/docs/*/development",
+            "/tests",
+            "/.github",
+            "/.phpunit.cache",
+            "/.phpunit.result.cache",
+            "/.phpstan-cache",
+            "/.idea",
+            "/.temp",
+            "/.gitignore",
+            "/.gitattributes",
+            "/phpunit.xml.dist",
+            "/phpcs.xml",
+            "/phpstan.neon",
+            "/phpstan-baseline.neon",
+            "/phpstan-stubs"
+        ]
+    },
+    "suggest": {
+        "ext-redis": "Optional atomic shared rate limits (phpredis >=6.2 with Redis >=7.0)",
+        "apisutra/laravel": "Laravel 13 integration: package discovery, dependency injection and HTTP adapters"
+    },
+    "bin": [
+        "bin/apisutra"
+    ]
+}

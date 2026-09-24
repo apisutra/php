@@ -1,0 +1,55 @@
+{
+    "connection": {
+        "url": "https://api.example.test/records/7",
+        "type": "Example\\ClientShowcase\\Resources\\Records\\RecordDto",
+        "id": 7,
+        "timeoutMs": 15000,
+        "connectTimeoutMs": 3000
+    },
+    "auth": {
+        "default": "Bearer demo-user-token",
+        "service": "demo-service-key",
+        "serviceHasBearer": false,
+        "anonymousHasCredentials": false,
+        "queryUrl": "https://api.example.test/records/7?api_key=demo-query-key"
+    },
+    "retry": {"success": true, "httpCalls": 2},
+    "quota": {
+        "httpCalls": 2,
+        "error": "rate_limited",
+        "reason": "local_rate_limit_exceeded",
+        "hasResponse": false
+    },
+    "cache": {"afterTwoReads": 1, "differentDtos": true, "afterBypass": 2, "afterClear": 3},
+    "dto": {
+        "extras": {"future_flag": true},
+        "dx": {"id": 7, "title": "Первая запись", "_extra": {"future_flag": true}},
+        "wire": {"id": 7, "title": "Первая запись"},
+        "invalidType": {"code": "hydration_error", "path": "data.id"}
+    },
+    "diagnostics": {
+        "trace": "record-7",
+        "hasExecutionId": true,
+        "rootHasNoParent": true,
+        "auditHasIdentity": true,
+        "debugAuthorization": "***",
+        "logged": true,
+        "traceLogged": true,
+        "jsonAuthorization": "***",
+        "auditStages": ["started", "http_request", "http_response", "completed"],
+        "hasDuration": true,
+        "traceSentAsHeader": false
+    },
+    "errors": {"code": "not_found", "dataOrFailThrows": true, "sendThrows": true},
+    "overrides": {
+        "urls": [
+            "https://preview.example.test/records/7",
+            "https://api.example.test/records/7",
+            "https://api.example.test/records/7"
+        ],
+        "timeoutMs": [4000, 2000, 15000],
+        "connectTimeoutMs": [3000, 1000, 3000],
+        "hasBearer": [false, false, true],
+        "baseTimeout": 15
+    }
+}

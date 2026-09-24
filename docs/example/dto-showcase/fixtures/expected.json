@@ -1,0 +1,232 @@
+{
+    "dto": {
+        "kind": "catalog_item",
+        "id": 7,
+        "sku": "BK-7",
+        "title": "Без названия",
+        "description": null,
+        "available": true,
+        "rating": 4.8,
+        "createdAt": "2026-09-15T10:30:00+00:00",
+        "status": "active",
+        "priceMinor": 1234,
+        "manualContent": "SDK manual",
+        "manualSize": 10,
+        "seller": {
+            "id": 9,
+            "name": "Книжная лавка",
+            "_extra": {
+                "tier": "gold"
+            }
+        },
+        "firstTag": "php",
+        "tagCount": 2,
+        "relatedIds": [
+            11,
+            12
+        ],
+        "mediaTypes": [
+            "ImageDto",
+            "VideoDto"
+        ],
+        "displayName": "Товар BK-7",
+        "stock": null,
+        "_extra": {
+            "metrics": {
+                "votes": 12
+            },
+            "assets": [
+                {
+                    "sourceKey": 0,
+                    "remainder": {
+                        "rank": 1
+                    }
+                },
+                {
+                    "sourceKey": 1,
+                    "remainder": {
+                        "rank": 2
+                    }
+                }
+            ],
+            "future_flag": false
+        }
+    },
+    "dx": {
+        "kind": "catalog_item",
+        "product_id": 7,
+        "vendor_code": "BK-7",
+        "title": "Без названия",
+        "description": null,
+        "available": true,
+        "rating": 4.8,
+        "created_at": "2026-09-15",
+        "state": "active",
+        "price": "12.34",
+        "manual_file": "U0RLIG1hbnVhbA==",
+        "seller": {
+            "id": 9,
+            "name": "Книжная лавка",
+            "_extra": {
+                "tier": "gold"
+            }
+        },
+        "tags": [
+            {
+                "name": "php"
+            },
+            {
+                "name": "sdk"
+            }
+        ],
+        "related_ids": [
+            11,
+            12
+        ],
+        "assets": [
+            {
+                "url": "https://assets.example.test/cover.png",
+                "width": 640,
+                "type": "image"
+            },
+            {
+                "url": "https://assets.example.test/demo.mp4",
+                "duration": 30,
+                "type": "video"
+            }
+        ],
+        "displayName": "Товар BK-7",
+        "stock": null,
+        "_extra": {
+            "metrics": {
+                "votes": 12
+            },
+            "assets": [
+                {
+                    "sourceKey": 0,
+                    "remainder": {
+                        "rank": 1
+                    }
+                },
+                {
+                    "sourceKey": 1,
+                    "remainder": {
+                        "rank": 2
+                    }
+                }
+            ],
+            "future_flag": false
+        }
+    },
+    "wire": {
+        "kind": "catalog_item",
+        "product_id": 7,
+        "vendor_code": "BK-7",
+        "title": "Без названия",
+        "available": true,
+        "rating": 4.8,
+        "created_at": "2026-09-15",
+        "state": "active",
+        "price": "12.34",
+        "manual_file": "U0RLIG1hbnVhbA==",
+        "seller": {
+            "id": 9,
+            "name": "Книжная лавка"
+        },
+        "tags": [
+            {
+                "name": "php"
+            },
+            {
+                "name": "sdk"
+            }
+        ],
+        "related_ids": [
+            11,
+            12
+        ],
+        "assets": [
+            {
+                "url": "https://assets.example.test/cover.png",
+                "width": 640,
+                "type": "image"
+            },
+            {
+                "url": "https://assets.example.test/demo.mp4",
+                "duration": 30,
+                "type": "video"
+            }
+        ],
+        "displayName": "Товар BK-7"
+    },
+    "fallback": {
+        "id": 8,
+        "title": "Без названия",
+        "description": "Описание книги",
+        "tagCount": 0,
+        "stock": 0,
+        "manualContent": "SDK manual"
+    },
+    "errors": {
+        "wrong_kind": {
+            "reason": "constructor_value_mismatch",
+            "path": "kind",
+            "sourcePath": "/kind",
+            "sourcePathKind": "resolved"
+        },
+        "missing_id": {
+            "reason": "required_field_missing",
+            "path": "id",
+            "sourcePath": "/product_id",
+            "sourcePathKind": "expected"
+        },
+        "string_id": {
+            "reason": "invalid_field_type",
+            "path": "id",
+            "sourcePath": "/product_id",
+            "sourcePathKind": "resolved"
+        },
+        "null_primary": {
+            "reason": "null_not_allowed",
+            "path": "id",
+            "sourcePath": "/product_id",
+            "sourcePathKind": "resolved"
+        },
+        "null_stock": {
+            "reason": "explicit_null_not_allowed",
+            "path": "stock",
+            "sourcePath": "/stock",
+            "sourcePathKind": "resolved"
+        },
+        "wrong_list_item": {
+            "reason": "invalid_field_type",
+            "path": "relatedIds[1]",
+            "sourcePath": "/related_ids/1",
+            "sourcePathKind": "resolved"
+        },
+        "wrong_seller_id": {
+            "reason": "invalid_field_type",
+            "path": "seller.id",
+            "sourcePath": "/seller/id",
+            "sourcePathKind": "resolved"
+        },
+        "unknown_variant": {
+            "reason": "unknown_nested_variant",
+            "path": "media[0]",
+            "sourcePath": "/assets/0/value",
+            "sourcePathKind": "resolved"
+        },
+        "invalid_date": {
+            "reason": "invalid_datetime",
+            "path": "createdAt",
+            "sourcePath": "/created_at",
+            "sourcePathKind": "resolved"
+        },
+        "invalid_price": {
+            "reason": "invalid_price",
+            "path": "priceMinor",
+            "sourcePath": "/price",
+            "sourcePathKind": "boundary"
+        }
+    }
+}

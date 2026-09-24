@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use ApiSutra\DataTransfer\AbstractDto as {{base}};
+
+/** Добавьте типизированные поля ответа и правила маппинга провайдера. */
+final readonly class {{class}} extends {{base}}
+{
+}

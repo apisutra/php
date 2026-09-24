@@ -1,0 +1,19 @@
+{
+  "request": {
+    "class": "ApiSutra\\Tests\\Stubs\\ProviderB\\Requests\\ProviderBSearchRequest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "limit": 10,
+        "total": 0
+      }
+    }
+  }
+}
