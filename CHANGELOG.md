@@ -1,6 +1,13 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.1.1
+
+- Expanded the English and Russian capability maps with grouped features and reference links.
+- Added client configuration and result selection examples, clarified async and pagination,
+  and linked the detailed DTO example.
+- Refined overview navigation, badges and declarative SDK positioning. No runtime changes.
+
 ## 0.1.0
 
 Initial release of the framework-independent PHP 8.4+ SDK toolkit.

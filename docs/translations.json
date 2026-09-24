@@ -22,8 +22,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "3a657e991f91413ed1e696d7987ed7c078d0cda748b5f48ac2881ce0ebd25480",
-          "translation_sha256": "701b8def018288d38b14b2fda54f0d8bae340ace95498ad4f7cf43e91e5f3989"
+          "source_sha256": "d4dbcf4e17cf0ede4957e301831837bbfb905622427738afa7a47b7407aecc62",
+          "translation_sha256": "9cbbba98f6a732c50243a310e2874c73efffe2b78b131b02da89d5e874219f22"
         }
       }
     },
@@ -52,8 +52,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "a5548169d743a89b0b133f725e97a44ec8f85341e809975c37db274800e407e2",
-          "translation_sha256": "d6c916f5c87e4a8efa2e899e157ebc7ef1f53c00ad6b6b13a795454b193fb1c9"
+          "source_sha256": "533006fa7b88f230ea816bc78a640ac30f53773accea8094c15b2ef48e855090",
+          "translation_sha256": "38ace90f51b5ff3fb9ff9f4376bf36aeb4391dc1d9c41173316caa03aaca03ab"
         }
       }
     },
