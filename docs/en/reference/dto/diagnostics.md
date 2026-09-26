@@ -12,7 +12,16 @@ Pointer `sourcePath`, `sourcePathKind`, and `sourceCandidates`. DTO `path` retai
 existing format. The exact path is available through `context()` and ExecutionResult;
 automatic logs use `logContext()`, masking unknown keys. After custom transformation,
 provenance is Boundary or Unavailable. See [values and examples](diagnostics.md#section-3).
-Existing models without config or DTO declarations retain their error structure.
+Standalone models without config or DTO declarations retain their error structure.
+
+Standard JSON hydration also carries source diagnostics without extra
+configuration. `actual` identifies `object` or `list`, rather than the ambiguous
+PHP `array`; a root mismatch has `path: "$"` and `sourcePath: ""`. Numeric property
+names of an object are masked as map keys, not treated as safe list indices.
+
+With [JSON shape validation disabled](configuration.md#section-4), collection keys
+without known JSON provenance are masked conservatively, including numeric keys.
+Disabling validation does not expose them as trusted list indices.
 
 ## Diagnostics and entry points <a id="section-3"></a>
 

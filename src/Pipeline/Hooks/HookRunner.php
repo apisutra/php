@@ -156,6 +156,7 @@ final readonly class HookRunner
         foreach ($handlers as $handler) {
             $modified = $handler->handle($context);
             if (is_array($modified)) {
+                $context->hydrationInputReplaced = true;
                 $data = $modified;
             }
         }
@@ -179,6 +180,7 @@ final readonly class HookRunner
             || $bridge->getDeclaringClass()->getName() !== AbstractRequest::class
         ) {
             $context->hydrationSourceTransformed = true;
+            $context->hydrationInputReplaced = true;
         }
 
         return $request->beforeHydrateInternal($context, $data);

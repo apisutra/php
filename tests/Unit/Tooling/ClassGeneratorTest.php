@@ -25,7 +25,7 @@ it('генерирует исполняемый комплект DTO/request/cli
             require $path;
         }
         $transport = new MockTransport();
-        $transport->fake(['*' => MockResponse::success([])]);
+        $transport->fake(['*' => MockResponse::make('{}')]);
         $clientClass = 'Generated\\Catalog\\Client';
         $requestClass = 'Generated\\Catalog\\GetProduct';
         $client = new $clientClass(new ClientConfig(baseUrl: 'https://test.example'), $transport);

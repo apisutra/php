@@ -18,7 +18,7 @@ final class ShapeCompiler
             $shape instanceof ScalarType => ValueShape::scalars($shape),
             $shape instanceof ListShape => ValueShape::list($this->compile($shape->item), $shape->each, $shape->itemCast, $shape->normalizeKeys),
             $shape instanceof NullableShape => ValueShape::nullable($this->compile($shape->value)),
-            $shape instanceof DtoShape => ValueShape::dto($shape->class),
+            $shape instanceof DtoShape => ValueShape::dto($shape->class, $shape->emptyListAsObject),
             $shape instanceof VariantsShape => ValueShape::variants($shape->discriminator, $shape->map, $shape->mode, $shape->unknown),
             default => throw new ConfigurationException(new Message('serialization.shape_accepts_only_built_in_shape_nodes')),
         };

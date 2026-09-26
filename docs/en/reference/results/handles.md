@@ -53,6 +53,8 @@ parsing applies.
 With a declared DTO, an empty body/JSON `null` still enters hydration as an empty set
 of fields; the result depends on required DTO fields and defaults. Pagination retains
 its array contract. Scalars in place of DTO or pagination data cause `hydration_error`.
+An actual JSON array, including `[]`, is rejected as a DTO input. JSON `{}` remains
+an object and proceeds to field checks. [Shape rules and local exceptions](../dto/shapes.md#section-3).
 A nonempty non-JSON response for DTO/pagination without an extension handler causes
 `response_decoding_error`, reason `unsupported_response_content_type`.
 

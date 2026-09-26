@@ -62,6 +62,10 @@ final class UnwrapData implements BeforeHydrateHookInterface
 Without `BeforeHydrate`, data goes into hydration unchanged.
 The request's `beforeHydrate()` method returns the input array unchanged by default.
 
+An observer returning null preserves original JSON container forms. An array returned
+by a handler or an overridden request method is new PHP input, even if equal to the
+original array. See [transformation boundaries](../dto/scope.md#section-3).
+
 For a successful response without a DTO, the hook runs only for array data. `null`,
 JSON scalars, and `text/plain` bypass `BeforeHydrate`; `AfterResponse` and
 `AfterHydrate` still run. Details and empty-body rules are in the

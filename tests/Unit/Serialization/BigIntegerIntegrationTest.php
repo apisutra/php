@@ -72,7 +72,7 @@ it('ResponseHandler обходит unwrap, но должен выполнить 
 
 it('проверяет unwrap контейнера пагинации и сохраняет допустимый пустой DTO', function (): void {
     $transport = new MockTransport();
-    $transport->fake(['*' => MockResponse::sequence([MockResponse::success([]), MockResponse::success(['response' => []])])]);
+    $transport->fake(['*' => MockResponse::sequence([MockResponse::success([]), MockResponse::make('{"response":{}}')])]);
     $client = new TestClient(new ClientConfig(baseUrl: 'https://api.test', environment: Environment::Testing), $transport);
     $request = (new UnwrapPaginationRequest())->setClient($client);
     expect($request->send()->raw()->errors->first()->context)->toMatchArray(['reason' => 'unwrap_path_missing', 'path' => 'response']);

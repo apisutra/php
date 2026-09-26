@@ -40,6 +40,8 @@ class PipelineContext
     /** @var list<ExecutionResult> */
     public array $nested = [];
     public bool $hydrationSourceTransformed = false;
+    /** @internal Фактическая замена данных, отдельно от диагностической границы hooks. */
+    public bool $hydrationInputReplaced = false;
     public ?CacheExecutionState $cacheExecution = null;
     public ?RequestDestination $destination = null;
     public ?FileTransferOptions $fileTransfer = null;

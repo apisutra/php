@@ -79,6 +79,11 @@ dependency construction failures can still occur after a successful HTTP respons
 
 ## Graph ownership and context <a id="context"></a>
 
+The standard JSON path validates the selected DTO's object shape before invoking
+the custom hydrator, including the local empty-list exception. The hydrator still
+receives ordinary PHP arrays/objects and owns its internal fields; ready objects
+are not traversed again. [Shape and transformation boundaries](shapes.md#section-3).
+
 The handler receives data after HTTP decoding, BeforeHydrate and unwrap, before the
 native field pipeline for this node. It owns construction and validation of its object.
 ApiSutra does not reapply computed, DtoHydrationProfileInterface policy/casts, field

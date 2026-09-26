@@ -11,6 +11,7 @@ use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Support\ArrayPath;
+use ApiSutra\Serialization\Input\InputShapeGuard;
 use Stringable;
 
 /** @internal Преобразует описанную форму; состояние источника принадлежит текущему вызову. */
@@ -53,8 +54,7 @@ final readonly class RuleValueProcessor
             if ($resultOnly) {
                 throw HydrationException::invalidValue('invalid_field_type', $class, get_debug_type($value));
             }
-            $this->assertInput($value, InputShape::Object);
-            return new ShapeResult($scope->hydrateDto($value, $class), SourceConsumption::all());
+            return new ShapeResult($scope->hydrateDto($value, $class, $shape->emptyListAsObject), SourceConsumption::all());
         }
         if ($shape->kind === 'list') {
             return $this->list($value, $shape, $policy, $scope, $resultOnly, $readyDto);
@@ -69,18 +69,9 @@ final readonly class RuleValueProcessor
         return $this->variant($value, $shape, $scope, $resultOnly);
     }
 
-    public function assertInput(mixed $value, InputShape $shape, bool $normalizeKeys = false): void
+    public function assertInput(mixed $value, InputShape $shape, bool $normalizeKeys = false, ?InputShape $source = null, bool $emptyListAsObject = false): void
     {
-        $valid = $shape === InputShape::List
-            ? is_array($value) && ($normalizeKeys || array_is_list($value))
-            : is_object($value) || is_array($value) && ($value === [] || !array_is_list($value));
-        if (!$valid) {
-            throw HydrationException::invalidValue(
-                $shape === InputShape::List ? 'invalid_list_shape' : 'invalid_object_shape',
-                $shape->value,
-                get_debug_type($value),
-            );
-        }
+        InputShapeGuard::assert($value, $shape, $normalizeKeys, $source, $emptyListAsObject);
     }
 
     private function list(
@@ -92,23 +83,23 @@ final readonly class RuleValueProcessor
         bool $readyDto,
     ): ShapeResult {
         $input = $resultOnly && $value instanceof AbstractCollection ? $value->all() : $value;
-        $this->assertInput($input, InputShape::List, !$resultOnly && $shape->normalizeKeys);
+        $this->assertInput($input, InputShape::List, !$resultOnly && $shape->normalizeKeys, $resultOnly ? null : $scope->shape($input));
         return $scope->node($input, function () use ($input, $value, $shape, $policy, $scope, $resultOnly, $readyDto): ShapeResult {
             $result = [];
             $consumed = new SourceConsumption();
             $consumed->projection = true;
             $index = 0;
+            $safe = $scope->hasListIndices($input);
             foreach ($input as $key => $raw) {
-                $location = $scope->location()->descend([$key], array_is_list($input));
                 try {
-                    $processed = $scope->at($location, fn (): ShapeResult => $this->listItem(
+                    $processed = $scope->descend([$key], fn (): ShapeResult => $this->listItem(
                         $raw,
                         $shape,
                         $policy,
                         $scope,
                         $resultOnly,
                         $readyDto,
-                    ));
+                    ), $safe);
                     $consumed->mergeAt([$key], $processed->consumed);
                     if (!$processed->skip) {
                         $result[] = $processed->value;
@@ -153,7 +144,7 @@ final readonly class RuleValueProcessor
                 ));
             }
             return $this->transform($value, $list->item, $policy, $scope, $resultOnly, $readyDto);
-        });
+        }, $segments);
         if ($processed->skip) {
             return new ShapeResult(null, SourceConsumption::all(), true);
         }
@@ -204,9 +195,8 @@ final readonly class RuleValueProcessor
         }
         $location = $scope->location()->descend($segments);
         $dto = $scope->at($location, function () use ($payload, $class, $scope): object {
-            $this->assertInput($payload, InputShape::Object);
             return $scope->hydrateDto($payload, $class);
-        });
+        }, $segments);
         $consumed = new SourceConsumption();
         $consumed->mergeAt($segments, SourceConsumption::all());
         return new ShapeResult($dto, $consumed);

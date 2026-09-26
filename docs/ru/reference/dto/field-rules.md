@@ -67,6 +67,12 @@ HydrationConfig.policy и defaults ядра. [Полная таблица с п�
 await и повторном awaitAs. HTTP-кеш хранит исходный ответ: DTO строится текущим набором.
 Ненулевой результат response handler, RawResponse и Download обходят обычную гидратацию.
 
+`ValueShape::dto($class, emptyListAsObject: true)` разрешает пустой JSON-список только
+для данного узла. Явный `inputShape(Object)` по-прежнему проверяет сырой вход до
+преобразования. По умолчанию штатное HTTP-декодирование сохраняет виды JSON-контейнеров ([режим клиента](configuration.md#section-4));
+standalone PHP-массивы сохраняют прежнюю неоднозначность.
+[Примеры и границы](shapes.md#section-3).
+
 `Hydrator::forRules($rules)` явно подключает тот же набор standalone.
 `Hydrator::default()` и `DTO::from()` набор клиента не наследуют. Создание набора
 не меняет семантику объектов, которые уже существуют. Для рекурсии пользовательского

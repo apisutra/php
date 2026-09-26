@@ -1,6 +1,25 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.2.0
+
+- Preserve JSON object/list identity through DTO hydration, nested shapes, cached and
+  async responses, pagination items and built-in continuation results.
+- Add client-wide `HydrationConfig::jsonShapeValidation` (enabled by default).
+  Disabling it skips additional source-shape metadata processing, including continuation;
+  DTO attributes and field rules do not override this setting.
+- Reject nonempty lists passed as DTO input instead of silently producing default-valued
+  DTOs. This validation remains active when JSON shape validation is disabled.
+  No setting fully restores 0.1.1 behavior: a response such as `["a"]` for a DTO
+  with defaults is rejected instead of silently discarding its values.
+- Tighten shape validation by default: JSON objects (including `{}` and numeric-key objects)
+  no longer satisfy strict lists; JSON arrays no longer satisfy DTO object inputs.
+  Shape failures report the field path instead of silently accepting the wrong form.
+- Add local `emptyListAsObject` to DtoShape, ValueShape::dto and Returns for providers
+  that use `[]` for an empty object. Required fields still apply. Custom transformation
+  boundaries and public decoded value types are unchanged; already-decoded PHP inputs
+  cannot recover lost JSON identity.
+
 ## 0.1.2
 
 - Expanded the runnable Records SDK with six related DTOs, typed collections, enum and

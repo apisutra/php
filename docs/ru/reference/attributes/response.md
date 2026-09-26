@@ -12,7 +12,7 @@
 | ContinuationResult | CLASS | `ContinuationResult(string $finalType, ?string $unwrap = null, ?string $pollRequest = null, ?ContinuationMode $defaultMode = null, ?string $stateResolver = null)` |
 | Download | CLASS | `Download()` |
 | RawResponse | CLASS | `RawResponse()` |
-| Returns | CLASS | `Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string\|false\|null $hydrator = null)` |
+| Returns | CLASS | `Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string\|false\|null $hydrator = null, bool $emptyListAsObject = false)` |
 
 Атрибуты, описывающие тип ответа и режим загрузки файлов.
 
@@ -23,6 +23,10 @@
 - **ContinuationResult** — когда готовность финала и его тип отличаются от стартового ответа.
 
 ## Returns <a id="section-4"></a>
+
+`emptyListAsObject: bool = false` явно разрешает пустой JSON-список для выбранного
+после unwrap/type DTO. Обязательные поля по-прежнему проверяются; опция не
+передаётся детям и не разрешает непустые списки. [Правила формы](../dto/shapes.md#section-3).
 **Target:** class
 **Параметры:**
 - `response: string` — класс DTO результата

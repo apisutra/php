@@ -227,7 +227,7 @@ it('изолирует Returns, пагинацию и CompositeFlow одного
     $transport->preventStrayRequests();
     $transport->fake([
         DefaultsRequest::class => MockResponse::success(['value' => 'wire']),
-        PaginatedDefaultsRequest::class => MockResponse::success(['data' => [[], []]]),
+        PaginatedDefaultsRequest::class => MockResponse::make('{"data":[{},{}]}'),
     ]);
     $config = new ClientConfig(baseUrl: 'https://isolation.test');
     $client = new TestClient($environment === null ? $config : $config->with(environment: $environment), $transport);
@@ -251,7 +251,7 @@ it('изолирует операции долгоживущего клиент�
     $registry = new ClientRegistry();
     $transport = new MockTransport();
     $transport->preventStrayRequests();
-    $transport->fake([DefaultsRequest::class => MockResponse::success([])]);
+    $transport->fake([DefaultsRequest::class => MockResponse::make('{}')]);
     $client = new TestClient(new ClientConfig(baseUrl: 'https://isolation.test'), $transport);
     $registry->register($client, 'ApiSutra\\Tests\\Stubs\\MetadataIsolation');
     $firstClient = $registry->resolve(DefaultsRequest::class);

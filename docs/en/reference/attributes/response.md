@@ -12,7 +12,7 @@ attribute is allowed. Behavior and priorities are covered in the topic links bel
 | ContinuationResult | CLASS | `ContinuationResult(string $finalType, ?string $unwrap = null, ?string $pollRequest = null, ?ContinuationMode $defaultMode = null, ?string $stateResolver = null)` |
 | Download | CLASS | `Download()` |
 | RawResponse | CLASS | `RawResponse()` |
-| Returns | CLASS | `Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string\|false\|null $hydrator = null)` |
+| Returns | CLASS | `Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string\|false\|null $hydrator = null, bool $emptyListAsObject = false)` |
 
 These attributes describe response types and file download mode.
 
@@ -29,6 +29,9 @@ These attributes describe response types and file download mode.
 - `unwrap?: string` — data path inside the response.
 - `type?: string` — DTO class override after unwrapping.
 - `mismatchMessage?: string` — message for a final type mismatch
+- `emptyListAsObject: bool = false` — explicitly accept an empty JSON list for the
+  selected DTO after unwrap/type. Required fields still apply; the option does not
+  extend to children or accept nonempty lists. [Shape rules](../dto/shapes.md#section-3).
 
 The final successful type is checked automatically, including values returned by
 extension handlers and stages. Subclasses are accepted; other types produce

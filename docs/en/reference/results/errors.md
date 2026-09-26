@@ -218,15 +218,15 @@ and JSON. See [file responses](../../guides/recipes/files.md).
 
 ### Shape and numeric range errors <a id="section-12"></a>
 
-DTO field contract violations, strict `Returns::unwrap`, JsonCast, and integer guards
-return `hydration_error` with `HydrationException`. For these failures,
+DTO field contract violations, strict `Returns::unwrap`, JsonCast, and integer guards return `hydration_error` with `HydrationException`. For these failures,
 `RequestError::context` and exception properties contain `reason`, `path`, `expected`, and `actual`:
 
 | reason | Meaning |
 | --- | --- |
 | `response_type_mismatch` | The final value violates active Returns; [messages and boundaries](exceptions.md). |
 | `unwrap_path_missing` | The specified path is absent; actual is `missing`. |
-| `unexpected_response_shape` | The path contains null/scalar instead of declared DTO data, or a nonempty list instead of a single Nested object. |
+| `invalid_list_shape` / `invalid_object_shape` | The input violates its declared container kind; original JSON distinguishes `object` and `list`, even when empty. [Shape rules](../dto/shapes.md#section-3). |
+| `unexpected_response_shape` | The path contains null/scalar instead of declared DTO data, or a list instead of a single Nested object (including an empty JSON array). |
 | `integer_out_of_range` | The number does not fit in int; actual is the source value's type. |
 | `required_field_missing` | A required field is absent. |
 | `null_not_allowed` | The final null value is not allowed by the declared type. |

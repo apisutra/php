@@ -21,7 +21,7 @@ $config = new ClientConfig(baseUrl: 'https://api.example.test', hydration: $hydr
 $hydrator = Hydrator::forConfig($hydration);
 ```
 
-Constructor: `HydrationConfig(?RulePolicy $policy = null, ?HydrationRules $rules = null, ?DtoHydratorInterface $hydrator = null)`.
+Constructor: `HydrationConfig(?RulePolicy $policy = null, ?HydrationRules $rules = null, ?DtoHydratorInterface $hydrator = null, bool $jsonShapeValidation = true)`.
 The object is immutable; a null policy retains core defaults rather than enabling Strict.
 Input naming is independent of `ClientConfig::namingStrategy`, which names outgoing
 request fields. An empty block differs from an absent block in
@@ -69,3 +69,61 @@ the wire representation; `DtoSerializer` without config and ordinary toArray() r
 the receiver as a field. See [outgoing projection](../serialization/receiver-output.md).
 
 The optional hydrator is described in [custom DTO hydration](hydrators.md); default null preserves native hydration.
+
+## JSON container validation <a id="section-4"></a>
+
+`jsonShapeValidation` defaults to **true**, including when the client has no explicit
+HydrationConfig. The standard response decoder preserves JSON object/array identity
+for the DTO traversal: root, nested objects, typed pagination items and built-in
+continuation. [Shape rules and local exceptions](shapes.md#section-3) describe the
+accepted inputs. Ordinary `array` without a shape declaration is not implicitly a list.
+
+To omit the additional shape metadata and its processing for one client:
+
+```php
+use ApiSutra\Config\ClientConfig;
+use ApiSutra\Config\HydrationConfig;
+
+$config = new ClientConfig(
+    baseUrl: 'https://api.example.test',
+    hydration: new HydrationConfig(jsonShapeValidation: false),
+);
+```
+
+This is one client-wide setting, independent of ScalarPolicy. DTO attributes,
+profiles and external field rules do not override it. Separate clients may use
+different modes concurrently. `ClientConfig::with()` preserves the hydration block;
+removing it restores the default. Public json()/jsonStrict() retain their ordinary
+decoding behavior in either mode. Already-decoded PHP values cannot recover lost
+JSON identity, even with this setting enabled.
+
+| Input, without local normalization permissions | Enabled | Disabled |
+| --- | --- | --- |
+| `{}` for a ListShape | Rejected | Accepted as an empty PHP list |
+| `{"0":"a","1":"b"}` for a ListShape | Rejected | Indistinguishable from a PHP list |
+| `{"name":"a"}` for a ListShape | Rejected | Rejected by PHP key shape |
+| `[]` for a DTO with defaults | Rejected | Accepted as an empty set of fields |
+| `["a"]` for a DTO | Rejected | Rejected; values are not silently discarded |
+
+Disabling skips source-shape metadata processing; ordinary decoding, hydration,
+required/null checks, declared shapes and final PHP-type checks still run.
+It does not reproduce every behavior of 0.1.1: nonempty lists cannot produce DTOs
+from defaults in either mode. Conversely, a numeric-key JSON object accepted as a
+DTO with source metadata may be rejected without it because its PHP value looks
+like a nonempty list.
+
+`inputShape` declares the expected input; `emptyListAsObject` permits only an empty
+list for one DTO, and `normalizeKeys` permits map-to-list conversion. They remain
+useful with validation enabled and do not re-enable the mechanism when disabled.
+Use a local permission when just one provider field needs normalization.
+
+Enabled validation adds decoding work and temporary memory; cost depends on response
+size and structure. Many empty objects or objects with consecutive numeric keys can
+require substantial shape metadata. JSON decoding processes the whole response;
+its byte size does not predict peak PHP memory use. There is no fixed minimum
+`memory_limit`: measure peak usage with representative responses and concurrency.
+For large paginated responses, smaller pages and lower concurrency reduce peak memory.
+
+Disabled mode omits that additional mechanism throughout the client, including
+built-in continuation. Neither mode adds metadata processing to RawResponse,
+downloads, terminal response handlers or public json()/jsonStrict().

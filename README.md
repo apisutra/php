@@ -166,7 +166,7 @@ The [item stream](docs/en/reference/execution/pagination-items.md) loads pages s
 | Field mapping | [Input names, nested paths and fallbacks](docs/en/reference/dto/profiles.md); independent output names, hydration profiles and [shared policy](docs/en/reference/dto/configuration.md). |
 | Field contracts | [Missing vs null, required presence, forbidden null, defaults and empty strings](docs/en/reference/dto/defaults.md); [checking constructor-assigned values](docs/en/reference/dto/constructor-values.md). |
 | Types and precision | [Scalar conversions, opt-in Strict, unions and large integer IDs without lost digits](docs/en/reference/dto/scalars.md); enums, [date formats and time zones](docs/en/reference/dto/profiles.md). |
-| Complex structures | [Nested DTOs and strict list shapes](docs/en/reference/dto/shapes.md), [typed collections](docs/en/reference/dto/collections.md), [item variants selected by discriminator](docs/en/reference/dto/variants.md). |
+| Complex structures | [Nested DTOs, strict list shapes and JSON object/array validation](docs/en/reference/dto/shapes.md), [typed collections](docs/en/reference/dto/collections.md), [item variants selected by discriminator](docs/en/reference/dto/variants.md). |
 | Additional data | [Preserve unmapped input with `Extras`](docs/en/reference/dto/extras.md), retain it in `toArray()`, and [exclude the receiver from outgoing requests](docs/en/reference/serialization/receiver-output.md). |
 | Custom transformations | [Input/output casts and nested transformations with context, including without HTTP](docs/en/reference/dto/scope.md), [computed values](docs/en/reference/dto/lifecycle.md); [custom hydrators with DI and native fallback](docs/en/reference/dto/hydrators.md). |
 

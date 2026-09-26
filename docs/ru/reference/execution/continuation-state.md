@@ -34,12 +34,22 @@ final class CheckRequest extends BaseRequest
 `ClientConfig::continuationStateResolver`. Если ничего не задано, ожидание завершается
 `ContinuationConfigurationException` до первого poll-запроса.
 
-Встроенный resolver читает `$result->response?->json()`. Значение по `unwrap`,
+Встроенный resolver декодирует исходный JSON ответа. Значение по `unwrap`,
 отличное от null, означает Ready; отсутствие пути, null, отсутствие ответа или
 тело, которое не является JSON-объектом, означают Pending. Значения `false`, `0`
 и `[]` присутствуют и считаются Ready. Корень ответа не подставляется вместо пути.
 Гидратация выполняется только после Ready: возможность создать DTO с defaults
 не является признаком готовности.
+
+При включённой проверке JSON-формы resolver сохраняет виды контейнеров выбранного payload, в том числе для повторной
+гидратации через `awaitAs()`, не удерживая карту соседних полей ответа. Поэтому
+Ready `[]` даёт ошибку, если финальный тип — DTO; `{}` проходит к проверкам полей.
+Пользовательский resolver возвращает новые PHP-данные: один диагностический path
+не доказывает их происхождение из JSON.
+[Контракт JSON-формы](../dto/shapes.md#section-3).
+
+Outcome по-прежнему удерживает финальный ответ и данные результата через `lastResult`;
+выбор маленького payload не освобождает этот ответ.
 
 `finalType` также автоматически попадает в `$client->responseDtoCatalog()` как
 запись с `kind = ResponseDtoKind::AsyncFinal`, рядом со start-DTO из `Returns(...)`
@@ -103,6 +113,10 @@ final class ProviderContinuationModeApplicator implements ContinuationModeApplic
 `ClientConfig::with()` переносит экземпляр; явный null снимает настройку.
 Без `ContinuationResult` вызов `await()` с resolver клиента возвращает Ready-payload
 без преобразования, в том числе null. `awaitAs()` задаёт тип явно.
+
+Штатный resolver учитывает единый [режим проверки JSON-формы клиента](../dto/configuration.md#section-4),
+в том числе при повторном awaitAs. Значение `ContinuationContext::jsonShapeValidation`
+передаётся клиентом; собственные resolver по-прежнему отвечают за созданные ими PHP-данные.
 
 ## Инварианты и ошибки конфигурации <a id="section-7"></a>
 

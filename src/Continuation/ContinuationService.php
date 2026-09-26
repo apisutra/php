@@ -125,7 +125,7 @@ final readonly class ContinuationService
                 throw ResultExceptionSelector::select($failed);
             }
             $result = $scope->finish(new ExecutionResult(null, ResultStatus::SUCCESS, new ErrorCollection([])));
-            return new ContinuationOutcome($outcome->value, $outcome->payload, $outcome->path, $outcome->lastResult, $outcome->attempts, $scope->trace, $result->audit);
+            return new ContinuationOutcome($outcome->value, $outcome->payload, $outcome->path, $outcome->lastResult, $outcome->attempts, $scope->trace, $result->audit, $outcome->input());
         } finally {
             $scope->release();
         }
@@ -146,6 +146,7 @@ final readonly class ContinuationService
                 unwrap: $declaration?->unwrap,
                 sourceRequestClass: $sourceClass,
                 mode: $this->resolveMode($sourceRequest, $declaration),
+                jsonShapeValidation: $this->client->getConfig()->hydration->jsonShapeValidation ?? true,
             );
             $resolver = $this->resolveStateResolver($declaration, $context);
             $attempts = 0;
@@ -200,6 +201,7 @@ final readonly class ContinuationService
                 $declaration->unwrap,
                 $sourceClass,
                 ContinuationMode::Async,
+                $this->client->getConfig()->hydration->jsonShapeValidation ?? true,
             );
             return $this->awaitByTokenInternal(
                 $scope,
@@ -226,6 +228,7 @@ final readonly class ContinuationService
                 null,
                 null,
                 ContinuationMode::Async,
+                $this->client->getConfig()->hydration->jsonShapeValidation ?? true,
             );
             return $this->awaitByTokenInternal(
                 $scope,
@@ -253,7 +256,7 @@ final readonly class ContinuationService
                         get_debug_type($outcome->payload),
                     );
                 }
-                $value = $this->hydrator->hydrate($outcome->payload, $type);
+                $value = $this->hydrator->hydrateInput($outcome->input(), $type);
             } catch (HydrationException $exception) {
                 if ($exception->sourcePathKind !== null || $this->hydrator->tracksSource($type)) {
                     if ($outcome->path === null) {
@@ -281,6 +284,7 @@ final readonly class ContinuationService
                 $outcome->path,
                 $outcome->lastResult,
                 $outcome->attempts,
+                input: $outcome->input(),
             );
         } catch (LocalizableExceptionInterface $exception) {
             throw $exception->localized($this->client->getConfig()->localization);
@@ -346,7 +350,7 @@ final readonly class ContinuationService
             }
             throw $this->awaitError($scope, 'continuation_failed', $result, $attempts);
         }
-        $outcome = new ContinuationOutcome($state->payload, $state->payload, $state->path, $result, $attempts);
+        $outcome = new ContinuationOutcome($state->payload, $state->payload, $state->path, $result, $attempts, input: $state->input());
 
         return $context->finalType === null ? $outcome : $this->hydrateScoped($scope, $outcome, $context->finalType);
     }

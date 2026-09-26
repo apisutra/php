@@ -6,6 +6,18 @@ DtoShape, and VariantsShape compose recursive shapes. This is attribute syntax f
 the same `ValueShape`, without a separate execution mechanism. Shape together with
 Nested or Cast on the same field is rejected.
 
+For a single nested DTO with a concrete class in its native type, a shorter declaration is available:
+
+| Declaration | How the nested DTO class is selected |
+| --- | --- |
+| `#[Shape(new DtoShape(AddressDto::class))] public AddressDto $address;` | Explicitly in DtoShape |
+| `#[Nested] public AddressDto $address;` | From the property type |
+
+For this simple field, `Nested` avoids repeating the class. `Shape` is useful for
+composite shapes: strict lists, nested lists, and combinations of DTOs, nullable
+values, and object variants. The two table rows are alternative declarations of
+one field; do not combine them.
+
 ## Nested DTOs <a id="section-2"></a>
 For responses containing nested objects or lists of objects, such as `user.address`
 or `order.items[]`.
@@ -81,7 +93,7 @@ Rule:
 ## Shapes, presence, and defaults <a id="section-3"></a>
 
 `ValueShape` provides `int()`, `float()`, `bool()`, `true()`, `false()`, `string()`,
-`mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class)`,
+`mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class, bool $emptyListAsObject = false)`,
 `list(ValueShape $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)`.
 Lists may be nested. PHPDoc `list<int>` and bare array do not themselves validate items.
 A plain native class without `dto()`, Nested, or DtoInterface is not hydrated automatically.
@@ -89,9 +101,46 @@ A plain native class without `dto()`, Nested, or DtoInterface is not hydrated au
 `list()` requires dense keys 0..n−1; a dictionary or sparse array produces `invalid_list_shape`.
 `normalizeKeys: true` allows a dictionary and reindexes the result while preserving
 original keys in diagnostics and extras. `Traversable` is not a list.
-`dto()` accepts an object or an object-shaped array; a nonempty list produces
-`invalid_object_shape`. An empty PHP array is allowed in both shapes: after associative
-decoding, the differences between `{}`/`[]` and `{"0":...}`/`[...]` cannot be recovered.
+By default, the standard JSON-response path preserves original container kinds
+until validation, at the root and at every nested DTO it hydrates. The client-wide
+[jsonShapeValidation setting](configuration.md#section-4) controls this mechanism:
+
+| JSON input | Strict list | DTO with no required fields |
+| --- | --- | --- |
+| `[]` | Accepted | `invalid_object_shape` |
+| `{}` | `invalid_list_shape` | Accepted |
+| `{"0":"a","1":"b"}` | `invalid_list_shape` | An object, subject to DTO field rules |
+| `["a"]` | Accepted for string items | `invalid_object_shape` |
+
+For example, `{"items":[]}` satisfies `ListShape(ScalarType::String)`, whereas
+`{"items":{}}` produces FAILED / `hydration_error`, reason `invalid_list_shape`,
+at path `items`. This also applies to cache hits and async calls. Missing, explicit
+null, empty object, and empty list remain distinct before their respective checks.
+
+If a provider uses an empty list for one object, permit that conversion locally:
+
+```php
+use ApiSutra\Attributes\DataTransfer\Shape;
+use ApiSutra\Serialization\Shapes\DtoShape;
+
+#[Shape(new DtoShape(AddressDto::class, emptyListAsObject: true))]
+public AddressDto $address;
+```
+
+The same option exists on `ValueShape::dto()` and [Returns](../attributes/response.md#section-4).
+It permits **only an empty list for that DTO**. Required fields are still checked;
+nonempty lists, null, children, and siblings do not inherit permission. With Returns,
+the option applies to the selected DTO after unwrap/type. An explicit
+`FieldRule::inputShape(InputShape::Object)` checks the original input first and can
+still reject `[]`; a cast's result shape still requires an actual DTO. Use Shape
+instead of single-object Nested when this local exception is needed.
+
+Standalone `Hydrator::hydrate()` / `DTO::from()` and user-created PHP data retain
+the PHP contract: an object or object-shaped array is accepted as a DTO, and an
+empty PHP array is ambiguous. The SDK cannot recover JSON shape already discarded
+by application decoding. [Custom transformations](scope.md#section-3) start new PHP
+input. Public json()/jsonStrict(), DTO fields, extras and toArray() keep their existing
+types; preserving container kinds in a later JSON round-trip is not guaranteed.
 
 Presence, original null, normalization, and defaults follow
 [field processing order](defaults.md#section-10).
@@ -126,8 +175,9 @@ A single DTO accepts an associative array or PHP object. Hydration uses ordinary
 field checks and one constructor call, even for an existing PHP DTO. A scalar or
 nonempty PHP list produces `unexpected_response_shape` at the property path. An empty
 array proceeds to the child DTO's field checks: for example, missing `city` produces
-`required_field_missing` at `address.city`. After JSON decode with `assoc=true`, empty
-{} and [] are indistinguishable; Nested does not recover that difference.
+`required_field_missing` at `address.city`. With JSON shape validation enabled,
+single-object Nested rejects every JSON array, including `[]`; an empty JSON object
+still proceeds to field checks. Nested collections keep their map-capable contract.
 See the [executable example](shapes.md#section-2).
 
 `Nested.from` overrides the From / Map / property-name path. Nonempty `Nested.fallback`

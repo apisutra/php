@@ -14,6 +14,9 @@ use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Serialization\Concerns\ReflectionHelperTrait;
 use ApiSutra\Serialization\NestedObjectTypeResolver;
 use ApiSutra\Serialization\Rules\HydrationScope;
+use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\NestedValueProcessor;
+use ApiSutra\Serialization\Rules\RuleValueProcessor;
 use ApiSutra\Support\ArrayPath;
 use ApiSutra\VO\Files\Base64File;
 use ReflectionClass;
@@ -42,18 +45,28 @@ final readonly class LegacyNestedHydrator
 
         $objectType = $this->nestedObjectTypeResolver->resolve($nested, $property);
         if ($objectType !== null) {
+            $kind = $scope->shape($value);
             if (
                 (!is_array($value) && !is_object($value))
-                || (is_array($value) && $value !== [] && array_is_list($value))
+                || $kind === InputShape::List
+                || ($kind === null && is_array($value) && $value !== [] && array_is_list($value))
             ) {
                 throw HydrationException::invalidValue(
                     'unexpected_response_shape',
                     $objectType,
-                    get_debug_type($value),
+                    $kind->value ?? get_debug_type($value),
                 );
             }
 
             return $scope->hydrateDto($value, $objectType);
+        }
+
+        if (is_array($value) && $scope->shape($value) !== null) {
+            $propertyType = $this->getPrimaryType($property);
+            $target = $nested->type ?? $propertyType;
+            $processed = (new NestedValueProcessor(new RuleValueProcessor()))->process($value, $nested, $target, $scope);
+            return $this->isDiscriminated($nested) || $target !== null && class_exists($target)
+                ? HydrationCollections::wrap($processed->value, $propertyType) : $processed->value;
         }
 
         if ($nested->each !== null && is_array($value)) {

@@ -39,6 +39,7 @@ final readonly class HydrationFieldPlan
     public ?ValueShape $shape;
     public ?InputShape $inputShape;
     public bool $normalizeKeys;
+    public bool $emptyListAsObject;
     public bool $collectionShape;
     public bool $required;
     public bool $forbidExplicitNull;
@@ -94,6 +95,7 @@ final readonly class HydrationFieldPlan
             default => null,
         };
         $this->normalizeKeys = $shape->normalizeKeys ?? false;
+        $this->emptyListAsObject = $rule?->inputShape === null && ($shape->emptyListAsObject ?? false);
         $this->collectionShape = $shape?->kind === 'list';
         $this->hydrationPolicy = $policy !== null && !$legacyProfile ? new DtoHydrationPolicy(
             namingStrategy: $policy->naming ?? NamingStrategy::None,

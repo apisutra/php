@@ -13,6 +13,8 @@ final readonly class ContinuationContext
         public ?string $unwrap,
         public ?string $sourceRequestClass,
         public ContinuationMode $mode,
+        /** @internal Режим клиента; resolver не включает сохранение формы самостоятельно. */
+        public bool $jsonShapeValidation = true,
     ) {
     }
 }

@@ -189,10 +189,10 @@ it('после Ready с ошибкой не расходует оставшие�
 });
 
 it('различает missing token и отсутствующий extractor', function (): void {
-    [$client] = continuationReadinessClient();
+    [$client] = continuationReadinessClient(['data' => null]);
     $error = captureContinuationError(fn () => $client->send(new ContinuationStartRequest('job'))->await());
     expect($error->reason)->toBe('continuation_token_missing');
-    [$withoutExtractor] = continuationReadinessClient(overrides: ['continuationTokenExtractor' => null]);
+    [$withoutExtractor] = continuationReadinessClient(['data' => null], overrides: ['continuationTokenExtractor' => null]);
     expect(fn () => $withoutExtractor->send(new ContinuationStartRequest('job'))->await())
         ->toThrow(ContinuationConfigurationException::class, 'continuationTokenExtractor');
 });

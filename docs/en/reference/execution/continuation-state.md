@@ -34,11 +34,20 @@ the built-in `FinalPathStateResolver` for a nonempty `unwrap`, then
 `ClientConfig::continuationStateResolver`. If none is set, waiting fails with
 `ContinuationConfigurationException` before the first poll request.
 
-The built-in resolver reads `$result->response?->json()`. A non-null value at `unwrap`
+The built-in resolver decodes the original response JSON. A non-null value at `unwrap`
 means Ready; a missing path, null, no response, or a body that is not a JSON object
 means Pending. `false`, `0`, and `[]` are present values and count as Ready. The
 response root is not substituted for the path. Hydration runs only after Ready:
 being able to construct a DTO with defaults is not evidence of readiness.
+
+With JSON shape validation enabled, the resolver retains container kinds for the selected payload, including repeated
+`awaitAs()` hydration, without retaining the shape map of unrelated response fields.
+Ready `[]` therefore fails when the final type is a DTO; `{}` proceeds to field
+checks. A custom resolver returns new PHP data: its diagnostic path alone does not
+prove JSON provenance. [JSON shape contract](../dto/shapes.md#section-3).
+
+An outcome still holds the final response and result data through `lastResult`;
+selecting a small payload does not release that response.
 
 `finalType` also appears automatically in `$client->responseDtoCatalog()` as an entry
 with `kind = ResponseDtoKind::AsyncFinal`, alongside the start DTO from `Returns(...)`
@@ -102,6 +111,10 @@ Set `stateResolver: OperationStateResolver::class` in `ContinuationResult` or
 `ClientConfig::with()` preserves the instance; explicit null removes the setting.
 Without `ContinuationResult`, `await()` with a client resolver returns the Ready
 payload unchanged, including null. `awaitAs()` sets an explicit type.
+
+The built-in resolver follows the client-wide [JSON shape validation mode](../dto/configuration.md#section-4),
+also for repeated awaitAs. Its `ContinuationContext::jsonShapeValidation` value is
+provided by the client; custom resolvers still own the PHP payloads they produce.
 
 ## Invariants and configuration errors <a id="section-7"></a>
 

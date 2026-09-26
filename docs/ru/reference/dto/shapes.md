@@ -3,6 +3,18 @@
 
 `#[Shape(new ListShape(ScalarType::Int))]` объявляет строгий список; NullableShape, DtoShape и VariantsShape составляют рекурсивные формы. Это атрибутный синтаксис того же ValueShape, без отдельного механизма исполнения. Shape вместе с Nested или Cast того же поля отклоняется.
 
+Для одиночного вложенного DTO с конкретным классом в native-типе есть более короткая запись:
+
+| Объявление | Как выбирается класс вложенного DTO |
+| --- | --- |
+| `#[Shape(new DtoShape(AddressDto::class))] public AddressDto $address;` | Явно в DtoShape |
+| `#[Nested] public AddressDto $address;` | Из типа свойства |
+
+Для такого простого поля удобно использовать `Nested`, чтобы не повторять класс.
+`Shape` удобен для составных форм: строгих списков, вложенных списков и сочетаний
+DTO, nullable-значений и вариантов объектов. Две строки таблицы — альтернативные
+объявления одного поля, их не нужно совмещать.
+
 ## Вложенные DTO <a id="section-2"></a>
 Когда ответ содержит вложенные объекты или списки объектов (например, `user.address`, `order.items[]`).
 
@@ -76,7 +88,7 @@ public array $faces = [];
 ## Формы, присутствие и defaults <a id="section-3"></a>
 
 `ValueShape` предоставляет `int()`, `float()`, `bool()`, `true()`, `false()`, `string()`,
-`mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class)`,
+`mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class, bool $emptyListAsObject = false)`,
 `list(ValueShape $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)`.
 Списки могут быть вложенными. PHPDoc `list<int>` и bare `array` сами элементы не проверяют.
 Plain native-класс без `dto()`, Nested или DtoInterface не гидратируется автоматически.
@@ -84,9 +96,47 @@ Plain native-класс без `dto()`, Nested или DtoInterface не гидр
 `list()` требует плотные ключи 0..n−1; словарь и разреженный массив дают
 `invalid_list_shape`. `normalizeKeys: true` разрешает словарь и переиндексирует результат,
 сохраняя исходные ключи в диагностике и extras. Traversable не считается списком.
-`dto()` допускает объект или массив формы object; непустой list даёт `invalid_object_shape`.
-Пустой PHP-массив допустим в обеих формах: после assoc-декодирования различие `{}`/`[]`
-и `{"0":...}`/`[...]` восстановить нельзя.
+По умолчанию стандартный путь JSON-ответа сохраняет исходные виды контейнеров
+до проверки корня и всех вложенных DTO. Механизм управляется единой настройкой
+клиента [jsonShapeValidation](configuration.md#section-4):
+
+| JSON на входе | Строгий список | DTO без обязательных полей |
+| --- | --- | --- |
+| `[]` | Принимается | `invalid_object_shape` |
+| `{}` | `invalid_list_shape` | Принимается |
+| `{"0":"a","1":"b"}` | `invalid_list_shape` | Объект; далее действуют правила полей DTO |
+| `["a"]` | Принимается для строковых элементов | `invalid_object_shape` |
+
+Например, `{"items":[]}` соответствует `ListShape(ScalarType::String)`, а
+`{"items":{}}` даёт FAILED / `hydration_error`, reason `invalid_list_shape`,
+по пути `items`. Это работает и при cache hit, и в async. Missing, явный null,
+пустой объект и пустой список остаются различимыми до соответствующих проверок.
+
+Если провайдер использует пустой список вместо конкретного объекта, разрешите
+это преобразование локально:
+
+```php
+use ApiSutra\Attributes\DataTransfer\Shape;
+use ApiSutra\Serialization\Shapes\DtoShape;
+
+#[Shape(new DtoShape(AddressDto::class, emptyListAsObject: true))]
+public AddressDto $address;
+```
+
+Та же опция есть у `ValueShape::dto()` и [Returns](../attributes/response.md#section-4).
+Она разрешает **только пустой список для данного DTO**. Обязательные поля проверяются;
+непустые списки, null, дочерние и соседние узлы разрешение не наследуют. У Returns
+оно относится к выбранному DTO после unwrap/type. Явный
+`FieldRule::inputShape(InputShape::Object)` проверяет исходный вход раньше и вправе
+отклонить `[]`; result shape после cast по-прежнему требует готовый DTO. Если это
+локальное исключение нужно одиночному Nested, используйте вместо него Shape.
+
+Standalone `Hydrator::hydrate()` / `DTO::from()` и созданные пользователем PHP-данные
+сохраняют PHP-контракт: DTO принимает объект или массив формы object, а пустой
+PHP-массив неоднозначен. SDK не восстанавливает форму, уже потерянную при decode
+в приложении. [Пользовательское преобразование](scope.md#section-3) создаёт новый
+PHP-вход. Публичные json()/jsonStrict(), поля DTO, extras и toArray() сохраняют
+свои типы; сохранение вида контейнера при последующем JSON round-trip не гарантируется.
 
 Присутствие, исходный null, нормализация и default проверяются по
 [порядку обработки поля](defaults.md#section-10).
@@ -122,8 +172,9 @@ Plain native-класс без `dto()`, Nested или DtoInterface не гидр
 Scalar и непустой PHP list дают `unexpected_response_shape` по пути свойства.
 Пустой массив проходит проверку полей дочернего DTO: например, отсутствие `city`
 даёт `required_field_missing` с путём `address.city`.
-После JSON decode с `assoc=true` пустые `{}` и `[]` неразличимы; `Nested` это
-различие не восстанавливает. [Исполняемый пример](shapes.md#section-2).
+При включённой проверке JSON-формы одиночный Nested отклоняет любой JSON array,
+включая `[]`; пустой JSON object проходит к проверкам полей. Коллекции Nested
+сохраняют контракт с поддержкой карт. [Исполняемый пример](shapes.md#section-2).
 
 `Nested.from` переопределяет путь `From` / `Map` / имени свойства.
 Непустой `Nested.fallback` имеет приоритет над `From.fallback`; fallback применяется

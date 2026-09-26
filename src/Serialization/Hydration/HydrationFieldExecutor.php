@@ -102,7 +102,7 @@ final readonly class HydrationFieldExecutor
                 $state = $resolved->state;
                 $value = $resolved->value;
                 $consumed = $resolved->isMissing() ? new SourceConsumption() : SourceConsumption::all();
-                $this->assertInput($state, $value, $field);
+                $this->assertInput($state, $value, $field, $scope);
                 if (
                     $field->handler === null && $field->cast === null
                     && $state === ValueState::Present && is_string($value)
@@ -147,7 +147,7 @@ final readonly class HydrationFieldExecutor
                     }
                     return new HydratedProperty(null, $state, $segments, $location, $consumed);
                 }
-                return $scope->at($location, fn (): HydratedProperty => $this->transform(
+                $operation = fn (): HydratedProperty => $this->transform(
                     $value,
                     $state,
                     $segments,
@@ -158,14 +158,15 @@ final readonly class HydrationFieldExecutor
                     $scope,
                     $defaultApplied,
                     !$resolved->isMissing(),
-                ));
-            });
+                );
+                return $defaultApplied ? $scope->boundary($operation) : $operation();
+            }, $segments);
         } catch (HydrationException $exception) {
             throw $exception->prependPath($field->name);
         }
     }
 
-    private function assertInput(ValueState $state, mixed $value, HydrationFieldPlan $field): void
+    private function assertInput(ValueState $state, mixed $value, HydrationFieldPlan $field, HydrationScope $scope): void
     {
         if ($field->required && $state === ValueState::Missing) {
             throw HydrationException::invalidValue(
@@ -178,7 +179,7 @@ final readonly class HydrationFieldExecutor
             throw HydrationException::invalidValue('explicit_null_not_allowed', 'non-null input', 'null');
         }
         if ($state === ValueState::Present && $field->inputShape !== null) {
-            $this->rules->assertInput($value, $field->inputShape, $field->normalizeKeys);
+            $this->rules->assertInput($value, $field->inputShape, $field->normalizeKeys, $scope->shape($value), $field->emptyListAsObject);
         }
     }
 
@@ -202,7 +203,7 @@ final readonly class HydrationFieldExecutor
                 $value = $scope->cast(new $spec->class(...$spec->args), $value);
                 $location = $location->boundary();
                 if ($field->shape !== null) {
-                    $value = $scope->at($location, fn (): mixed => $this->rules->transform(
+                    $value = $scope->boundary(fn (): mixed => $this->rules->transform(
                         $value,
                         $field->shape,
                         $policy,

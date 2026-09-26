@@ -27,6 +27,7 @@ final readonly class ValueShape
         public array $map = [],
         public NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value,
         public NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw,
+        public bool $emptyListAsObject = false,
     ) {
     }
 
@@ -81,9 +82,9 @@ final readonly class ValueShape
         return new self('nullable', item: $shape);
     }
 
-    public static function dto(string $class): self
+    public static function dto(string $class, bool $emptyListAsObject = false): self
     {
-        return new self('dto', class: $class);
+        return new self('dto', class: $class, emptyListAsObject: $emptyListAsObject);
     }
 
     public static function list(

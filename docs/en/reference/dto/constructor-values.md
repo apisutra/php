@@ -76,8 +76,9 @@ The check performs no extra coercion to make values match.
 The comparison uses existing **PHP keys**. `[1 => 'b', 0 => 'a']` equals `['a', 'b']`:
 index-to-value associations match. `array_is_list()` does not introduce a separate
 failure. After JSON decoding, key `"1"` is already an int, while `"01"` remains a string;
-empty `{}` and `[]` are indistinguishable after associative decoding. The check does
-not reconstruct lost JSON information.
+this equality check compares empty containers as PHP arrays. Declared
+[shapes](shapes.md#section-3) validate the original JSON kind earlier; constructor
+equality does not add a separate JSON round-trip guarantee.
 
 ## Boundaries and errors <a id="section-5"></a>
 

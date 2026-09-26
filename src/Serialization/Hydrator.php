@@ -10,6 +10,9 @@ use ApiSutra\Exceptions\ControlFlow\ControlFlowException;
 use ApiSutra\Exceptions\ControlFlow\ExecutorContractViolation;
 use ApiSutra\Exceptions\Transport\ExecutionDeadlineException;
 use ApiSutra\Serialization\Context\HydrationContext;
+use ApiSutra\DataTransfer\AbstractResponseDto;
+use ApiSutra\Serialization\Input\HydrationInput;
+use ReflectionMethod;
 use Throwable;
 use ApiSutra\Localization\Message;
 use ApiSutra\Config\LocalizationConfig;
@@ -108,8 +111,20 @@ final class Hydrator
         ?PipelineContext $context = null,
         DtoHydratorInterface|false|null $hydrator = null,
     ): object {
+        return $this->hydrateInput(new HydrationInput($data), $dtoClass, $context, $hydrator);
+    }
+
+    /** @internal Вход HTTP/continuation, не меняющий публичные значения и контракт расширений. */
+    public function hydrateInput(
+        HydrationInput $input,
+        string $dtoClass,
+        ?PipelineContext $context = null,
+        DtoHydratorInterface|false|null $hydrator = null,
+        bool $emptyListAsObject = false,
+    ): object {
         try {
-            return $this->scope($context, $hydrator)->hydrateDto($data, $dtoClass);
+            $scope = $this->scope($context, $hydrator);
+            return $scope->withShape($input->shape, fn (): object => $scope->hydrateDto($input->value, $dtoClass, $emptyListAsObject), $input->jsonSourceKnown);
         } catch (LocalizableExceptionInterface $exception) {
             throw $exception->localized($context?->config->localization ?? $this->localization);
         }
@@ -124,6 +139,7 @@ final class Hydrator
             $context,
             $this->config !== null || $selected !== null,
             $selected,
+            $this->config->jsonShapeValidation ?? true,
         );
     }
 
@@ -153,7 +169,10 @@ final class Hydrator
                 $boundary = is_subclass_of($dtoClass, ResponseDtoInterface::class)
                     || is_object($data) && (method_exists($data, 'toArray') || $data instanceof JsonSerializable);
                 if ($boundary) {
-                    return $scope->boundary(fn (): object => $this->hydrateObject($data, $dtoClass, $scope));
+                    return $scope->boundary(
+                        fn (): object => $this->hydrateObject($data, $dtoClass, $scope),
+                        preserveShape: is_array($data) && (new ReflectionMethod($dtoClass, 'computed'))->getDeclaringClass()->getName() === AbstractResponseDto::class,
+                    );
                 }
                 return $this->hydrateObject($data, $dtoClass, $scope);
             },
@@ -237,18 +256,34 @@ final class Hydrator
         ?PipelineContext $context = null,
         DtoHydratorInterface|false|null $hydrator = null,
     ): array {
+        return $this->hydrateCollectionInput(new HydrationInput($items), $dtoClass, $context, $hydrator);
+    }
+
+    /**
+     * @internal Коллекция сохраняет формы элементов, не становясь строгим списком.
+     * @return list<object>
+     */
+    public function hydrateCollectionInput(
+        HydrationInput $input,
+        string $dtoClass,
+        ?PipelineContext $context = null,
+        DtoHydratorInterface|false|null $hydrator = null,
+    ): array {
         try {
             $scope = $this->scope($context, $hydrator);
-            return $scope->node($items, function () use ($items, $dtoClass, $scope): array {
+            $items = $input->value;
+            return $scope->withShape($input->shape, fn (): array => $scope->node($items, function () use ($items, $dtoClass, $scope): array {
                 $result = [];
+                $safe = $scope->hasListIndices($items);
                 foreach ($items as $key => $item) {
-                    $result[] = $scope->at(
-                        $scope->location()->descend([$key], array_is_list($items)),
+                    $result[] = $scope->descend(
+                        [$key],
                         fn (): object => HydrationCollections::item($item, $dtoClass, count($result), $scope),
+                        $safe,
                     );
                 }
                 return $result;
-            });
+            }), $input->jsonSourceKnown);
         } catch (LocalizableExceptionInterface $exception) {
             throw $exception->localized($context?->config->localization ?? $this->localization);
         }

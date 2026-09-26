@@ -92,7 +92,7 @@ it('исполняет атрибуты в CompositeFlow с границей п�
 })->with([false, true]);
 
 it('доставляет ошибку Ready и повторного awaitAs без превращения в Pending', function (bool $invalid, bool $wrongShape): void {
-    [$client, $transport] = attributeEntryClient(['data' => $wrongShape ? 7 : ($invalid ? [] : ['id' => 7])]);
+    [$client, $transport] = attributeEntryClient(['data' => $wrongShape ? 7 : ($invalid ? new stdClass() : ['id' => 7])]);
     $handle = $client->send(new Dto\AwaitRequest());
     if ($invalid || $wrongShape) {
         try {

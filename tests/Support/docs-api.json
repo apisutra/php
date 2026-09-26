@@ -1584,11 +1584,16 @@
               "type": "string|false|null",
               "optional": true,
               "variadic": false
+            },
+            "emptyListAsObject": {
+              "type": "bool",
+              "optional": true,
+              "variadic": false
             }
           }
         }
       },
-      "constructor_source": "Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string|false|null $hydrator = null)",
+      "constructor_source": "Returns(string $response, ?string $unwrap = null, ?string $type = null, ?string $mismatchMessage = null, string|false|null $hydrator = null, bool $emptyListAsObject = false)",
       "source": "src/Attributes/Response/Returns.php",
       "signature_doc": "reference/attributes/response"
     },
@@ -2666,6 +2671,11 @@
               "type": "ApiSutra\\Enums\\Continuation\\ContinuationMode",
               "optional": false,
               "variadic": false
+            },
+            "jsonShapeValidation": {
+              "type": "bool",
+              "optional": true,
+              "variadic": false
             }
           }
         }
@@ -2712,6 +2722,11 @@
             },
             "audit": {
               "type": "array",
+              "optional": true,
+              "variadic": false
+            },
+            "input": {
+              "type": "?ApiSutra\\Serialization\\Input\\HydrationInput",
               "optional": true,
               "variadic": false
             }
@@ -5613,6 +5628,11 @@
               "type": "string",
               "optional": false,
               "variadic": false
+            },
+            "emptyListAsObject": {
+              "type": "bool",
+              "optional": true,
+              "variadic": false
             }
           }
         },
@@ -5935,11 +5955,16 @@
               "type": "?ApiSutra\\Contracts\\Interfaces\\Serialization\\DtoHydratorInterface",
               "optional": true,
               "variadic": false
+            },
+            "jsonShapeValidation": {
+              "type": "bool",
+              "optional": true,
+              "variadic": false
             }
           }
         }
       },
-      "constructor_source": "HydrationConfig(?RulePolicy $policy = null, ?HydrationRules $rules = null, ?DtoHydratorInterface $hydrator = null)",
+      "constructor_source": "HydrationConfig(?RulePolicy $policy = null, ?HydrationRules $rules = null, ?DtoHydratorInterface $hydrator = null, bool $jsonShapeValidation = true)",
       "source": "src/Config/HydrationConfig.php",
       "signature_doc": "reference/dto/configuration"
     },
@@ -6085,11 +6110,16 @@
               "type": "string",
               "optional": false,
               "variadic": false
+            },
+            "emptyListAsObject": {
+              "type": "bool",
+              "optional": true,
+              "variadic": false
             }
           }
         }
       },
-      "constructor_source": "DtoShape(string $class)",
+      "constructor_source": "DtoShape(string $class, bool $emptyListAsObject = false)",
       "source": "src/Serialization/Shapes/DtoShape.php",
       "signature_doc": "reference/dto/declarations"
     },

@@ -224,7 +224,8 @@ ExecutionDeadlineException pipeline сохраняет накопленное с
 | --- | --- |
 | `response_type_mismatch` | Итоговое значение нарушает активный Returns; [сообщения и границы](exceptions.md). |
 | `unwrap_path_missing` | Указанный путь отсутствует; actual — `missing`. |
-| `unexpected_response_shape` | По пути найден null/scalar вместо данных объявленного DTO либо непустой list вместо одиночного Nested. |
+| `invalid_list_shape` / `invalid_object_shape` | Вход нарушает объявленный вид контейнера; исходный JSON различает `object` и `list`, даже пустые. [Правила формы](../dto/shapes.md#section-3). |
+| `unexpected_response_shape` | По пути найден null/scalar вместо данных объявленного DTO либо list вместо одиночного Nested, включая пустой JSON array. |
 | `integer_out_of_range` | Число не помещается в int; actual — тип исходного значения. |
 | `required_field_missing` | Обязательное поле отсутствует. |
 | `null_not_allowed` | Итоговое значение null не допускается объявленным типом. |

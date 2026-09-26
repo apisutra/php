@@ -68,6 +68,11 @@ await, and repeated awaitAs. The HTTP cache stores the original response: the cu
 rule set builds the DTO. A non-null response handler result, RawResponse, and Download
 bypass ordinary hydration.
 
+`ValueShape::dto($class, emptyListAsObject: true)` permits an empty JSON list only
+at that node. An explicit `inputShape(Object)` still checks raw input before this
+conversion. By default, standard HTTP decoding preserves JSON kinds (see [client mode](configuration.md#section-4)); standalone PHP arrays
+retain their existing ambiguity. [Examples and boundaries](shapes.md#section-3).
+
 `Hydrator::forRules($rules)` explicitly connects the same rules for standalone use.
 `Hydrator::default()` and `DTO::from()` do not inherit client rules. Creating a rule
 set does not change existing objects' semantics. For recursion in a custom `cast`/provider,

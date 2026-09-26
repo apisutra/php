@@ -9,6 +9,7 @@ use ApiSutra\Contracts\Interfaces\Continuation\ContinuationStateResolverInterfac
 use ApiSutra\Exceptions\Configuration\ContinuationConfigurationException;
 use ApiSutra\Result\ExecutionResult;
 use ApiSutra\Support\ArrayPath;
+use ApiSutra\Exceptions\Serialization\ResponseDecodingException;
 
 final readonly class FinalPathStateResolver implements ContinuationStateResolverInterface
 {
@@ -23,7 +24,12 @@ final readonly class FinalPathStateResolver implements ContinuationStateResolver
         if ($response?->body === null || !str_starts_with(ltrim($response->body), '{')) {
             return ContinuationState::pending();
         }
-        $data = $response->json();
+        try {
+            $input = $response->jsonInput($context->jsonShapeValidation);
+        } catch (ResponseDecodingException) {
+            return ContinuationState::pending();
+        }
+        $data = $input->value;
         if (!is_array($data)) {
             return ContinuationState::pending();
         }
@@ -31,6 +37,6 @@ final readonly class FinalPathStateResolver implements ContinuationStateResolver
 
         return $resolved->isMissing() || $resolved->value === null
             ? ContinuationState::pending()
-            : ContinuationState::ready($resolved->value, $path);
+            : ContinuationState::readyInput($input->select($path), $path);
     }
 }

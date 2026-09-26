@@ -21,6 +21,7 @@ use ApiSutra\Extensions\ExtensionRegistry;
 use ApiSutra\Pagination\PaginationConfigResolver;
 use ApiSutra\Pagination\PaginationItemsCollectionBuilder;
 use ApiSutra\Serialization\Hydrator;
+use ApiSutra\Serialization\Input\HydrationInput;
 use ApiSutra\Serialization\Rules\SourceLocation;
 use ApiSutra\Serialization\Rules\SourcePathKind;
 use ApiSutra\Support\ArrayPath;
@@ -65,7 +66,8 @@ final readonly class ResponseHydrator
             return new DecodedResponse($context->response?->json() ?? [], $handler);
         }
 
-        return new DecodedResponse($this->decodeStandardResponse($request, $context->response));
+        $input = $this->decodeStandardResponse($request, $context->response);
+        return new DecodedResponse($input->value, shape: $input->shape, jsonSourceKnown: $input->jsonSourceKnown);
     }
 
     public function hydrateResponse(
@@ -120,10 +122,18 @@ final readonly class ResponseHydrator
             return $extensionResult;
         }
 
+        $input = new HydrationInput(
+            $data,
+            $context->hydrationInputReplaced ? null : $decoded?->shape,
+            !$context->hydrationInputReplaced && ($decoded->jsonSourceKnown ?? false),
+        );
         if (($decoded === null && $context->response !== null) || $handler !== null) {
             $standardData = $this->decodeStandardResponse($request, $context->response);
-            if (!is_array($standardData)) {
-                $data = $standardData;
+            if (!is_array($standardData->value)) {
+                $data = $standardData->value;
+                $input = $standardData;
+            } elseif (!$context->hydrationInputReplaced) {
+                $input = new HydrationInput($data, $standardData->shape, $standardData->jsonSourceKnown);
             }
         }
 
@@ -139,12 +149,12 @@ final readonly class ResponseHydrator
 
             // Режим контейнера: #[Returns] сохраняет структуру ответа, items подставляются отдельно
             if ($returns !== null) {
-                $items = $this->extractPaginationItems($data, $pagination);
+                $items = $this->extractPaginationItems($input, $pagination);
                 $items = $this->hydratePaginationItems($items, $pagination, $context, $hydrator);
                 $items = $this->buildItemsCollection($items, $pagination);
 
-                [$data, $dtoClass] = $this->applyUnwrap($data, $returns, $dtoClass);
-                $container = $this->hydrateIfNeeded($data, $dtoClass, $context, $hydrator);
+                [$input, $dtoClass] = $this->applyUnwrap($input, $returns, $dtoClass);
+                $container = $this->hydrateIfNeeded($input, $dtoClass, $context, $hydrator);
 
                 if (!$container instanceof PaginationItemsContainerInterface) {
                     throw new ConfigurationException(new Message('pipeline.pagination_dto_container_must_implement_paginationitemscontainerinterface'));
@@ -154,17 +164,17 @@ final readonly class ResponseHydrator
             }
 
             if ($this->config->hydration !== null) {
-                $items = $this->extractPaginationItems($data, $pagination);
+                $items = $this->extractPaginationItems($input, $pagination);
                 return $this->buildItemsCollection($this->hydratePaginationItems($items, $pagination, $context, $hydrator), $pagination);
             }
 
             // Режим items-only: возвращаем только items
-            $data = $this->applyPaginationItemsOnly($data, $pagination);
+            $input = $this->applyPaginationItemsOnly($input, $pagination);
         }
 
-        [$data, $dtoClass] = $this->applyUnwrap($data, $returns, $dtoClass);
+        [$input, $dtoClass] = $this->applyUnwrap($input, $returns, $dtoClass);
 
-        return $this->hydrateIfNeeded($data, $dtoClass, $context, $hydrator);
+        return $this->hydrateIfNeeded($input, $dtoClass, $context, $hydrator);
     }
 
     private function makeFileResponse(?ProviderResponse $response): FileResponse
@@ -220,21 +230,25 @@ final readonly class ResponseHydrator
             ?? ($request instanceof AbstractRequest && $request->hasRawResponse());
     }
 
-    private function decodeStandardResponse(RequestInterface $request, ?ProviderResponse $response): mixed
+    private function decodeStandardResponse(RequestInterface $request, ?ProviderResponse $response): HydrationInput
     {
         $requiresArray = $this->resolveDtoClass($request) !== null || $request instanceof PaginableInterface;
         if ($response === null || $response->status === 204 || $response->body === '') {
-            return $requiresArray ? [] : null;
+            return new HydrationInput($requiresArray ? [] : null);
         }
 
         $contentType = strtolower(trim(explode(';', $response->header('Content-Type') ?? '')[0]));
         if ($contentType === '' || $contentType === 'application/json' || str_ends_with($contentType, '+json')) {
-            $data = $response->jsonStrict();
-            return $requiresArray && $data === null ? [] : $data;
+            $requiresShapes = $this->resolveDtoClass($request) !== null
+                || $this->config->hydration !== null
+                    && $request instanceof AbstractRequest && $request instanceof PaginableInterface
+                    && $this->resolvePaginationConfig($request)->itemsType !== null;
+            $input = $response->jsonInput($requiresShapes && ($this->config->hydration->jsonShapeValidation ?? true));
+            return $requiresArray && $input->value === null ? new HydrationInput([]) : $input;
         }
 
         if (!$requiresArray) {
-            return $response->body;
+            return new HydrationInput($response->body);
         }
 
         throw new ResponseDecodingException(
@@ -253,38 +267,39 @@ final readonly class ResponseHydrator
         return $request instanceof AbstractRequest ? $request->getReturnsAttribute() : null;
     }
 
-    private function applyPaginationItemsOnly(mixed $data, PaginationConfig $pagination): mixed
+    private function applyPaginationItemsOnly(HydrationInput $data, PaginationConfig $pagination): HydrationInput
     {
         if ($pagination->itemsPath === '') {
             return $data;
         }
 
-        $items = ArrayPath::getByPath($data, $pagination->itemsPath);
-        return $items !== null ? $items : $data;
+        $items = $data->select($pagination->itemsPath);
+        return $items->value !== null ? $items : $data;
     }
 
     /**
      * @param object|null $returns
-     * @return array{0: mixed, 1: ?string}
+     * @return array{0: HydrationInput, 1: ?string}
      */
-    private function applyUnwrap(mixed $data, ?object $returns, ?string $dtoClass): array
+    private function applyUnwrap(HydrationInput $data, ?object $returns, ?string $dtoClass): array
     {
         if ($returns === null || $returns->unwrap === null) {
             return [$data, $dtoClass];
         }
 
-        $unwrapped = ArrayPath::getByPathWithStatus($data, $returns->unwrap);
+        $unwrapped = ArrayPath::getByPathWithStatus($data->value, $returns->unwrap);
         if ($unwrapped->isMissing()) {
             throw HydrationException::invalidValue('unwrap_path_missing', 'present', 'missing', $returns->unwrap);
         }
 
         $dtoClass = $returns->type ?? $dtoClass;
 
-        return [$unwrapped->value, $dtoClass];
+        return [$data->select($returns->unwrap), $dtoClass];
     }
 
-    private function hydrateIfNeeded(mixed $data, ?string $dtoClass, PipelineContext $context, DtoHydratorInterface|false|null $hydrator): mixed
+    private function hydrateIfNeeded(HydrationInput $input, ?string $dtoClass, PipelineContext $context, DtoHydratorInterface|false|null $hydrator): mixed
     {
+        $data = $input->value;
         if ($dtoClass === null) {
             return $data;
         }
@@ -295,7 +310,13 @@ final readonly class ResponseHydrator
         }
 
         try {
-            return $this->hydrator->hydrate($data, $dtoClass, $context, $hydrator);
+            return $this->hydrator->hydrateInput(
+                $input,
+                $dtoClass,
+                $context,
+                $hydrator,
+                $this->resolveReturnsAttribute($context->request)->emptyListAsObject ?? false,
+            );
         } catch (HydrationException $exception) {
             if ($exception->reason === 'custom_hydrator_type_mismatch' && $exception->path === '') {
                 throw ResponseContractGuard::mismatch($context->request, $context->config, $dtoClass, $exception->actual ?? 'object');
@@ -305,6 +326,9 @@ final readonly class ResponseHydrator
                     $exception = $exception->prependSourcePath($path);
                 }
                 $exception = $exception->prependPath($path);
+            }
+            if ($exception->path === '') {
+                $exception = $exception->prependPath('$');
             }
             throw $exception;
         } catch (SdkException | ExecutorContractViolation $exception) {
@@ -320,35 +344,21 @@ final readonly class ResponseHydrator
         return $resolver->resolve($request);
     }
 
-    /**
-     * @return array<array-key, mixed>
-     */
-    private function extractPaginationItems(mixed $data, PaginationConfig $pagination): array
+    private function extractPaginationItems(HydrationInput $input, PaginationConfig $pagination): HydrationInput
     {
-        if (!is_array($data)) {
-            return [];
-        }
-
-        if ($pagination->itemsPath === '') {
-            return $data;
-        }
-
-        $items = ArrayPath::getByPath($data, $pagination->itemsPath);
-        return is_array($items) ? $items : [];
+        $items = $pagination->itemsPath === '' ? $input : $input->select($pagination->itemsPath);
+        return is_array($items->value) ? $items : new HydrationInput([]);
     }
 
-    /**
-     * @param array<array-key, mixed> $items
-     * @return array<array-key, mixed>
-     */
-    private function hydratePaginationItems(array $items, PaginationConfig $pagination, PipelineContext $context, DtoHydratorInterface|false|null $hydrator): array
+    /** @return array<array-key, mixed> */
+    private function hydratePaginationItems(HydrationInput $items, PaginationConfig $pagination, PipelineContext $context, DtoHydratorInterface|false|null $hydrator): array
     {
         if ($pagination->itemsType === null) {
-            return $items;
+            return $items->value;
         }
 
         try {
-            return $this->hydrator->hydrateCollection($items, $pagination->itemsType, $context, $hydrator);
+            return $this->hydrator->hydrateCollectionInput($items, $pagination->itemsType, $context, $hydrator);
         } catch (HydrationException $exception) {
             if ($pagination->itemsPath !== '' && !$context->hydrationSourceTransformed) {
                 $exception = $exception->prependSourcePath($pagination->itemsPath);

@@ -28,7 +28,7 @@ try {
     $clientClass = 'Generated\\Smoke\\Client';
     $requestClass = 'Generated\\Smoke\\Request';
     $transport = new MockTransport();
-    $transport->fake(['*' => MockResponse::success([])]);
+    $transport->fake(['*' => MockResponse::make('{}')]);
     $client = new $clientClass(new ClientConfig(baseUrl: 'https://example.test'), $transport);
     if (!$client->send(new $requestClass())->dataOrFail() instanceof Data) { throw new RuntimeException('Generated DTO contract failed'); }
     echo "Generated CLI/client/request/DTO without dev dependencies — OK\n";

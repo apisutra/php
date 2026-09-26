@@ -61,7 +61,7 @@ They translate to the existing ValueShape, with the same processing and errors.
 | ScalarType | Int, Float, Bool, String — one scalar type |
 | ListShape | `ListShape(ScalarType\|ShapeSpec $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)` |
 | NullableShape | `NullableShape(ScalarType\|ShapeSpec $value)` |
-| DtoShape | `DtoShape(string $class)` — including a plain class |
+| DtoShape | `DtoShape(string $class, bool $emptyListAsObject = false)` — including a plain class |
 | VariantsShape | `VariantsShape(string $discriminator, array $map, NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw)` |
 
 Nullability is declared separately for the list and its items. For example,

@@ -14,6 +14,7 @@ final readonly class HydrationConfig
         public ?RulePolicy $policy = null,
         public ?HydrationRules $rules = null,
         public ?DtoHydratorInterface $hydrator = null,
+        public bool $jsonShapeValidation = true,
     ) {
     }
 }

@@ -48,6 +48,15 @@ A cast over a visible receiver is still forbidden before the handler runs. A DTO
 created inside a handler can be serialized through the context; ordinary
 [receiver rules](../serialization/receiver-output.md) apply.
 
+Source JSON forms follow built-in selection (`From`, fallback, unwrap, each), not
+arbitrary user transformations. Cast/provider results, custom computed methods,
+response handlers, composite/EarlyReturn data, and context->hydrate() calls are new
+PHP input; the SDK never guesses provenance by comparing arrays. A BeforeHydrate
+observer returning no replacement preserves forms, while returning an array creates
+new input even if it looks unchanged. Inherited AbstractResponseDto::computed and
+the unchanged built-in request hook preserve forms. Diagnostic Boundary does not
+itself disable shape checks. [JSON shape contract](shapes.md#section-3).
+
 ## Lifetime <a id="section-4"></a>
 
 After the handler returns or throws, **every method on its context** throws

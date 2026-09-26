@@ -197,7 +197,7 @@ it('сохраняет контейнер и явное включение typed
 
 it('сохраняет ошибку атрибутного Ready внутри continuation', function (): void {
     $factory = new RecordingFactory();
-    [$client, $transport] = resultHydrationClient(['data' => []], [
+    [$client, $transport] = resultHydrationClient(['data' => new stdClass()], [
         'resultExceptions' => new ResultExceptionConfig(exceptionFactory: $factory),
     ]);
     try {

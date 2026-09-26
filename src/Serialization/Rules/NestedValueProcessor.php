@@ -49,8 +49,9 @@ final readonly class NestedValueProcessor
             $consumed = new SourceConsumption();
             $consumed->projection = true;
             $index = 0;
+            $safe = $scope->hasListIndices($input);
             foreach ($input as $key => $raw) {
-                $location = $scope->location()->descend([$key], array_is_list($input));
+                $location = $scope->location()->descend([$key], $safe);
                 $segments = $nested->each === null ? [] : explode('.', $nested->each);
                 $value = $raw;
                 if ($nested->each !== null) {
@@ -85,7 +86,7 @@ final readonly class NestedValueProcessor
                             return new ShapeResult($value, SourceConsumption::all());
                         };
                         return $cast === null ? $operation() : $scope->boundary($operation);
-                    });
+                    }, [$key, ...$segments]);
                 } catch (HydrationException $exception) {
                     throw $exception->prependPath('[' . $index . ']');
                 }

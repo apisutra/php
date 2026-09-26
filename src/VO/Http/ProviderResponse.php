@@ -9,6 +9,8 @@ use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Serialization\ResponseDecodingException;
 use ApiSutra\Support\ArrayPath;
 use JsonException;
+use ApiSutra\Serialization\Input\HydrationInput;
+use ApiSutra\Serialization\Input\JsonDecoder;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -67,13 +69,18 @@ readonly class ProviderResponse
     /** Строгий разбор JSON; вызывающая сторона выбирает политику пустого/raw ответа. */
     public function jsonStrict(?string $key = null): mixed
     {
+        $data = $this->jsonInput(false)->value;
+        return $key === null ? $data : ArrayPath::getByPath($data, $key);
+    }
+
+    /** @internal Формы живут у вызова decode, а не в долгоживущем ответе. */
+    public function jsonInput(bool $shapes = true): HydrationInput
+    {
         try {
-            $data = json_decode($this->stringBody(), true, 512, JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING);
+            return (new JsonDecoder())->decode($this->stringBody(), $shapes);
         } catch (JsonException $exception) {
             throw new ResponseDecodingException(new Message('vo.failed_to_decode_response_json', ['value0' => $exception->getMessage()]), 0, $exception);
         }
-
-        return $key === null ? $data : ArrayPath::getByPath($data, $key);
     }
 
     /** HTTP-ошибка сохраняет приоритет над невалидным или не-JSON телом ответа. */

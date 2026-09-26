@@ -17,6 +17,7 @@ readonly class Returns
         public ?string $type = null,
         public ?string $mismatchMessage = null,
         public string|false|null $hydrator = null,
+        public bool $emptyListAsObject = false,
     ) {
     }
 }
