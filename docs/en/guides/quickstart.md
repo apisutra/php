@@ -23,9 +23,9 @@ php docs/example/sdk/run.php
 Both commands execute [the same file](../../example/sdk/run.php). It uses local
 fixtures and `MockTransport`: no API keys or network access are needed.
 The formatted output has sections for typed objects (`dto`), `toArray()` (`serialized`),
-an immutable copy (`copy`), standalone hydration, defaults, HTTP 404 and twelve invalid
-responses (`hydrationErrors`). The same fixture includes an author with contacts, tags,
-image/document variants, an enum, dates, a custom cast and an inline file preview.
+an immutable copy (`copy`), standalone hydration, webhook, defaults, HTTP 404 and seventeen invalid
+bodies (`hydrationErrors`). The same fixture includes an author with contacts, tags,
+known and unknown attachment variants, a dictionary, an enum, dates, a custom cast and an inline file preview.
 See the [example walkthrough](../examples/sdk.md#dto-features) for fields and rules.
 
 ## How the example works <a id="section-3"></a>
@@ -48,7 +48,7 @@ See the [example walkthrough](../examples/sdk.md#dto-features) for fields and ru
    extracting data. `raw()` exposes a hydration error even when HTTP returned 200,
    including the DTO path and original JSON Pointer.
 7. `toArray()` applies output rules recursively. `with()` changes a copy. The same
-   fixture is hydrated without HTTP using the SDK's explicit HydrationConfig, and
+   JSON fixture is hydrated without HTTP through `hydrateJson()` with the same configuration, and
    missing/null/invalid values are demonstrated separately.
 
 Sources are next to their explanations; copy them into your SDK and register your

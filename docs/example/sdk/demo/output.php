@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Example\Records\Demo;
 
+use Example\Records\Resources\Records\Get\Dto\AttachmentDto;
 use Example\Records\Resources\Records\Get\Dto\DocumentAttachmentDto;
 use Example\Records\Resources\Records\Get\Dto\ImageAttachmentDto;
+use Example\Records\Resources\Records\Get\Dto\RawAttachmentDto;
 use Example\Records\Resources\Records\Get\Dto\TagDto;
 use Example\Records\Resources\Records\Get\GetRecordResponseDto;
+use LogicException;
 use ReflectionClass;
 
 /**
@@ -30,6 +33,8 @@ function describeRecord(GetRecordResponseDto $record): array
         ],
         'tags' => $record->tags->mapToArray(static fn (TagDto $tag): string => $tag->name),
         'attachments' => array_map(describeAttachment(...), $record->attachments),
+        'cover' => $record->cover === null ? null : describeAttachment($record->cover),
+        'localizedTitles' => $record->localizedTitles,
         'relatedIds' => $record->relatedIds,
         'rating' => $record->rating,
         'readingTimeSeconds' => $record->readingTimeSeconds,
@@ -43,14 +48,25 @@ function describeRecord(GetRecordResponseDto $record): array
 }
 
 /** @return array<string, mixed> */
-function describeAttachment(ImageAttachmentDto|DocumentAttachmentDto $attachment): array
+function describeAttachment(AttachmentDto $attachment): array
 {
+    if ($attachment instanceof RawAttachmentDto) {
+        return ['class' => 'RawAttachmentDto', 'raw' => $attachment->raw];
+    }
+    if (!$attachment instanceof ImageAttachmentDto && !$attachment instanceof DocumentAttachmentDto) {
+        throw new LogicException('Добавьте описание нового известного типа в вывод примера');
+    }
+
     return [
         'class' => (new ReflectionClass($attachment))->getShortName(),
         'type' => $attachment->type,
-        'details' => $attachment instanceof ImageAttachmentDto
-            ? ['width' => $attachment->width, 'height' => $attachment->height]
-            : ['pages' => $attachment->pages, 'preview' => $attachment->preview->content()],
+        'details' => match (true) {
+            $attachment instanceof ImageAttachmentDto => ['width' => $attachment->width, 'height' => $attachment->height],
+            $attachment instanceof DocumentAttachmentDto => [
+                'pages' => $attachment->pages,
+                'preview' => $attachment->preview->content(),
+            ],
+        },
         'extra' => $attachment->_extra,
     ];
 }

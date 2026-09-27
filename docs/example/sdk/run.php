@@ -2,17 +2,20 @@
 
 declare(strict_types=1);
 
+use ApiSutra\Config\HydrationConfig;
 use ApiSutra\Serialization\Hydrator;
 use ApiSutra\Testing\MockResponse;
 use ApiSutra\Transport\MockTransport;
 use Example\Records\AttributeExample\RecordDto;
 use Example\Records\Config\ClientConfigFactory;
-use Example\Records\Config\HydrationConfigFactory;
 use Example\Records\DemoClient;
+use Example\Records\Resources\Records\Get\Dto\AttachmentDto;
 use Example\Records\Resources\Records\Get\GetRecordRequest;
 use Example\Records\Resources\Records\Get\GetRecordResponseDto;
+use Example\Records\Webhook\RecordPayload;
 
 use function Example\Records\Demo\collectHydrationErrors;
+use function Example\Records\Demo\describeAttachment;
 use function Example\Records\Demo\describeDefaults;
 use function Example\Records\Demo\describeRecord;
 
@@ -22,23 +25,19 @@ require_once __DIR__ . '/demo/output.php';
 
 $transport = new MockTransport();
 $transport->preventStrayRequests();
-$success = json_decode(
-    (string) file_get_contents(__DIR__ . '/fixtures/record.json'),
-    true,
-    flags: JSON_THROW_ON_ERROR,
-);
-$failure = json_decode(
-    (string) file_get_contents(__DIR__ . '/fixtures/error.json'),
-    true,
-    flags: JSON_THROW_ON_ERROR,
-);
+$successJson = file_get_contents(__DIR__ . '/fixtures/record.json');
+$failureJson = file_get_contents(__DIR__ . '/fixtures/error.json');
+if ($successJson === false || $failureJson === false) {
+    throw new RuntimeException('Не удалось прочитать JSON-фикстуры');
+}
 $transport->fake([
     GetRecordRequest::class => MockResponse::sequence([
-        MockResponse::success($success),
-        MockResponse::make($failure, 404),
+        MockResponse::make($successJson),
+        MockResponse::make($failureJson, 404),
     ]),
 ]);
-$client = new DemoClient(ClientConfigFactory::create(), $transport);
+$config = ClientConfigFactory::create();
+$client = new DemoClient($config, $transport);
 // Выполнить запрос синхронно. send() возвращает ResultHandle — обёртку результата.
 $handle = $client->records()->get(7)->send();
 
@@ -47,8 +46,15 @@ $handle = $client->records()->get(7)->send();
 $record = $handle->dataOrFail();
 $error = $client->records()->get(404)->send()->resolved();
 
-// Тот же граф можно собрать без HTTP с явной конфигурацией гидратора.
-$hydrator = Hydrator::forConfig(HydrationConfigFactory::create());
+// Исходный JSON webhook разбирается с той же конфигурацией, что у клиента.
+// RecordPayload описывает оболочку data, поэтому до hydrateJson() не нужен json_decode().
+$hydrator = Hydrator::forConfig($config->hydration ?? new HydrationConfig(), $config->localization);
+$webhook = $hydrator->hydrateJson($successJson, RecordPayload::class);
+// Та же декларация вариантов работает у самого корня JSON.
+$rootAttachment = $hydrator->hydrateJson('{"type":"audio","duration":12}', AttachmentDto::class);
+
+// Отдельный PHP-вход для уже декодированных данных; исходную JSON-форму он не восстанавливает.
+$success = json_decode($successJson, true, flags: JSON_THROW_ON_ERROR);
 $standalone = $hydrator->hydrate($success['data'], GetRecordResponseDto::class);
 
 // Маленькая отдельная модель показывает from() без клиента и внешних правил.
@@ -72,9 +78,9 @@ $fallbackSource['author']['display_name'] = 'Редактор';
 $fallback = $hydrator->hydrate($fallbackSource, GetRecordResponseDto::class);
 $nullTitle = $hydrator->hydrate(array_replace($success['data'], ['title' => null]), GetRecordResponseDto::class);
 
-// Двенадцать некорректных ответов проходят через тот же клиент: raw() сохраняет детали отказа.
+// Некорректные ответы проверяются и через HTTP, и через JSON-вход webhook.
 // Таблица изменений и чтение code/reason/path/sourcePath находятся в demo/hydration-errors.php.
-$diagnostics = collectHydrationErrors($client, $transport, $success['data']);
+$diagnostics = collectHydrationErrors($client, $transport, $hydrator, $success['data']);
 
 // Вывод сгруппирован: объекты приложения, сериализация, defaults и диагностика ошибок.
 echo json_encode([
@@ -84,6 +90,11 @@ echo json_encode([
     'standalone' => [
         'sameData' => $standalone->toArray() === $serialized,
         'fromId' => $attributeRecord->id,
+        'variant' => describeAttachment($rootAttachment),
+    ],
+    'webhook' => [
+        'class' => $webhook::class,
+        'sameData' => $webhook->data->toArray() === $serialized,
     ],
     'defaults' => describeDefaults($fallback, $nullTitle),
     'httpError' => ['failed' => $error->isFailed(), 'status' => $error->errorStatus()],

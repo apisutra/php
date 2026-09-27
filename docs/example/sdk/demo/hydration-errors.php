@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Example\Records\Demo;
 
+use ApiSutra\Exceptions\Serialization\HydrationException;
+use ApiSutra\Serialization\Hydrator;
 use ApiSutra\Testing\MockResponse;
 use ApiSutra\Transport\MockTransport;
 use Example\Records\DemoClient;
 use Example\Records\Resources\Records\Get\GetRecordRequest;
+use Example\Records\Webhook\RecordPayload;
 use RuntimeException;
 
 /**
@@ -27,7 +30,7 @@ function invalidPayloads(array $source): array
     return [
         'nested_contact' => $replace(['author' => ['contact' => ['email' => 42]]]),
         'collection_item' => $replace(['tags' => [1 => ['id' => '2']]]),
-        'unknown_variant' => $replace(['assets' => [0 => ['value' => ['type' => 'audio']]]]),
+        'invalid_discriminator' => $replace(['assets' => [0 => ['value' => ['type' => true]]]]),
         'variant_field' => $replace(['assets' => [0 => ['value' => ['width' => '640']]]]),
         'list_item' => $replace(['related_ids' => [1 => '12']]),
         'custom_cast' => $replace(['reading_time' => '03:99']),
@@ -37,6 +40,12 @@ function invalidPayloads(array $source): array
         'constructor_value' => $replace(['kind' => 'other']),
         'enum' => $replace(['state' => 'unknown']),
         'date' => $replace(['created_at' => 'yesterday']),
+        // Прямая замена сохраняет пустой контейнер; рекурсивное слияние оставило бы прежние элементы.
+        'dictionary_shape' => array_replace($source, ['localized_titles' => []]),
+        'dictionary_value' => array_replace($source, ['localized_titles' => ['en' => 17]]),
+        'list_shape' => array_replace($source, ['related_ids' => (object) []]),
+        'numeric_object_as_list' => array_replace($source, ['related_ids' => (object) [11, 12]]),
+        'dto_shape' => array_replace($source, ['cover' => []]),
     ];
 }
 
@@ -46,13 +55,14 @@ function invalidPayloads(array $source): array
  * @param array<string, mixed> $source
  * @return array<string, array<string, mixed>>
  */
-function collectHydrationErrors(DemoClient $client, MockTransport $transport, array $source): array
+function collectHydrationErrors(DemoClient $client, MockTransport $transport, Hydrator $hydrator, array $source): array
 {
     $payloads = invalidPayloads($source);
-    $responses = array_map(
-        static fn (array $data): MockResponse => MockResponse::success(['data' => $data]),
-        array_values($payloads),
+    $bodies = array_map(
+        static fn (array $data): string => json_encode(['data' => $data], JSON_THROW_ON_ERROR),
+        $payloads,
     );
+    $responses = array_map(static fn (string $body): MockResponse => MockResponse::make($body), array_values($bodies));
     $transport->fake([GetRecordRequest::class => MockResponse::sequence($responses)]);
 
     $diagnostics = [];
@@ -72,6 +82,14 @@ function collectHydrationErrors(DemoClient $client, MockTransport $transport, ar
             'sourcePathKind' => $problem->context['sourcePathKind'] ?? null,
             'httpStatus' => $execution->response?->status,
         ];
+
+        // Тот же исходный JSON должен быть отклонён при получении webhook без HTTP-клиента.
+        try {
+            $hydrator->hydrateJson($bodies[$case], RecordPayload::class);
+            throw new RuntimeException('Webhook принял ошибочный сценарий ' . $case);
+        } catch (HydrationException $error) {
+            $diagnostics[$case]['webhook'] = ['reason' => $error->reason, 'sourcePath' => $error->sourcePath];
+        }
     }
 
     return $diagnostics;

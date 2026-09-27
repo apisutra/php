@@ -6,8 +6,10 @@ use Example\Records\Resources\Records\Get\Dto\AuthorDto;
 use Example\Records\Resources\Records\Get\Dto\ContactDto;
 use Example\Records\Resources\Records\Get\Dto\DocumentAttachmentDto;
 use Example\Records\Resources\Records\Get\Dto\ImageAttachmentDto;
+use Example\Records\Resources\Records\Get\Dto\RawAttachmentDto;
 use Example\Records\Resources\Records\Get\Dto\TagCollection;
 use Example\Records\Resources\Records\Get\RecordStatus;
+use Example\Records\Webhook\RecordPayload;
 
 $checkout = $argv[1] ?? dirname(__DIR__, 2);
 // Выполняется опубликованный пример из проверяемого дистрибутива.
@@ -27,6 +29,8 @@ $check(
     && $record->tags instanceof TagCollection && $record->tags->first()->name === 'php'
     && $record->attachments[0] instanceof ImageAttachmentDto
     && $record->attachments[1] instanceof DocumentAttachmentDto
+    && $record->attachments[2] instanceof RawAttachmentDto
+    && $record->cover instanceof ImageAttachmentDto
     && $record->status === RecordStatus::Published,
     'потеряны типы вложенного графа',
 );
@@ -41,6 +45,7 @@ $check(
     $serialized['record_id'] === 7 && $serialized['state'] === 'published'
     && $serialized['created_at'] === '2026-09-15T10:30:00+00:00'
     && $serialized['reading_time'] === '03:05'
+    && $serialized['localized_titles'] === ['en' => 'First record', 'ru' => 'Первая запись']
     && $serialized['author']['first_name'] === 'Анна'
     && array_key_exists('phone', $serialized['author']['contact'])
     && $serialized['author']['contact']['phone'] === null
@@ -54,6 +59,7 @@ $check(
         'assets' => [
             ['sourceKey' => 0, 'remainder' => ['rank' => 1]],
             ['sourceKey' => 1, 'remainder' => ['rank' => 2]],
+            ['sourceKey' => 2, 'remainder' => ['rank' => 3]],
         ],
         'metrics' => ['votes' => 0],
         'future_flag' => false,
@@ -67,7 +73,30 @@ $check(
     && $serialized['assets'][1]['_extra'] === ['checksum' => 'demo'],
     'потеряны дополнительные данные корня, обёрток или вложенных объектов',
 );
-$check($output['standalone'] === ['sameData' => true, 'fromId' => 7], 'разошлись HTTP и standalone');
+$check($output['standalone'] === [
+    'sameData' => true,
+    'fromId' => 7,
+    'variant' => ['class' => 'RawAttachmentDto', 'raw' => ['type' => 'audio', 'duration' => 12]],
+], 'разошлись HTTP и standalone или не работает выбор у корня JSON');
+$check(
+    $output['webhook']['sameData'] === true && $webhook->data->cover instanceof ImageAttachmentDto
+    && $standalone !== $record && $standalone !== $webhook->data,
+    'потерян граф webhook или самостоятельный PHP-вход',
+);
+$check($record->localizedTitles === ['en' => 'First record', 'ru' => 'Первая запись'], 'искажён словарь названий');
+// Пустой JSON object допустим до cast; исходные [] проверяются ниже как ошибочный сценарий.
+$emptyDictionary = $hydrator->hydrateJson(json_encode([
+    'data' => array_replace($success['data'], ['localized_titles' => (object) []]),
+], JSON_THROW_ON_ERROR), RecordPayload::class);
+$check($emptyDictionary->data->localizedTitles === [], 'пустой JSON-словарь ошибочно отклонён');
+$raw = [
+    'type' => 'audio', 'url' => 'https://assets.example.test/clip.mp3', 'duration' => 12,
+    'enabled' => false, 'caption' => null, 'channels' => [],
+];
+$check(
+    $record->attachments[2]->raw === $raw && $serialized['assets'][2]['raw'] === $raw,
+    'fallback потерял данные при чтении или toArray()',
+);
 $check(
     $output['copy'] === ['originalTitle' => 'Первая запись', 'newTitle' => 'Обновлённая запись']
     && $copy !== $record && $copy->author === $record->author,
@@ -85,9 +114,13 @@ $check($output['defaults'] === [
 ], 'нарушены правила missing/null/defaults или приоритет явного значения');
 $check($output['httpError'] === ['failed' => true, 'status' => 404], 'не показан HTTP-отказ');
 $errors = $output['hydrationErrors'];
-$check(count($errors) === 12, 'пропущен сценарий некорректного ответа');
+$check(count($errors) === 17, 'пропущен сценарий некорректного ответа');
 foreach ($errors as $case => $error) {
     $check($error['code'] === 'hydration_error' && $error['httpStatus'] === 200, 'неверная классификация ' . $case);
+    $check(
+        $error['webhook'] === ['reason' => $error['reason'], 'sourcePath' => $error['sourcePath']],
+        'HTTP и webhook расходятся для ' . $case,
+    );
 }
 $check(
     $errors['nested_contact']['path'] === 'data.author.contact.email'
@@ -98,5 +131,15 @@ $check(
     && $errors['custom_cast']['reason'] === 'invalid_reading_time'
     && $errors['constructor_value']['reason'] === 'constructor_value_mismatch',
     'диагностика не указывает нарушенное поле исходного ответа',
+);
+$check(
+    $errors['invalid_discriminator']['reason'] === 'invalid_discriminator_type'
+    && $errors['dictionary_shape']['reason'] === 'invalid_object_shape'
+    && $errors['dictionary_shape']['sourcePath'] === '/data/localized_titles'
+    && $errors['dictionary_value']['reason'] === 'invalid_localized_titles'
+    && $errors['list_shape']['reason'] === 'invalid_list_shape'
+    && $errors['numeric_object_as_list']['reason'] === 'invalid_list_shape'
+    && $errors['dto_shape']['sourcePath'] === '/data/cover',
+    'потеряна исходная форма или проверка discriminator',
 );
 echo "Standalone published SDK — OK.\n";

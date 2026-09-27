@@ -14,9 +14,10 @@ calls. It does not require credentials, a server, a database or a queue worker.
 | Part | Example contract |
 | --- | --- |
 | Operation | GET /records/{id}; id is a path parameter |
-| Success | The data object contains record fields, author/contact, tags, assets and metadata |
+| Success | The data object contains record fields, author/contact, tags, assets, cover and the localized_titles dictionary |
+| Webhook | The same data envelope and DTOs; the original JSON goes into hydrateJson() |
 | DTO | Readonly DTO graph, enum, dates, typed collection and discriminator variants; unknown fields in _extra |
-| Error | HTTP 404 via resolved(); twelve malformed HTTP 200 responses via raw() with field diagnostics |
+| Error | HTTP 404 via resolved(); seventeen malformed bodies via raw() and hydrateJson() with field diagnostics |
 | Authentication | Optional Bearer token; the local example uses none |
 
 The [fixtures](../../example/sdk/fixtures/record.json) are the source for this teaching
@@ -64,23 +65,25 @@ If the example is installed as a separate package:
 php vendor/example/records-sdk/run.php
 ```
 
-The output is formatted JSON with seven sections:
+The output is formatted JSON with eight sections:
 
 | Section | What to inspect |
 | --- | --- |
-| dto | Author/contact objects, enum value/title, tag names, attachment types, 185 seconds from `03:05`, exact large ID and file preview |
+| dto | Author/contact objects, enum, tags, known and unknown attachments, cover, translations, 185 seconds from `03:05`, exact large ID and file preview |
 | serialized | Actual `toArray()` of the entire graph: mapped names, UTC dates, enum value, cast back to `03:05`, Base64 and unknown fields |
 | copy | A new title from `with()` alongside the unchanged original |
-| standalone | Equality with explicit Hydrator output; the small attribute-only model's `from()` |
+| standalone | Separate hydration of existing PHP data; variants at the JSON root and the small attribute-only model's `from()` |
+| webhook | The same model from the original webhook JSON, using the client's hydration configuration |
 | defaults | Fallback ID, missing/null title, absent collection, nullable date, revision 0 and an explicit author name overriding its default provider |
 | httpError | `failed: true`, `status: 404` |
-| hydrationErrors | Twelve failures: code/reason, DTO path, original sourcePath/kind and HTTP status 200 |
+| hydrationErrors | Seventeen failures: code/reason, DTO path, sourcePath/kind and HTTP status 200; alongside reason/sourcePath for the same body at the webhook JSON entry point |
 
 ## DTO features in this SDK <a id="dto-features"></a>
 
 Start with the [response model](../../example/sdk/src/Resources/Records/Get/GetRecordResponseDto.php)
-and its [JSON fixture](../../example/sdk/fixtures/record.json). All its supporting types
+and its [JSON fixture](../../example/sdk/fixtures/record.json). Models and conversions
 belong to `Resources/Records/Get/`; nested models are in `Dto/`.
+`Webhook/RecordPayload` describes the data envelope and reuses the response model.
 
 | Feature | Where it is visible |
 | --- | --- |
@@ -90,8 +93,12 @@ belong to `Resources/Records/Get/`; nested models are in `Dto/`.
 | Nested DTO graph | AuthorDto → ContactDto, including extras at both levels |
 | Default provider | Missing display_name is built from first_name/last_name; explicit input wins |
 | Typed collection | TagCollection validates TagDto items and provides first/count/mapToArray; missing tags becomes an empty collection |
-| ListShape and variants | related_ids requires integers; assets[*].value.type selects an image or document DTO |
-| No silent item loss | Unknown attachment variants fail; wrapper rank and extra variant fields survive in _extra |
+| ListShape | related_ids requires a list of integers; assets extracts each value and hydrates AttachmentDto |
+| DtoVariants on a type | One AttachmentDto map selects an image or document in the assets list, the single cover field and at the JSON root |
+| Typed fallback | Unknown type=audio becomes RawAttachmentDto with the entire node in raw; errors in known models do not become fallbacks |
+| Shape validation before a cast | InputShape(Object) checks localized_titles, then LocalizedTitlesCast checks language codes and string values |
+| Original webhook JSON | hydrateJson() preserves object/list distinctions; settings come from the same ClientConfig |
+| No silent item loss | Wrapper rank and extra fields of known variants survive in _extra; unknown variants remain in the list |
 | Dates and output timezone | DateTimeFrom validates DATE_ATOM; DateTimeTo serializes the same instant in UTC |
 | Enum | RecordStatus provides a typed value and title(); DtoSerialize selects the raw value for toArray() |
 | Custom bidirectional cast | ReadingTimeCast converts MM:SS ↔ seconds with bounds and format checks |
@@ -115,10 +122,11 @@ $renamed = $record->with(title: 'Обновлённая запись');
 
 `toArray()` is the declared DTO representation, not a byte-for-byte reconstruction
 of the response: input wrappers are projected into DTOs, names/formats follow output
-rules, and unknown values are retained in `_extra`. It is not automatically a request
-body. [HTTP serialization has its own rules](../reference/serialization/dto-output.md).
+rules, unknown fields are retained in `_extra`, and unknown attachments in `RawAttachmentDto::raw`.
+It is not automatically a request body. [HTTP serialization has its own rules](../reference/serialization/dto-output.md).
 The main README keeps a shortened model; [additional DTO examples](../guides/dto/showcase.md)
 cover other model styles and request serialization.
+For a walkthrough of the new mapping, see the [DTO catalog](dto-showcase.md#json-mapping).
 
 ## One SDK, three environments <a id="environments"></a>
 
@@ -145,8 +153,8 @@ transport and already-bound request overrides remain the application's choice.
 | [composer.json](../../example/sdk/composer.json) | Installation, PSR-4, and Laravel package discovery |
 | [config/records.php](../../example/sdk/config/records.php) | Defaults, environment, and optional publishing |
 | [bootstrap.php](../../example/sdk/bootstrap.php) | Autoloading the example namespace |
-| [run.php](../../example/sdk/run.php) | DTO graph, serialization, standalone, defaults and failures |
-| [demo/hydration-errors.php](../../example/sdk/demo/hydration-errors.php) | Table of twelve malformed responses and their diagnostics through the client |
+| [run.php](../../example/sdk/run.php) | DTO graph, serialization, standalone, webhook, defaults and failures |
+| [demo/hydration-errors.php](../../example/sdk/demo/hydration-errors.php) | Seventeen malformed bodies and their diagnostics through the client and JSON entry point |
 | [demo/output.php](../../example/sdk/demo/output.php) | Output helpers showing typed object access and default values |
 | [DemoClient](../../example/sdk/src/DemoClient.php) | The `records()` entry point |
 | [ClientConfigFactory](../../example/sdk/src/Config/ClientConfigFactory.php) | Shared runtime defaults and standalone config creation |
@@ -157,6 +165,9 @@ transport and already-bound request overrides remain the application's choice.
 | [AuthorDto](../../example/sdk/src/Resources/Records/Get/Dto/AuthorDto.php), [ContactDto](../../example/sdk/src/Resources/Records/Get/Dto/ContactDto.php) | Nested models, defaults and extras |
 | [TagDto](../../example/sdk/src/Resources/Records/Get/Dto/TagDto.php), [TagCollection](../../example/sdk/src/Resources/Records/Get/Dto/TagCollection.php) | Typed collection items and container |
 | [ImageAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/ImageAttachmentDto.php), [DocumentAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/DocumentAttachmentDto.php) | Discriminator variants, fixed types and inline Base64 |
+| [AttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/AttachmentDto.php), [RawAttachmentDto](../../example/sdk/src/Resources/Records/Get/Dto/RawAttachmentDto.php) | Shared variants map and preservation of unknown nodes |
+| [LocalizedTitlesCast](../../example/sdk/src/Resources/Records/Get/LocalizedTitlesCast.php) | Dictionary validation after InputShape |
+| [RecordPayload](../../example/sdk/src/Webhook/RecordPayload.php) | Webhook envelope using the same record model |
 | [RecordStatus](../../example/sdk/src/Resources/Records/Get/RecordStatus.php) | Backed enum with a readable title |
 | [ReadingTimeCast](../../example/sdk/src/Resources/Records/Get/ReadingTimeCast.php), [AuthorDisplayNameProvider](../../example/sdk/src/Resources/Records/Get/AuthorDisplayNameProvider.php) | Explicit custom conversion and derived default |
 | [RecordDto with an attribute](../../example/sdk/src/AttributeExample/RecordDto.php) | DTO creation through from() without a client or external rules |

@@ -2,9 +2,7 @@
 # Возможности DTO на одном примере <a id="section-1"></a>
 `CatalogItemDto` описывает товар: маппинг, defaults, преобразования, вложенность, коллекции, Base64-файл и исходящий JSON.
 
-[Входной JSON](#section-2) · [DTO](#section-3) · [Политика](#section-4) ·
-[Результат](#section-5) · [Сериализация](#section-6) · [Файл в DTO](#section-7) ·
-[Отправка](#section-8) · [Ошибки](#section-9) · [Другие варианты](#section-10).
+[Входной JSON](#section-2) · [DTO](#section-3) · [Политика](#section-4) · [Результат](#section-5) · [Сериализация](#section-6) · [Файл в DTO](#section-7) · [Отправка](#section-8) · [Ошибки](#section-9) · [Другие варианты](#section-10).
 
 Из checkout после `composer install`:
 
@@ -44,8 +42,7 @@ php docs/example/dto-showcase/run.php
 
 ## Декларация DTO <a id="section-3"></a>
 
-Полный [CatalogItemDto](../../../example/dto-showcase/src/CatalogItemDto.php): `AbstractDto` даёт `from()`, `toArray()`, `with()` и подходит для `Returns`.
-`AbstractResponseDto` добавляет `computed()`; [обычные PHP-классы](plain-models.md) также поддерживаются.
+Полный [CatalogItemDto](../../../example/dto-showcase/src/CatalogItemDto.php): `AbstractDto` даёт `from()`, `toArray()`, `with()` и подходит для `Returns`. `AbstractResponseDto` добавляет `computed()`; [обычные PHP-классы](plain-models.md) также поддерживаются.
 
 ```php
 declare(strict_types=1);
@@ -97,51 +94,64 @@ final readonly class CatalogItemDto extends AbstractDto
         #[To('product_id')]
         #[RequiredInput]
         public int $id,
+
         // Одно внешнее имя для чтения и записи.
         #[Map('vendor_code')]
         public string $sku,
+
         // Отсутствие и явный null разрешены контрактом вымышленного API.
         #[DefaultValue('Без названия', when: [ValueState::Missing, ValueState::Null])]
         public string $title,
+
         // Ключ обязателен, но его значение может быть null или пустой строкой.
         #[EmptyStringAsNull(blank: true)]
         public ?string $description,
+
         // Общая Strict-policy проверяет точный тип bool.
         public bool $available,
+
         // Вложенный путь можно развернуть в отдельное свойство DTO.
         #[From('metrics.rating')]
         public float $rating,
+
         // Вход содержит время с часовым поясом, исходящий формат — календарную дату.
         #[From('created_at')]
         #[To('created_at')]
         #[DateTimeFrom(format: DATE_ATOM, strictFormat: true)]
         #[DateTimeTo(format: 'Y-m-d', timezone: 'UTC')]
         public DateTimeImmutable $createdAt,
+
         // Строковое значение API превращается в backed enum.
         #[From('state')]
         #[To('state')]
         public ItemStatus $status,
+
         // Собственный cast читает "12.34" как 1234 и выполняет обратное преобразование.
         #[From('price')]
         #[To('price')]
         #[Cast(MinorUnitsCast::class)]
         public int $priceMinor,
+
         // Файл внутри JSON: вход допускает data URI, выход содержит чистый Base64.
         #[Map('manual_file')]
         #[Cast(DataUriBase64FileCast::class)]
         public Base64File $manual,
+
         // SellerDto — обычный PHP-класс; Nested создаёт отдельный вложенный объект.
         #[Nested(type: SellerDto::class)]
         public SellerDto $seller,
+
         // Элементы становятся DTO, контейнер проверяет их тип и даёт first()/count().
         #[Nested(type: TagDto::class)]
         public TagCollection $tags,
+
         // Shape проверяет каждый элемент списка; PHPDoc нужен для IDE.
         #[From('related_ids')]
         #[To('related_ids')]
         #[RequiredInput]
         #[Shape(new ListShape(ScalarType::Int))]
         public array $relatedIds,
+
         // Каждый value становится DTO варианта; соседний rank остаётся в extras.
         #[From('assets')]
         #[To('assets')]
@@ -151,12 +161,15 @@ final readonly class CatalogItemDto extends AbstractDto
             'video' => VideoDto::class,
         ], unknown: UnknownVariant::Error), each: 'value'))]
         public array $media,
+
         // Provider вычисляет отсутствующее значение по исходным данным DTO.
         #[DefaultValue(provider: DisplayNameProvider::class)]
         public string $displayName,
+
         // Отсутствие разрешено; исходный null запрещён.
         #[ForbidExplicitNull]
         public ?int $stock = null,
+
         // Непрочитанные поля сохраняются здесь и исключаются из запросов клиента.
         #[Extras]
         public array $_extra = [],
@@ -172,8 +185,7 @@ final readonly class CatalogItemDto extends AbstractDto
 
 ## Общая политика клиента <a id="section-4"></a>
 
-[CatalogHydration](../../../example/dto-showcase/src/CatalogHydration.php) задаёт общий Strict.
-Все декларации полей, включая вложенный receiver, находятся на моделях; реестр DTO не нужен.
+[CatalogHydration](../../../example/dto-showcase/src/CatalogHydration.php) задаёт общий Strict. Все декларации полей, включая вложенный receiver, находятся на моделях; реестр DTO не нужен.
 
 ```php
 declare(strict_types=1);
@@ -193,14 +205,9 @@ final class CatalogHydration
 }
 ```
 
-В [run.php](../../../example/dto-showcase/run.php) `$source` содержит JSON, `$hydration = CatalogHydration::create()`.
-Standalone: `Hydrator::forConfig($hydration)->hydrate($source, CatalogItemDto::class)`.
-Тот же блок передаётся в `ClientConfig(hydration: $hydration, ...)`; [запрос](../../../example/dto-showcase/src/GetCatalogItemRequest.php)
-объявляет `Returns(CatalogItemDto::class, unwrap: 'data')`.
-`CatalogItemDto::from()` читает атрибуты, но общую политику клиента не наследует.
+В [run.php](../../../example/dto-showcase/run.php) `$source` содержит JSON, `$hydration = CatalogHydration::create()`. Standalone: `Hydrator::forConfig($hydration)->hydrate($source, CatalogItemDto::class)`. Тот же блок передаётся в `ClientConfig(hydration: $hydration, ...)`; [запрос](../../../example/dto-showcase/src/GetCatalogItemRequest.php) объявляет `Returns(CatalogItemDto::class, unwrap: 'data')`. `CatalogItemDto::from()` читает атрибуты, но общую политику клиента не наследует.
 
-[Внешние правила](plain-models.md) полезны для чужих моделей. Не дублируйте ими
-входной атрибут того же поля: это [конфликт конфигурации](../../reference/dto/field-rules.md#section-3).
+[Внешние правила](plain-models.md) полезны для чужих моделей. Не дублируйте ими входной атрибут того же поля: это [конфликт конфигурации](../../reference/dto/field-rules.md#section-3).
 
 ## Что получит приложение <a id="section-5"></a>
 
@@ -235,16 +242,11 @@ Standalone: `Hydrator::forConfig($hydration)->hydrate($source, CatalogItemDto::c
 
 ## Атрибуты сериализации <a id="section-6"></a>
 
-To/Map задают имена, DateTimeTo и Cast — представление значений; DtoSerialize настраивает dump.
-[Полный контракт DX/wire](../../reference/serialization/dto-output.md); результат обоих путей — в таблице отправки ниже.
+To/Map задают имена, DateTimeTo и Cast — представление значений; DtoSerialize настраивает dump. [Полный контракт DX/wire](../../reference/serialization/dto-output.md); результат обоих путей — в таблице отправки ниже.
 
 ## Файл в поле DTO <a id="section-7"></a>
 
-`manual` выше — инструкция внутри JSON. `DataUriBase64FileCast` принимает чистый Base64 и data URI:
-`$item->manual->content()` даёт `"SDK manual"`; `$item->manual->saveTo($path)` сохраняет эти байты в указанный файл.
-При `toArray()` и отправке Cast возвращает `manual_file: "U0RLIG1hbnVhbA=="` без MIME-префикса data URI.
-Base64 материализуется в памяти. Потоковые upload/download показаны в [файловом рецепте](../recipes/files.md).
-[Контракт Base64File и списки файлов](../../reference/files/downloads.md#section-8).
+`manual` выше — инструкция внутри JSON. `DataUriBase64FileCast` принимает чистый Base64 и data URI: `$item->manual->content()` даёт `"SDK manual"`; `$item->manual->saveTo($path)` сохраняет эти байты в указанный файл. При `toArray()` и отправке Cast возвращает `manual_file: "U0RLIG1hbnVhbA=="` без MIME-префикса data URI. Base64 материализуется в памяти. Потоковые upload/download показаны в [файловом рецепте](../recipes/files.md). [Контракт Base64File и списки файлов](../../reference/files/downloads.md#section-8).
 
 ## Что уйдёт в запрос <a id="section-8"></a>
 
@@ -259,14 +261,11 @@ Base64 материализуется в памяти. Потоковые upload
 | `_extra`, включая seller | Обычное свойство с остатком | Исключено атрибутами Extras на обеих глубинах |
 | `media` | Массив объектов под именем assets | Массив без входной обёртки value и без rank |
 
-Входной `each` не восстанавливает обёртку; `toArray()` не гарантирует побайтовый round-trip JSON.
-Настройки [DX и wire](../../reference/serialization/dto-output.md) выбираются по контракту API.
-Исключение receiver зависит от декларации класса, включая DTO, созданные вручную: [границы casts и представлений](../../reference/serialization/receiver-output.md).
+Входной `each` не восстанавливает обёртку; `toArray()` не гарантирует побайтовый round-trip JSON. Настройки [DX и wire](../../reference/serialization/dto-output.md) выбираются по контракту API. Исключение receiver зависит от декларации класса, включая DTO, созданные вручную: [границы casts и представлений](../../reference/serialization/receiver-output.md).
 
 ## Как выглядят ошибки <a id="section-9"></a>
 
-`run.php` отдельно гидратирует десять повреждённых вариантов. `path` указывает свойство DTO,
-`sourcePath` — JSON Pointer во входе standalone; при Returns внешний unwrap добавляет `/data`.
+`run.php` отдельно гидратирует десять повреждённых вариантов. `path` указывает свойство DTO, `sourcePath` — JSON Pointer во входе standalone; при Returns внешний unwrap добавляет `/data`.
 
 | Нарушение | reason | path | sourcePath |
 | --- | --- | --- | --- |
@@ -281,8 +280,7 @@ Base64 материализуется в памяти. Потоковые upload
 | Дата не соответствует формату | invalid_datetime | createdAt | /created_at |
 | Цена `"12,34"` | invalid_price (свой cast) | priceMinor | /price (boundary) |
 
-Boundary у cast указывает вход преобразования; для computed и непрозрачных преобразований точный источник может быть недоступен.
-[Диагностика и безопасный лог](../../reference/dto/diagnostics.md) описывают границы точности.
+Boundary у cast указывает вход преобразования; для computed и непрозрачных преобразований точный источник может быть недоступен. [Диагностика и безопасный лог](../../reference/dto/diagnostics.md) описывают границы точности.
 
 ## Как выбрать другой приём <a id="section-10"></a>
 
@@ -292,7 +290,7 @@ Boundary у cast указывает вход преобразования; дл�
 | Одинаковые имена, даты и casts во многих моделях | [NamingStrategy и профиль гидратации](../../reference/dto/profiles.md); профиль — альтернатива DtoRules для этого класса |
 | Правила вложенного списка удобнее хранить в DTO | [Nested с each/discriminator](../../reference/dto/shapes.md); не совмещать с FieldRule того же свойства |
 | Нужны словари, вложенные списки, union или допустимый null элемента | [ValueShape и строгие скаляры](../../reference/dto/scalars.md), [формы](../../reference/dto/shapes.md); PHPDoc сам не валидирует элементы |
-| Неизвестные варианты надо сохранять или пропускать | [KeepRaw / Skip](../../reference/dto/variants.md); KeepRaw требует контейнера, допускающего raw-значения |
+| Неизвестные варианты надо сохранять или пропускать | [Типизированный fallback в учебном SDK](../../examples/dto-showcase.md#json-mapping) или [KeepRaw / Skip](../../reference/dto/variants.md); KeepRaw требует контейнера для raw-значений |
 | Cast/provider сам создаёт вложенные DTO | [HydrationContext](../../reference/dto/scope.md) передаёт текущие правила; простой Hydrator::default() их теряет |
 | Default зависит от контекста или нужна проверка найденного значения | [DefaultValue provider и состояния](../../reference/dto/defaults.md#section-9); один provider может обработать несколько состояний |
 | Нужны прикладные правила и описание смысла поля | [Validate, Label, About](../../reference/attributes/hydration.md); подключение валидатора — [отдельный шаг](../../reference/client/validation.md) |

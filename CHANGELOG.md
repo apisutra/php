@@ -1,6 +1,16 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.3.1
+
+- Update the runnable Records SDK to use a shared DtoVariants declaration for list,
+  single-field and root inputs, with a typed fallback preserving unknown attachments.
+- Demonstrate webhook hydration from original JSON with the HTTP client's configuration,
+  and dictionary shape validation before a custom cast. Compare diagnostics for seventeen
+  invalid bodies through HTTP and the JSON entry point.
+- Expand the English and Russian DTO catalog, SDK walkthrough and quickstart;
+  improve attributed-property spacing in the DTO examples. No core runtime API changes.
+
 ## 0.3.0
 
 - Add public `Hydrator::hydrateJson()` and `#[InputShape(ContainerShape::Object)]`

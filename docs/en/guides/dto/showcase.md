@@ -2,9 +2,7 @@
 # DTO capabilities in one example <a id="section-1"></a>
 `CatalogItemDto` describes a product: mapping, defaults, transformations, nesting, collections, a Base64 file, and outgoing JSON.
 
-[Input JSON](#section-2) · [DTO](#section-3) · [Policy](#section-4) ·
-[Result](#section-5) · [Serialization](#section-6) · [File in a DTO](#section-7) ·
-[Dispatch](#section-8) · [Errors](#section-9) · [Other options](#section-10).
+[Input JSON](#section-2) · [DTO](#section-3) · [Policy](#section-4) · [Result](#section-5) · [Serialization](#section-6) · [File in a DTO](#section-7) · [Dispatch](#section-8) · [Errors](#section-9) · [Other options](#section-10).
 
 From a checkout after `composer install`:
 
@@ -44,8 +42,7 @@ This is the [`data` field](../../../example/dto-showcase/fixtures/item.json) of 
 
 ## DTO declaration <a id="section-3"></a>
 
-Complete [CatalogItemDto](../../../example/dto-showcase/src/CatalogItemDto.php): `AbstractDto` provides `from()`, `toArray()`, `with()`, and works with `Returns`.
-`AbstractResponseDto` adds `computed()`; [ordinary PHP classes](plain-models.md) are also supported.
+Complete [CatalogItemDto](../../../example/dto-showcase/src/CatalogItemDto.php): `AbstractDto` provides `from()`, `toArray()`, `with()`, and works with `Returns`. `AbstractResponseDto` adds `computed()`; [ordinary PHP classes](plain-models.md) are also supported.
 
 ```php
 declare(strict_types=1);
@@ -97,51 +94,64 @@ final readonly class CatalogItemDto extends AbstractDto
         #[To('product_id')]
         #[RequiredInput]
         public int $id,
+
         // One external name for both reading and writing.
         #[Map('vendor_code')]
         public string $sku,
+
         // Missing input and explicit null are allowed by the fictional API contract.
         #[DefaultValue('Без названия', when: [ValueState::Missing, ValueState::Null])]
         public string $title,
+
         // The key is required, but its value may be null or an empty string.
         #[EmptyStringAsNull(blank: true)]
         public ?string $description,
+
         // The shared Strict policy checks the exact bool type.
         public bool $available,
+
         // A nested path can be flattened into a separate DTO property.
         #[From('metrics.rating')]
         public float $rating,
+
         // Input contains a time with a timezone; the output format is a calendar date.
         #[From('created_at')]
         #[To('created_at')]
         #[DateTimeFrom(format: DATE_ATOM, strictFormat: true)]
         #[DateTimeTo(format: 'Y-m-d', timezone: 'UTC')]
         public DateTimeImmutable $createdAt,
+
         // The API string becomes a backed enum.
         #[From('state')]
         #[To('state')]
         public ItemStatus $status,
+
         // A custom cast reads "12.34" as 1234 and performs the reverse transformation.
         #[From('price')]
         #[To('price')]
         #[Cast(MinorUnitsCast::class)]
         public int $priceMinor,
+
         // File inside JSON: input accepts a data URI; output contains plain Base64.
         #[Map('manual_file')]
         #[Cast(DataUriBase64FileCast::class)]
         public Base64File $manual,
+
         // SellerDto is an ordinary PHP class; Nested creates a separate nested object.
         #[Nested(type: SellerDto::class)]
         public SellerDto $seller,
+
         // Elements become DTOs; the container checks their type and provides first()/count().
         #[Nested(type: TagDto::class)]
         public TagCollection $tags,
+
         // Shape checks every list element; PHPDoc is for the IDE.
         #[From('related_ids')]
         #[To('related_ids')]
         #[RequiredInput]
         #[Shape(new ListShape(ScalarType::Int))]
         public array $relatedIds,
+
         // Each value becomes a variant DTO; its sibling rank remains in extras.
         #[From('assets')]
         #[To('assets')]
@@ -151,12 +161,15 @@ final readonly class CatalogItemDto extends AbstractDto
             'video' => VideoDto::class,
         ], unknown: UnknownVariant::Error), each: 'value'))]
         public array $media,
+
         // The provider computes a missing value from the original DTO data.
         #[DefaultValue(provider: DisplayNameProvider::class)]
         public string $displayName,
+
         // Missing input is allowed; an original null is forbidden.
         #[ForbidExplicitNull]
         public ?int $stock = null,
+
         // Unread fields are retained here and excluded from client requests.
         #[Extras]
         public array $_extra = [],
@@ -172,8 +185,7 @@ Supporting types: [SellerDto](../../../example/dto-showcase/src/SellerDto.php) i
 
 ## Shared client policy <a id="section-4"></a>
 
-[CatalogHydration](../../../example/dto-showcase/src/CatalogHydration.php) sets shared Strict behavior.
-All field declarations, including the nested receiver, live on the models; no DTO registry is needed.
+[CatalogHydration](../../../example/dto-showcase/src/CatalogHydration.php) sets shared Strict behavior. All field declarations, including the nested receiver, live on the models; no DTO registry is needed.
 
 ```php
 declare(strict_types=1);
@@ -193,14 +205,9 @@ final class CatalogHydration
 }
 ```
 
-In [run.php](../../../example/dto-showcase/run.php), `$source` contains JSON and `$hydration = CatalogHydration::create()`.
-Standalone: `Hydrator::forConfig($hydration)->hydrate($source, CatalogItemDto::class)`.
-The same block is passed to `ClientConfig(hydration: $hydration, ...)`; the [request](../../../example/dto-showcase/src/GetCatalogItemRequest.php)
-declares `Returns(CatalogItemDto::class, unwrap: 'data')`.
-`CatalogItemDto::from()` reads attributes but does not inherit the shared client policy.
+In [run.php](../../../example/dto-showcase/run.php), `$source` contains JSON and `$hydration = CatalogHydration::create()`. Standalone: `Hydrator::forConfig($hydration)->hydrate($source, CatalogItemDto::class)`. The same block is passed to `ClientConfig(hydration: $hydration, ...)`; the [request](../../../example/dto-showcase/src/GetCatalogItemRequest.php) declares `Returns(CatalogItemDto::class, unwrap: 'data')`. `CatalogItemDto::from()` reads attributes but does not inherit the shared client policy.
 
-[External rules](plain-models.md) are useful for third-party models. Do not use them
-to duplicate an input attribute on the same field: that is a [configuration conflict](../../reference/dto/field-rules.md#section-3).
+[External rules](plain-models.md) are useful for third-party models. Do not use them to duplicate an input attribute on the same field: that is a [configuration conflict](../../reference/dto/field-rules.md#section-3).
 
 ## What the application receives <a id="section-5"></a>
 
@@ -235,16 +242,11 @@ The seller remainder belongs to SellerDto; the discriminator is read by ImageDto
 
 ## Serialization attributes <a id="section-6"></a>
 
-To/Map set names, DateTimeTo and Cast set value representations, and DtoSerialize configures the dump.
-See the [complete DX/wire contract](../../reference/serialization/dto-output.md); both paths' results appear in the dispatch table below.
+To/Map set names, DateTimeTo and Cast set value representations, and DtoSerialize configures the dump. See the [complete DX/wire contract](../../reference/serialization/dto-output.md); both paths' results appear in the dispatch table below.
 
 ## A file in a DTO field <a id="section-7"></a>
 
-The `manual` above is a manual embedded in JSON. `DataUriBase64FileCast` accepts plain Base64 and data URIs:
-`$item->manual->content()` returns `"SDK manual"`; `$item->manual->saveTo($path)` saves those bytes to the specified file.
-During `toArray()` and dispatch, Cast returns `manual_file: "U0RLIG1hbnVhbA=="` without the data URI MIME prefix.
-Base64 is materialized in memory. Streaming uploads/downloads are shown in the [file recipe](../recipes/files.md).
-See the [Base64File contract and file lists](../../reference/files/downloads.md#section-8).
+The `manual` above is a manual embedded in JSON. `DataUriBase64FileCast` accepts plain Base64 and data URIs: `$item->manual->content()` returns `"SDK manual"`; `$item->manual->saveTo($path)` saves those bytes to the specified file. During `toArray()` and dispatch, Cast returns `manual_file: "U0RLIG1hbnVhbA=="` without the data URI MIME prefix. Base64 is materialized in memory. Streaming uploads/downloads are shown in the [file recipe](../recipes/files.md). See the [Base64File contract and file lists](../../reference/files/downloads.md#section-8).
 
 ## What is sent in the request <a id="section-8"></a>
 
@@ -259,14 +261,11 @@ See the [Base64File contract and file lists](../../reference/files/downloads.md#
 | `_extra`, including seller | An ordinary property containing the remainder | Excluded by Extras attributes at both depths |
 | `media` | An array of objects under assets | An array without the input value wrapper or rank |
 
-Input `each` does not restore the wrapper; `toArray()` does not guarantee a byte-for-byte JSON round trip.
-Choose [DX and wire](../../reference/serialization/dto-output.md) settings according to the API contract.
-Receiver exclusion depends on the class declaration, including manually created DTOs: see [cast and representation boundaries](../../reference/serialization/receiver-output.md).
+Input `each` does not restore the wrapper; `toArray()` does not guarantee a byte-for-byte JSON round trip. Choose [DX and wire](../../reference/serialization/dto-output.md) settings according to the API contract. Receiver exclusion depends on the class declaration, including manually created DTOs: see [cast and representation boundaries](../../reference/serialization/receiver-output.md).
 
 ## What errors look like <a id="section-9"></a>
 
-`run.php` separately hydrates ten invalid variants. `path` identifies the DTO property;
-`sourcePath` is a JSON Pointer into standalone input; with Returns, the external unwrap adds `/data`.
+`run.php` separately hydrates ten invalid variants. `path` identifies the DTO property; `sourcePath` is a JSON Pointer into standalone input; with Returns, the external unwrap adds `/data`.
 
 | Violation | reason | path | sourcePath |
 | --- | --- | --- | --- |
@@ -281,8 +280,7 @@ Receiver exclusion depends on the class declaration, including manually created 
 | Date does not match the format | invalid_datetime | createdAt | /created_at |
 | Price `"12,34"` | invalid_price (custom cast) | priceMinor | /price (boundary) |
 
-A cast boundary points to transformation input; the precise source may be unavailable for computed or opaque transformations.
-[Diagnostics and safe logging](../../reference/dto/diagnostics.md) describes precision boundaries.
+A cast boundary points to transformation input; the precise source may be unavailable for computed or opaque transformations. [Diagnostics and safe logging](../../reference/dto/diagnostics.md) describes precision boundaries.
 
 ## Choosing another approach <a id="section-10"></a>
 
@@ -292,7 +290,7 @@ A cast boundary points to transformation input; the precise source may be unavai
 | Shared names, dates, and casts across many models | [NamingStrategy and a hydration profile](../../reference/dto/profiles.md); the profile is an alternative to DtoRules for that class |
 | Nested-list rules are more convenient on the DTO | [Nested with each/discriminator](../../reference/dto/shapes.md); do not combine with FieldRule on the same property |
 | Dictionaries, nested lists, unions, or nullable elements are needed | [ValueShape and strict scalars](../../reference/dto/scalars.md), [shapes](../../reference/dto/shapes.md); PHPDoc alone does not validate elements |
-| Unknown variants must be retained or skipped | [KeepRaw / Skip](../../reference/dto/variants.md); KeepRaw requires a container that accepts raw values |
+| Unknown variants must be retained or skipped | [Typed fallback in the example SDK](../../examples/dto-showcase.md#json-mapping) or [KeepRaw / Skip](../../reference/dto/variants.md); KeepRaw requires a container for raw values |
 | A cast/provider creates nested DTOs itself | [HydrationContext](../../reference/dto/scope.md) passes current rules; ordinary Hydrator::default() loses them |
 | A default depends on context or a found value needs checking | [DefaultValue providers and states](../../reference/dto/defaults.md#section-9); one provider can handle multiple states |
 | Application rules and field descriptions are needed | [Validate, Label, About](../../reference/attributes/hydration.md); validator setup is a [separate step](../../reference/client/validation.md) |

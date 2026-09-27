@@ -22,8 +22,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "7316055ccd51d51415b0f5893bc15b451c82fe2de9ed54d0bcf1c5f186fb3f1c",
-          "translation_sha256": "c654907aa85b6356a9cf74691890511ed50155ff0c9649fb376f78e2087cb147"
+          "source_sha256": "e8d56a54294ca103e4b35382acb06cad3bf3aae0d75336ebaa0308d2f2bcfdbc",
+          "translation_sha256": "152264a6d8dde8361277d3e0e69b10a8da2c8e426a5051eb902e66a3be1a4ca9"
         }
       }
     },
@@ -322,8 +322,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "3090f7bb5dc5ca992ac4c18286c8c42cf10baf5775abab1b9952c00582beff42",
-          "translation_sha256": "73a3e3db3bedb2121d832c90c78547c7f80bf8f07fed222ca7afef44f1516ec0"
+          "source_sha256": "bac192b016b380d2ae412b295a8cc2bf368936777bf67297bdf21d2e844d7308",
+          "translation_sha256": "d1bf501843ed17be5b384dbb005b262e89eaa587f532d98a08da348935e57a52"
         }
       }
     },
@@ -382,8 +382,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "80df182c93d146f369149805624fe5d79114d8663d4a100e96244b81c8cabaca",
-          "translation_sha256": "1bab32063f0ed7269b1106fdf710ead9b5f5f8af735b6deefd3fa8dc4fb19b05"
+          "source_sha256": "ca48c22cb263584843a96945a4bcd5563bd9370ae66d1de99bf8d3cabeeb62cd",
+          "translation_sha256": "1a449f891c4b896ae9c5f22c09fddda6bf4b8e99b3280ae59f366e558b799bae"
         }
       }
     },
@@ -697,8 +697,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "ac9f02abef2414e5de1dd954c82a72e4d0adcd03d71cba9d53bcf5ff01ab7c2e",
-          "translation_sha256": "f39aae70946539059c2ae92efb49436e12d97a76677ca6e2c3a9631eb3e32213"
+          "source_sha256": "07768e458152b1f8015a20ea30f373e2a79eaad023c7c462f026a7d41a709aa2",
+          "translation_sha256": "1f5e3a9aedeccfe0d3947d81c7fe6a01b4ef56b92bc5eb7eb4394a4cfafa6689"
         }
       }
     },
@@ -742,8 +742,8 @@
       },
       "reviewed": {
         "ru": {
-          "source_sha256": "7ea2611ba215db491325111dcf211bfb838a772f086a8bb8f72571f97e63004f",
-          "translation_sha256": "ebc75f19c0ea6b179f565f8943a9ec81f3f6a09f7049760aba0c9f78ffd63b84"
+          "source_sha256": "e830289213e21ee7a6a4e8ca706dca41104a03c43286e604cef80eed3ce6ab3a",
+          "translation_sha256": "7917fa2e001a5a320687e932b7cbdab32de3919dcf908818a301b9f92a393dc5"
         }
       }
     },
