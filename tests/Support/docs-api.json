@@ -861,19 +861,19 @@
               "variadic": false
             },
             "discriminatorMode": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedDiscriminatorMode",
+              "type": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
               "optional": true,
               "variadic": false
             },
             "unknownVariant": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedUnknownVariant",
+              "type": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant|string",
               "optional": true,
               "variadic": false
             }
           }
         }
       },
-      "constructor_source": "Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, NestedDiscriminatorMode $discriminatorMode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknownVariant = NestedUnknownVariant::KeepRaw)",
+      "constructor_source": "Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, DiscriminatorMode $discriminatorMode = DiscriminatorMode::Value, UnknownVariant|string $unknownVariant = UnknownVariant::KeepRaw)",
       "source": "src/Attributes/DataTransfer/Nested.php",
       "signature_doc": "reference/attributes/hydration"
     },
@@ -4133,13 +4133,13 @@
       ]
     },
     {
-      "class": "ApiSutra\\Enums\\DataTransfer\\NestedDiscriminatorMode",
+      "class": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
       "docs": [
         "reference/dto/shapes"
       ]
     },
     {
-      "class": "ApiSutra\\Enums\\DataTransfer\\NestedUnknownVariant",
+      "class": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant",
       "docs": [
         "reference/dto/shapes"
       ]
@@ -4972,7 +4972,8 @@
         "reference/dto/field-rules",
         "reference/dto/shapes",
         "guides/dto/showcase",
-        "reference/dto/hydrators"
+        "reference/dto/hydrators",
+        "reference/dto/configuration"
       ],
       "methods": {
         "__construct": {
@@ -5080,6 +5081,21 @@
             "localization": {
               "type": "ApiSutra\\Config\\LocalizationConfig",
               "optional": true,
+              "variadic": false
+            }
+          }
+        },
+        "hydrateJson": {
+          "return": "object",
+          "parameters": {
+            "json": {
+              "type": "string",
+              "optional": false,
+              "variadic": false
+            },
+            "dtoClass": {
+              "type": "string",
+              "optional": false,
               "variadic": false
             }
           }
@@ -5246,7 +5262,7 @@
           "return": "self",
           "parameters": {
             "shape": {
-              "type": "ApiSutra\\Serialization\\Rules\\InputShape",
+              "type": "ApiSutra\\Serialization\\Rules\\ContainerShape",
               "optional": false,
               "variadic": false
             }
@@ -5302,7 +5318,8 @@
       "docs": [
         "reference/dto/field-rules",
         "guides/dto/showcase",
-        "guides/client/showcase"
+        "guides/client/showcase",
+        "reference/dto/variants"
       ],
       "methods": {
         "create": {
@@ -5340,6 +5357,36 @@
             "class": {
               "type": "string",
               "optional": false,
+              "variadic": false
+            }
+          }
+        },
+        "withVariants": {
+          "return": "self",
+          "parameters": {
+            "type": {
+              "type": "string",
+              "optional": false,
+              "variadic": false
+            },
+            "discriminator": {
+              "type": "string",
+              "optional": false,
+              "variadic": false
+            },
+            "map": {
+              "type": "array",
+              "optional": false,
+              "variadic": false
+            },
+            "mode": {
+              "type": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
+              "optional": true,
+              "variadic": false
+            },
+            "unknown": {
+              "type": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant|string",
+              "optional": true,
               "variadic": false
             }
           }
@@ -5399,7 +5446,7 @@
       }
     },
     {
-      "class": "ApiSutra\\Serialization\\Rules\\InputShape",
+      "class": "ApiSutra\\Serialization\\Rules\\ContainerShape",
       "docs": [
         "reference/dto/field-rules"
       ],
@@ -5675,12 +5722,12 @@
               "variadic": false
             },
             "mode": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedDiscriminatorMode",
+              "type": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
               "optional": true,
               "variadic": false
             },
             "unknown": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedUnknownVariant",
+              "type": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant|string",
               "optional": true,
               "variadic": false
             }
@@ -6143,19 +6190,19 @@
               "variadic": false
             },
             "mode": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedDiscriminatorMode",
+              "type": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
               "optional": true,
               "variadic": false
             },
             "unknown": {
-              "type": "ApiSutra\\Enums\\DataTransfer\\NestedUnknownVariant",
+              "type": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant|string",
               "optional": true,
               "variadic": false
             }
           }
         }
       },
-      "constructor_source": "VariantsShape(string $discriminator, array $map, NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw)",
+      "constructor_source": "VariantsShape(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant|string $unknown = UnknownVariant::KeepRaw)",
       "source": "src/Serialization/Shapes/VariantsShape.php",
       "signature_doc": "reference/dto/declarations"
     },
@@ -7304,6 +7351,64 @@
           }
         }
       }
+    },
+    {
+      "class": "ApiSutra\\Attributes\\DataTransfer\\InputShape",
+      "docs": [
+        "reference/attributes/hydration"
+      ],
+      "methods": {
+        "__construct": {
+          "return": "",
+          "parameters": {
+            "value": {
+              "type": "ApiSutra\\Serialization\\Rules\\ContainerShape",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        }
+      },
+      "constructor_source": "InputShape(ContainerShape $value)",
+      "source": "src/Attributes/DataTransfer/InputShape.php",
+      "signature_doc": "reference/attributes/hydration"
+    },
+    {
+      "class": "ApiSutra\\Attributes\\DataTransfer\\DtoVariants",
+      "docs": [
+        "reference/attributes/hydration",
+        "reference/dto/variants"
+      ],
+      "methods": {
+        "__construct": {
+          "return": "",
+          "parameters": {
+            "discriminator": {
+              "type": "string",
+              "optional": false,
+              "variadic": false
+            },
+            "map": {
+              "type": "array",
+              "optional": false,
+              "variadic": false
+            },
+            "mode": {
+              "type": "ApiSutra\\Enums\\DataTransfer\\DiscriminatorMode",
+              "optional": true,
+              "variadic": false
+            },
+            "unknown": {
+              "type": "ApiSutra\\Enums\\DataTransfer\\UnknownVariant|string",
+              "optional": true,
+              "variadic": false
+            }
+          }
+        }
+      },
+      "constructor_source": "DtoVariants(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant|string $unknown = UnknownVariant::Error)",
+      "source": "src/Attributes/DataTransfer/DtoVariants.php",
+      "signature_doc": "reference/attributes/hydration"
     }
   ]
 }

@@ -19,19 +19,27 @@ abstract readonly class AbstractTypedCollection extends AbstractCollection
     abstract protected static function itemClass(): string;
 
     /**
-     * @param array<int, mixed> $items
+     * @internal Статическая декларация для проверки схемы без создания коллекции.
+     * @return class-string<T>
      */
-    protected function validateItems(array $items): void
+    final public static function declaredItemClass(): string
     {
         $class = static::itemClass();
         if ($class === '') {
             throw new ConfigurationException(new Message('collections.collection_item_type_is_not_specified'));
         }
 
-        if (!class_exists($class) && !enum_exists($class)) {
+        if (!class_exists($class) && !interface_exists($class) && !enum_exists($class)) {
             throw new ConfigurationException(new Message('collections.collection_item_class_not_found', ['class' => $class]));
         }
 
+        return $class;
+    }
+
+    /** @param array<int, mixed> $items */
+    protected function validateItems(array $items): void
+    {
+        $class = static::declaredItemClass();
         foreach ($items as $item) {
             if (!$item instanceof $class) {
                 throw new ConfigurationException(new Message('collections.invalid_collection_item_type', ['class' => $class]));

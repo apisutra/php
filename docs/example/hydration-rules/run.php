@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Example\HydrationRules;
 
+use RuntimeException;
 use ApiSutra\Config\ClientConfig;
 use ApiSutra\Config\HydrationConfig;
 use ApiSutra\Serialization\Hydrator;
@@ -37,6 +38,13 @@ $source = [
     'next_feature' => null,
 ];
 $dto = Hydrator::forRules($rules)->hydrate($source, ReportDto::class);
+// Webhook передаёт исходный JSON: форма контейнеров проверяется теми же правилами.
+$jsonDto = Hydrator::forConfig($config->hydration)->hydrateJson(<<<'JSON'
+{"owner":{"record_id":7,"future":false},"rows":[{"value":{"record_id":8},"meta":{"revision":2}}],"ids":[1,2],"next_feature":null}
+JSON, ReportDto::class);
+if ($jsonDto != $dto) {
+    throw new RuntimeException('JSON и PHP-вход дали разные DTO');
+}
 // owner.id = 7, owner._extra = ['future' => false], items[0].id = 8, count = null.
 // _extra содержит next_feature и остаток rows с meta (форма описана ниже).
 

@@ -1,6 +1,8 @@
 <!-- languages --> <a href="../../../en/reference/execution/pagination.md">English</a> · <a href="pagination.md">Русский</a> <!-- /languages -->
 # Пагинация <a id="section-1"></a>
 
+itemsType принимает [объявленные варианты](../dto/variants.md#type-variants): элемент становится известной моделью или типизированным fallback при последовательном и конкурентном обходе.
+
 Дефолтные правила пагинации в `ClientConfig::paginationRule`.
 
 ## Базовая настройка <a id="section-2"></a>

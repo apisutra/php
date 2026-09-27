@@ -7,6 +7,7 @@ namespace ApiSutra\Serialization;
 use ApiSutra\Localization\Message;
 use ApiSutra\Attributes\DataTransfer\Nested;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
+use ApiSutra\Serialization\Hydration\DtoTargetCompiler;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -16,6 +17,9 @@ use Traversable;
 /** @internal Выбирает одиночный DTO; null сохраняет обработку коллекции. */
 final readonly class NestedObjectTypeResolver
 {
+    public function __construct(private DtoTargetCompiler $targets = new DtoTargetCompiler())
+    {
+    }
     /** @return class-string|null */
     public function resolve(Nested $nested, ReflectionProperty $property): ?string
     {
@@ -93,9 +97,7 @@ final readonly class NestedObjectTypeResolver
 
     private function assertAvailable(string $type): void
     {
-        if (!class_exists($type) || (new ReflectionClass($type))->isAbstract() || enum_exists($type)) {
-            throw new ConfigurationException(new Message('serialization.nested_class_is_unavailable_for_hydration', ['type' => $type]));
-        }
+        $this->targets->validate($type);
     }
 
     /** @param class-string $type */

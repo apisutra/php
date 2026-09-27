@@ -6,13 +6,11 @@ namespace ApiSutra\Serialization\Rules;
 
 use ApiSutra\Localization\Message;
 use ApiSutra\Collections\AbstractCollection;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Serialization\Variants\VariantSelector;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Support\ArrayPath;
 use ApiSutra\Serialization\Input\InputShapeGuard;
-use Stringable;
 
 /** @internal Преобразует описанную форму; состояние источника принадлежит текущему вызову. */
 final readonly class RuleValueProcessor
@@ -59,17 +57,13 @@ final readonly class RuleValueProcessor
         if ($shape->kind === 'list') {
             return $this->list($value, $shape, $policy, $scope, $resultOnly, $readyDto);
         }
-        if ($readyDto && is_object($value)) {
-            foreach ($shape->map as $class) {
-                if ($value instanceof $class) {
-                    return new ShapeResult($value, SourceConsumption::all());
-                }
-            }
+        if ($readyDto && is_object($value) && $shape->variants->accepts($value)) {
+            return new ShapeResult($value, SourceConsumption::all());
         }
         return $this->variant($value, $shape, $scope, $resultOnly);
     }
 
-    public function assertInput(mixed $value, InputShape $shape, bool $normalizeKeys = false, ?InputShape $source = null, bool $emptyListAsObject = false): void
+    public function assertInput(mixed $value, ContainerShape $shape, bool $normalizeKeys = false, ?ContainerShape $source = null, bool $emptyListAsObject = false): void
     {
         InputShapeGuard::assert($value, $shape, $normalizeKeys, $source, $emptyListAsObject);
     }
@@ -83,7 +77,7 @@ final readonly class RuleValueProcessor
         bool $readyDto,
     ): ShapeResult {
         $input = $resultOnly && $value instanceof AbstractCollection ? $value->all() : $value;
-        $this->assertInput($input, InputShape::List, !$resultOnly && $shape->normalizeKeys, $resultOnly ? null : $scope->shape($input));
+        $this->assertInput($input, ContainerShape::List, !$resultOnly && $shape->normalizeKeys, $resultOnly ? null : $scope->shape($input));
         return $scope->node($input, function () use ($input, $value, $shape, $policy, $scope, $resultOnly, $readyDto): ShapeResult {
             $result = [];
             $consumed = new SourceConsumption();
@@ -155,48 +149,19 @@ final readonly class RuleValueProcessor
 
     private function variant(mixed $value, ValueShape $shape, HydrationScope $scope, bool $resultOnly): ShapeResult
     {
+        $definition = $shape->variants;
         if ($resultOnly) {
-            foreach ($shape->map as $class) {
-                if ($value instanceof $class) {
-                    return new ShapeResult($value, SourceConsumption::all());
-                }
+            if (is_object($value) && $definition->accepts($value)) {
+                return new ShapeResult($value, SourceConsumption::all());
             }
             throw HydrationException::invalidValue('invalid_field_type', 'variant DTO', get_debug_type($value));
         }
-        $source = is_object($value) ? get_object_vars($value) : $value;
-        $payload = $value;
-        $segments = [];
-        if ($shape->mode === NestedDiscriminatorMode::Key) {
-            if ($shape->discriminator !== '') {
-                $segments = explode('.', $shape->discriminator);
-                $source = ArrayPath::getByPath($source, $shape->discriminator);
-            }
-            $key = is_array($source) && $source !== [] ? array_key_first($source) : null;
-            $tag = $key === null ? null : (string) $key;
-            $payload = $key === null ? null : $source[$key];
-            if ($key !== null) {
-                $segments[] = $key;
-            }
-        } else {
-            $tag = ArrayPath::getByPath($source, $shape->discriminator);
-            $tag = is_scalar($tag) || $tag instanceof Stringable ? (string) $tag : null;
+        $selection = VariantSelector::select($value, $definition);
+        if ($selection->class === null) {
+            return new ShapeResult($selection->payload, SourceConsumption::all(), $selection->skip);
         }
-        $class = $tag === null ? null : ($shape->map[$tag] ?? null);
-        if ($class === null) {
-            return match ($shape->unknown) {
-                NestedUnknownVariant::Skip => new ShapeResult(null, SourceConsumption::all(), true),
-                NestedUnknownVariant::KeepRaw => new ShapeResult($value, SourceConsumption::all()),
-                NestedUnknownVariant::Error => throw HydrationException::invalidValue(
-                    'unknown_nested_variant',
-                    'variant: ' . implode('|', array_keys($shape->map)),
-                    $tag === null ? 'missing' : 'string',
-                ),
-            };
-        }
-        $location = $scope->location()->descend($segments);
-        $dto = $scope->at($location, function () use ($payload, $class, $scope): object {
-            return $scope->hydrateDto($payload, $class);
-        }, $segments);
+        $segments = $selection->segments;
+        $dto = $scope->descend($segments, fn (): object => $scope->hydrateDto($selection->payload, $selection->class, selectVariants: false));
         $consumed = new SourceConsumption();
         $consumed->mergeAt($segments, SourceConsumption::all());
         return new ShapeResult($dto, $consumed);

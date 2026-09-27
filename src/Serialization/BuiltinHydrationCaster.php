@@ -10,7 +10,6 @@ use ApiSutra\Attributes\DataTransfer\DateTimeFrom;
 use ApiSutra\Casts\DateTimeCast;
 use ApiSutra\Casts\EnumCast;
 use ApiSutra\Contracts\Interfaces\Casting\HydrationCastInterface;
-use ApiSutra\Contracts\Interfaces\DataTransfer\DtoInterface;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Serialization\VO\ResolvedDtoHydration;
@@ -108,7 +107,7 @@ final readonly class BuiltinHydrationCaster
             return $scope->invoke(fn (HydrationContext $context): mixed => (new EnumCast($type))->hydrate($value, $context));
         }
 
-        if (is_subclass_of($type, DtoInterface::class)) {
+        if ($this->typeSelector->isDtoType($type)) {
             if (!is_array($value) && !is_object($value)) {
                 throw HydrationException::invalidValue('unexpected_response_shape', $type, get_debug_type($value));
             }

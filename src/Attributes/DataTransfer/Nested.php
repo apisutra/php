@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ApiSutra\Attributes\DataTransfer;
 
 use Attribute;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class Nested
@@ -19,8 +19,8 @@ readonly class Nested
         public ?string $each = null,
         public ?string $discriminator = null,
         public ?array $map = null,
-        public NestedDiscriminatorMode $discriminatorMode = NestedDiscriminatorMode::Value,
-        public NestedUnknownVariant $unknownVariant = NestedUnknownVariant::KeepRaw,
+        public DiscriminatorMode $discriminatorMode = DiscriminatorMode::Value,
+        public UnknownVariant|string $unknownVariant = UnknownVariant::KeepRaw,
     ) {
     }
 }

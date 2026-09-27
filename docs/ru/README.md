@@ -9,6 +9,8 @@
 
 - [OAuth2: готовые grants, PKCE, refresh и хранение](reference/auth/oauth2.md).
 
+- [Варианты DTO, типизированный fallback и входящий JSON webhook](reference/dto/variants.md).
+
 ## Начать с задачи <a id="section-2"></a>
 
 - [Первый запуск](guides/quickstart.md) — исполняемый пример без сети.

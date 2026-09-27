@@ -190,7 +190,7 @@ final class Pipeline
         $audit = [];
         $this->initializeBudget($context);
         $this->retrySender->assertConcurrencySupported($context);
-        ResponseContractGuard::validate($request, $this->config);
+        ResponseContractGuard::validate($request, $this->config, $this->hydrator->descriptions()->targets());
         $this->responseHydrator->assertResponseModeSupported($request, $context);
         $startTime = $this->contextFactory->start($request, $context, $audit);
         $context->budget->check('started');

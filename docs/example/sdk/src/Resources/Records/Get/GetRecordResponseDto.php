@@ -20,7 +20,7 @@ use ApiSutra\Attributes\DataTransfer\RequiredInput;
 use ApiSutra\Attributes\DataTransfer\Shape;
 use ApiSutra\Attributes\DataTransfer\To;
 use ApiSutra\DataTransfer\AbstractDto;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 use ApiSutra\Enums\DataTransfer\ValueState;
 use ApiSutra\Enums\Serialization\EnumOutput;
 use ApiSutra\Serialization\Rules\ScalarType;
@@ -75,7 +75,7 @@ final readonly class GetRecordResponseDto extends AbstractDto
         #[Shape(new ListShape(new VariantsShape('type', [
             'image' => ImageAttachmentDto::class,
             'document' => DocumentAttachmentDto::class,
-        ], unknown: NestedUnknownVariant::Error), each: 'value'))]
+        ], unknown: UnknownVariant::Error), each: 'value'))]
         public array $attachments,
         // PHPDoc помогает IDE; Shape проверяет каждый элемент в рантайме.
         #[Map('related_ids')]

@@ -148,5 +148,16 @@ if ($result->errors->first()?->code->value !== 'hydration_error'
     || str_contains($result->errors->first()->message, 'fixture-secret')) {
     throw new RuntimeException('Нарушен standalone контракт JsonCast/диагностики');
 }
+if ($hydrator->hydrateJson('{"id":9223372036854775808999}', StringIdentifierDto::class)->id !== $id) {
+    throw new RuntimeException('Публичный JSON-вход потерял точность ID');
+}
+try {
+    $hydrator->hydrateJson('[]', StringIdentifierDto::class);
+    throw new RuntimeException('JSON список принят как DTO');
+} catch (HydrationException $exception) {
+    if ($exception->reason !== 'invalid_object_shape') {
+        throw $exception;
+    }
+}
 echo "Standalone JSON/DTO: обязательные поля, JsonCast и raw response работают без Laravel/Guzzle HTTP Client.\n";
 echo "Standalone JSON: прежние контракты, строгий unwrap и точные ID работают без Laravel/Guzzle HTTP Client.\n";

@@ -22,12 +22,9 @@ use ApiSutra\Attributes\Request\File;
 use ApiSutra\Attributes\Request\Header;
 use ApiSutra\Attributes\Request\Path;
 use ApiSutra\Attributes\Request\Query;
-use ApiSutra\Collections\AbstractTypedCollection;
 use ApiSutra\Contracts\Interfaces\Casting\HydrationCastInterface;
 use ApiSutra\Contracts\Interfaces\DataTransfer\DefaultValueProviderInterface;
 use ApiSutra\Contracts\Interfaces\DataTransfer\DtoInterface;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Metadata\MetadataCatalog;
 use ApiSutra\Metadata\ClassMetadata;
@@ -36,8 +33,11 @@ use ApiSutra\Attributes\DataTransfer\Extras;
 use ApiSutra\Attributes\DataTransfer\ForbidExplicitNull;
 use ApiSutra\Attributes\DataTransfer\RequiredInput;
 use ApiSutra\Attributes\DataTransfer\Shape;
+use ApiSutra\Attributes\DataTransfer\InputShape;
 use ApiSutra\Config\HydrationConfig;
 use ApiSutra\Serialization\Shapes\ShapeCompiler;
+use ApiSutra\Serialization\Hydration\DtoTargetCompiler;
+use ApiSutra\Serialization\Hydration\HydrationCollections;
 use Throwable;
 use DateTimeInterface;
 use JsonSerializable;
@@ -55,7 +55,7 @@ final class RuleSetCompiler
     private const array INPUT_ATTRIBUTES = [
         From::class, Map::class, Nested::class, Cast::class,
         DateTimeFrom::class, EmptyStringAsNull::class, DefaultValue::class,
-        RequiredInput::class, ForbidExplicitNull::class, ConstructorValue::class, Shape::class,
+        RequiredInput::class, ForbidExplicitNull::class, ConstructorValue::class, Shape::class, InputShape::class,
     ];
     private const array OUTPUT_ATTRIBUTES = [
         To::class, DateTimeTo::class, Query::class, Body::class, BodyRoot::class,
@@ -73,12 +73,15 @@ final class RuleSetCompiler
     private bool $compiling = false;
     private bool $resetOnFailure = false;
     private ?self $hydrationNodes = null;
+    private readonly DtoTargetCompiler $targets;
 
     public function __construct(
         private readonly ?HydrationConfig $config = null,
         private readonly MetadataCatalog $metadata = new MetadataCatalog(),
         private readonly bool $deferNested = false,
+        ?DtoTargetCompiler $targets = null,
     ) {
+        $this->targets = $targets ?? new DtoTargetCompiler($config, $metadata);
         $rules = $config?->rules;
         $this->validatePolicy($config->policy ?? new RulePolicy());
         if ($rules !== null) {
@@ -95,6 +98,11 @@ final class RuleSetCompiler
         return $this->metadata;
     }
 
+    public function targets(): DtoTargetCompiler
+    {
+        return $this->targets;
+    }
+
     public function forClass(string $class): CompiledDtoRules
     {
         if (isset($this->compiled[$class])) {
@@ -106,7 +114,7 @@ final class RuleSetCompiler
     /** @internal Вложенный узел выбирает custom/native до компиляции собственных правил. */
     public function forHydrationNode(string $class): CompiledDtoRules
     {
-        $this->hydrationNodes ??= new self($this->config, $this->metadata, deferNested: true);
+        $this->hydrationNodes ??= new self($this->config, $this->metadata, deferNested: true, targets: $this->targets);
         return $this->hydrationNodes->forClass($class);
     }
 
@@ -276,7 +284,7 @@ final class RuleSetCompiler
         foreach ($description->properties as $property) {
             $name = $property->getName();
             $declarations = [];
-            foreach ([Extras::class, RequiredInput::class, ForbidExplicitNull::class, ConstructorValue::class, Shape::class] as $attribute) {
+            foreach ([Extras::class, RequiredInput::class, ForbidExplicitNull::class, ConstructorValue::class, Shape::class, InputShape::class] as $attribute) {
                 $matches = $property->getAttributes($attribute);
                 if (count($matches) > 1) {
                     throw new ConfigurationException(new Message('serialization.attribute_cannot_be_repeated', ['attribute' => $attribute]));
@@ -311,6 +319,9 @@ final class RuleSetCompiler
             }
             if (isset($declarations[ConstructorValue::class])) {
                 $field = $field->constructorValue($declarations[ConstructorValue::class]->allowMissing);
+            }
+            if (isset($declarations[InputShape::class])) {
+                $field = $field->inputShape($declarations[InputShape::class]->value);
             }
             if (isset($declarations[Shape::class])) {
                 $this->rejectAttributes($property, [Cast::class, Nested::class]);
@@ -408,22 +419,16 @@ final class RuleSetCompiler
             $this->compileReference($shape->class);
         }
         if ($shape->kind === 'variants') {
-            if (!$listItem || $shape->map === []) {
-                throw new ConfigurationException(new Message('serialization.variants_requires_a_non_empty_map_and_a_list'));
-            }
-            if ($shape->mode === NestedDiscriminatorMode::Value && $shape->discriminator === '') {
-                throw new ConfigurationException(new Message('serialization.value_discriminator_requires_a_non_empty_path'));
-            }
             $type = $property->getType();
-            if (
-                $shape->unknown === NestedUnknownVariant::KeepRaw
-                && $type instanceof ReflectionNamedType
-                && is_subclass_of($type->getName(), AbstractTypedCollection::class)
-            ) {
-                throw new ConfigurationException(new Message('serialization.keepraw_is_incompatible_with_a_typed_dto_collection'));
-            }
-            foreach ($shape->map as $class) {
-                $this->compileReference($class);
+            $types = $type instanceof ReflectionUnionType ? $type->getTypes() : ($type === null ? [] : [$type]);
+            $allowsArray = $type === null || array_any($types, static fn (ReflectionType $type): bool
+                => $type instanceof ReflectionNamedType && in_array($type->getName(), ['array', 'mixed', 'iterable'], true));
+            $itemClass = $listItem && $type instanceof ReflectionNamedType ? HydrationCollections::itemClass($type->getName()) : null;
+            $position = ($listItem ? 'list item ' : 'single field ')
+                . $property->getDeclaringClass()->getName() . '::$' . $property->getName();
+            $shape->variants->validate($position, $listItem, $listItem ? $itemClass === null : $allowsArray, target: $itemClass);
+            foreach ($shape->variants->classes() as $class) {
+                $this->compileReference($class, selectVariants: false);
             }
         }
         if ($shape->itemCast !== null) {
@@ -434,17 +439,21 @@ final class RuleSetCompiler
         }
     }
 
-    private function compileReference(mixed $class): void
+    private function compileReference(mixed $class, bool $selectVariants = true): void
     {
         if (!is_string($class)) {
             throw new ConfigurationException(new Message('serialization.variants_map_requires_dto_classes'));
         }
+        $definition = null;
+        if ($selectVariants) {
+            $this->targets->validate($class);
+            $definition = $this->targets->variantsFor($class);
+        }
         if ($this->deferNested) {
-            if (!class_exists($class) || (new ReflectionClass($class))->isAbstract() || enum_exists($class)) {
-                throw new ConfigurationException(new Message('serialization.rule_set_dto_class_not_found', ['class' => $class]));
-            }
             return;
         }
-        $this->compile($class);
+        foreach ($definition?->classes() ?? [$class] as $concrete) {
+            $this->compile($concrete);
+        }
     }
 }

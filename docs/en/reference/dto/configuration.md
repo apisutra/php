@@ -127,3 +127,27 @@ For large paginated responses, smaller pages and lower concurrency reduce peak m
 Disabled mode omits that additional mechanism throughout the client, including
 built-in continuation. Neither mode adds metadata processing to RawResponse,
 downloads, terminal response handlers or public json()/jsonStrict().
+
+## Original JSON outside HTTP <a id="json-input"></a>
+
+For a webhook, use the original body rather than json_decode(..., true):
+
+```php
+use ApiSutra\Serialization\Hydrator;
+
+// $json is the original request body; $dtoClass is your declared DTO class.
+$dto = Hydrator::default()->hydrateJson($json, $dtoClass);
+```
+
+`hydrateJson(string $json, string $dtoClass): object` needs no client or container.
+For the same policy as an HTTP client, use `Hydrator::forConfig($config->hydration
+?? new HydrationConfig(), $config->localization)`. Existing rules, custom hydrator
+and localization apply; request-local Returns::hydrator and HTTP hooks do not.
+The generic return type follows the supplied class.
+
+The method returns a DTO or throws: invalid JSON (including an empty string) gives
+HydrationException with reason `invalid_json` and a previous JsonException. JSON
+null/scalars/lists are subject to the DTO object-input contract, not HTTP 204 rules.
+Shapes are preserved by default; false skips shape metadata, but a nonempty list
+still cannot become a DTO. `hydrate()` accepts already-decoded PHP values and does
+not reconstruct lost JSON identity. Internal decoder types remain implementation details.

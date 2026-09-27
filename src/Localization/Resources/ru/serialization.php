@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'serialization.ambiguous_dto_target' => 'Неоднозначный тип DTO для {property}; задайте явную форму',
+    'serialization.duplicate_dto_variants' => 'Варианты DTO объявлены повторно для {type}',
+    'serialization.variants_empty_map' => 'Вариантам в позиции {position} нужна непустая карта',
+    'serialization.variant_policy_not_allowed' => 'Политика вариантов {policy} недопустима в позиции {position}; укажите Error или класс fallback DTO',
+    'serialization.variant_class_unavailable' => 'Класс варианта {class} в позиции {position} должен быть конкретным и доступным',
+    'serialization.variant_class_incompatible' => 'Вариант {class} в позиции {position} должен реализовать или наследовать {target}',
     'serialization.invalid_dto_hydrator' => 'Не удалось создать гидратор DTO: {class}',
     'serialization.absolute_url_is_incompatible_with_additional_query_parameters' => 'Готовый URL несовместим с дополнительными query-параметрами',
     'serialization.ambiguous_nested_cardinality' => 'Неоднозначная кардинальность Nested: {value0}',
@@ -52,18 +58,15 @@ return [
     'serialization.invalid_declaration_of' => 'Неверная декларация {attribute}',
     'serialization.invalid_or_unresolved_path_placeholder' => 'Некорректный или незаполненный placeholder в path',
     'serialization.invalid_rule_handler_for_is_required' => 'Неверный обработчик правила: {value0} для {target}; требуется {interface}',
-    'serialization.keepraw_is_incompatible_with_a_typed_dto_collection' => 'KeepRaw несовместим с typed collection DTO',
     'serialization.missing_or_invalid_path_parameter' => 'Отсутствует или недопустим path-параметр: {value0}',
     'serialization.more_than_one_bodyroot_found_in_the_request' => 'Найдено более одного BodyRoot в запросе',
     'serialization.multipart_payload_expects_an_array_body' => 'Multipart payload ожидает body в виде массива',
     'serialization.multipartstream_is_unavailable_guzzlehttp_psr7' => 'MultipartStream недоступен (guzzlehttp/psr7)',
-    'serialization.nested_class_is_unavailable_for_hydration' => 'Недоступен класс Nested для гидратации: {type}',
     'serialization.nested_does_not_support_intersection_types' => 'Nested не поддерживает intersection: {value0}',
     'serialization.nested_itemcast_class_not_found' => 'Nested.itemCast класс не найден: {castClass}',
     'serialization.nested_itemcast_must_implement_hydrationcastinterface' => 'Nested.itemCast должен реализовывать HydrationCastInterface: {castClass}',
     'serialization.nested_itemcast_must_implement_hydrationcastinterface.nestedvalueprocessor' => 'Nested.itemCast должен реализовывать HydrationCastInterface: {class}',
     'serialization.nested_list_parameters_cannot_be_used_for_a_single' => 'Параметры списка Nested заданы для одиночного объекта: {value0}',
-    'serialization.nested_map_must_contain_available_dto_classes' => 'Nested.map должен содержать доступные классы DTO',
     'serialization.nested_type_is_incompatible_with_the_property_type' => 'Nested.type несовместим с типом свойства: {value0}',
     'serialization.parent_not_found_for_nested' => 'Не найден parent для Nested: {value0}',
     'serialization.path_parameter_cannot_be_empty_or' => 'Path-параметр не может быть пустым, . или ..: {value0}',
@@ -89,6 +92,5 @@ return [
     'serialization.valueshape_dto_requires_a_class' => 'ValueShape.dto требует класс',
     'serialization.valueshape_scalars_requires_at_least_one_type' => 'ValueShape.scalars требует хотя бы один тип',
     'serialization.variants_map_requires_dto_classes' => 'Variants.map требует классы DTO',
-    'serialization.variants_requires_a_non_empty_map_and_a_list' => 'Variants требует непустую map и позицию элемента list',
     'serialization.withdownloadto_requires_download' => 'withDownloadTo требует #[Download]',
 ];

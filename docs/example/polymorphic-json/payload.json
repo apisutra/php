@@ -1,0 +1,13 @@
+{
+  "update_type": "message",
+  "message": {
+    "id": 42,
+    "participants": {"17": "owner", "28": "reader"},
+    "featured": {"type": "image", "url": "https://example.test/image.png"},
+    "attachments": [
+      {"type": "share", "payload": {"url": "https://example.test/article"}},
+      {"type": "future_attachment", "payload": {"enabled": true}}
+    ]
+  },
+  "permissions": []
+}

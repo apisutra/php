@@ -21,7 +21,7 @@ input JSON, declarations, and observable results.
 - [Scalars, unions, and ranges](scalars.md).
 - [Nested hydration context](scope.md).
 - [Nested objects and lists](shapes.md).
-- [List item variants](variants.md).
+- [DTO variants and typed fallback](variants.md).
 - [Custom DTO factories and hydrators](hydrators.md).
 
 [All reference topics](../README.md).

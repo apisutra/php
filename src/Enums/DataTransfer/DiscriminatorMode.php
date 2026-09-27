@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ApiSutra\Enums\DataTransfer;
 
 /**
- * Режим извлечения discriminator для Nested.
+ * Режим извлечения discriminator для выбора варианта DTO.
  */
-enum NestedDiscriminatorMode: string
+enum DiscriminatorMode: string
 {
     /**
      * Discriminator извлекается как значение поля по пути.

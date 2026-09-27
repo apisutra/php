@@ -1,6 +1,8 @@
 <!-- languages --> <a href="field-rules.md">English</a> · <a href="../../../ru/reference/dto/field-rules.md">Русский</a> <!-- /languages -->
 # External rules and declaration conflicts <a id="section-1"></a>
 
+Use [HydrationRules::withVariants()](variants.md#type-variants) to declare variants for a third-party type without adding attributes.
+
 ## HydrationRules <a id="section-2"></a>
 
 `ClientConfig::hydration` is `?HydrationConfig`, defaulting to null. The client passes
@@ -31,7 +33,7 @@ its schema does not vary with its path in the graph.
 | `noTransform()` | Explicitly disable transformation; native type is still validated |
 | `constructorValue(bool $allowMissing = false)` | [Validate a constructor value without writing again](constructor-values.md) |
 | `required()`, `forbidExplicitNull()` | Require key presence and forbid original null |
-| `inputShape(InputShape $shape)` | Validate Object/List before `cast` or `noTransform` |
+| `inputShape(ContainerShape $shape)` | Validate Object/List before `cast` or `noTransform` |
 | `default(DefaultSpec $default)`, `policy(RulePolicy $policy)` | Field default and policy |
 
 Duplicate fields/receivers, repeated from/default/policy groups, or multiple

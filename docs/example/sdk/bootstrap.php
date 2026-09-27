@@ -22,3 +22,4 @@ $loader->addPsr4('Example\\ConstructorValues\\', __DIR__ . '/../constructor-valu
 $loader->addPsr4('Example\\Files\\', __DIR__ . '/../files/src/');
 
 $loader->addPsr4('Example\\DtoHydrator\\', __DIR__ . '/../dto-hydrator/src/');
+$loader->addPsr4('Example\\PolymorphicJson\\', __DIR__ . '/../polymorphic-json/src/');

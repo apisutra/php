@@ -9,6 +9,8 @@ separate section below.
 
 - [OAuth2: ready-made grants, PKCE, refresh and storage](reference/auth/oauth2.md).
 
+- [DTO variants, typed fallback and incoming webhook JSON](reference/dto/variants.md).
+
 ## Start with a task <a id="section-2"></a>
 
 - [Quickstart](guides/quickstart.md) — an executable example without network access.

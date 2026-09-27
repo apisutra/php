@@ -54,7 +54,7 @@ final class AttributeMetadataCache
         }
 
         foreach ($classes as $class) {
-            if (!class_exists($class) || isset($this->cache[$class])) {
+            if ((!class_exists($class) && !interface_exists($class)) || isset($this->cache[$class])) {
                 continue;
             }
 

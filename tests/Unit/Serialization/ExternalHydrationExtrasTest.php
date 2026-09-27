@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 use ApiSutra\Serialization\Hydrator;
 use ApiSutra\Serialization\Rules\DefaultSpec;
 use ApiSutra\Serialization\Rules\DtoRules;
@@ -89,7 +89,7 @@ it('распределяет discriminator и соседей Key-обёртки 
     $shape = ValueShape::list(ValueShape::variants(
         $mode === 'key' ? '' : 'type',
         ['known' => $type],
-        mode: $mode === 'key' ? NestedDiscriminatorMode::Key : NestedDiscriminatorMode::Value,
+        mode: $mode === 'key' ? DiscriminatorMode::Key : DiscriminatorMode::Value,
     ));
     $rules = HydrationRules::create(new RulePolicy(scalars: ScalarPolicy::Strict))
         ->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape($shape))->extras('extra'))
@@ -101,23 +101,23 @@ it('распределяет discriminator и соседей Key-обёртки 
         ->and($dto->extra)->toBe($mode === 'key' ? ['value' => [['sourceKey' => 0, 'remainder' => ['meta' => 3]]]] : []);
 })->with(['value', 'mapped-value', 'key']);
 
-it('различает unknown политики и не подавляет ошибку известного варианта', function (NestedUnknownVariant $policy): void {
+it('различает unknown политики и не подавляет ошибку известного варианта', function (UnknownVariant $policy): void {
     $shape = ValueShape::list(ValueShape::variants('type', ['known' => OwnerDto::class], unknown: $policy), each: 'value');
     $rules = HydrationRules::create(new RulePolicy(scalars: ScalarPolicy::Strict))
         ->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape($shape))->extras('extra'));
     $hydrator = Hydrator::forRules($rules);
     $raw = ['value' => ['type' => 'unknown', 'secret' => 'preserved'], 'meta' => false];
-    if ($policy === NestedUnknownVariant::Error) {
+    if ($policy === UnknownVariant::Error) {
         expect(HydrationRulesFixture::error(fn () => $hydrator->hydrate(['value' => [$raw]], ValueDto::class))->reason)
             ->toBe('unknown_nested_variant');
     } else {
         $dto = $hydrator->hydrate(['value' => [$raw]], ValueDto::class);
-        expect($dto->value)->toBe($policy === NestedUnknownVariant::Skip ? [] : [$raw['value']])
-            ->and($dto->extra)->toBe($policy === NestedUnknownVariant::Skip ? [] : ['value' => [['sourceKey' => 0, 'remainder' => ['meta' => false]]]]);
+        expect($dto->value)->toBe($policy === UnknownVariant::Skip ? [] : [$raw['value']])
+            ->and($dto->extra)->toBe($policy === UnknownVariant::Skip ? [] : ['value' => [['sourceKey' => 0, 'remainder' => ['meta' => false]]]]);
     }
     $error = HydrationRulesFixture::error(fn () => $hydrator->hydrate(['value' => [['value' => ['type' => 'known', 'id' => 'bad']]]], ValueDto::class));
     expect($error->reason)->toBe('invalid_field_type')->and($error->path)->toBe('value[0].id');
-})->with(NestedUnknownVariant::cases());
+})->with(UnknownVariant::cases());
 
 it('передаёт receiver в DTO без конструктора и сохраняет Expected для обязательного поля', function (): void {
     $rules = HydrationRules::create()->withDto(NoConstructorDto::class, DtoRules::create()->extras('extra'));

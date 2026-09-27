@@ -126,3 +126,27 @@ defaults ни в одном режиме. Обратно, JSON-объект с �
 Выключенный режим исключает этот дополнительный механизм во всём клиенте, включая
 штатный continuation. Оба режима не добавляют метаданные для RawResponse, скачивания,
 конечных обработчиков ответа и публичных json()/jsonStrict().
+
+## Исходный JSON вне HTTP <a id="json-input"></a>
+
+Для webhook передавайте исходное тело, а не результат json_decode(..., true):
+
+```php
+use ApiSutra\Serialization\Hydrator;
+
+// $json — исходное тело запроса; $dtoClass — объявленный класс вашего DTO.
+$dto = Hydrator::default()->hydrateJson($json, $dtoClass);
+```
+
+`hydrateJson(string $json, string $dtoClass): object` не требует клиента или контейнера.
+Для той же политики, что у HTTP-клиента, используйте `Hydrator::forConfig($config->hydration
+?? new HydrationConfig(), $config->localization)`. Применяются существующие правила,
+пользовательский гидратор и локализация; request-local Returns::hydrator и HTTP hooks
+не переносятся. Generic-тип результата соответствует переданному классу.
+
+Метод возвращает DTO либо бросает исключение: невалидный JSON (включая пустую строку)
+даёт HydrationException с reason `invalid_json` и предыдущей JsonException. JSON
+null/скаляры/списки подчиняются контракту объектного входа DTO, а не правилам HTTP 204.
+Форма сохраняется по умолчанию; false отключает метаданные, но непустой список всё
+равно не становится DTO. `hydrate()` принимает готовые PHP-значения и не восстанавливает
+утраченную JSON-форму. Внутренние типы декодера остаются деталями реализации.

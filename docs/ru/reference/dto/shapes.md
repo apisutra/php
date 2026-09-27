@@ -54,16 +54,16 @@ echo $user->address->city; // Sample
 
 Пример key‑mode (кейс вида `{"person": {...}}`):
 ```php
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 #[Nested(
-    discriminatorMode: NestedDiscriminatorMode::Key,
+    discriminatorMode: DiscriminatorMode::Key,
     map: [
         'person' => PersonOwnerDto::class,
         'organization' => OrganizationOwnerDto::class,
     ],
-    unknownVariant: NestedUnknownVariant::KeepRaw,
+    unknownVariant: UnknownVariant::KeepRaw,
 )]
 public array $owners = [];
 ```
@@ -91,7 +91,8 @@ public array $faces = [];
 `mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class, bool $emptyListAsObject = false)`,
 `list(ValueShape $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)`.
 Списки могут быть вложенными. PHPDoc `list<int>` и bare `array` сами элементы не проверяют.
-Plain native-класс без `dto()`, Nested или DtoInterface не гидратируется автоматически.
+Native-тип с [DtoVariants](variants.md#type-variants) также распознаётся автоматически.
+Остальные plain native-классы без `dto()`, Nested или DtoInterface не гидратируются автоматически.
 
 `list()` требует плотные ключи 0..n−1; словарь и разреженный массив дают
 `invalid_list_shape`. `normalizeKeys: true` разрешает словарь и переиндексирует результат,
@@ -127,7 +128,7 @@ public AddressDto $address;
 Она разрешает **только пустой список для данного DTO**. Обязательные поля проверяются;
 непустые списки, null, дочерние и соседние узлы разрешение не наследуют. У Returns
 оно относится к выбранному DTO после unwrap/type. Явный
-`FieldRule::inputShape(InputShape::Object)` проверяет исходный вход раньше и вправе
+`FieldRule::inputShape(ContainerShape::Object)` проверяет исходный вход раньше и вправе
 отклонить `[]`; result shape после cast по-прежнему требует готовый DTO. Если это
 локальное исключение нужно одиночному Nested, используйте вместо него Shape.
 
@@ -153,8 +154,8 @@ PHP-вход. Публичные json()/jsonStrict(), поля DTO, extras и to
 | --- | --- |
 | `#[Nested] AddressDto` или `?AddressDto` | Одиночный DTO указанного класса |
 | `#[Nested(type: AddressDto::class)] AddressDto` | Одиночный DTO; допустим также конкретный подтип |
-| Интерфейс или абстрактный класс свойства | Для одиночного объекта нужен совместимый конкретный `Nested.type` |
-| `object` | Для одиночного объекта нужен конкретный `Nested.type` |
+| Интерфейс или абстрактный класс свойства | При DtoVariants достаточно объявленного типа; иначе нужен совместимый конкретный `Nested.type` |
+| `object` | Для одиночного объекта нужен `Nested.type` (конкретный класс или объявленные варианты) |
 | `array`, `iterable`, `mixed`, отсутствие native-типа | Сохраняется обработка массива элементов; `type` задаёт класс элемента |
 | Класс `Traversable`, включая `AbstractCollection` / `AbstractTypedCollection` | Коллекция; `type` задаёт класс элемента, `map` — классы вариантов |
 | Пользовательская обёртка и отдельный, несовместимый с ней `type` элемента | Коллекция, если есть вызываемая `fromArray()` либо публичный конструктор, принимающий массив первым аргументом без других обязательных аргументов |
@@ -188,4 +189,27 @@ discriminator → обёртка коллекции. `Nested` не включа�
 его порядковый индекс. `#[Cast]` всего свойства при наличии `Nested` не выполняется.
 
 Ошибка одиночного объекта содержит путь поля дочернего DTO без индекса списка.
-Укажите конкретный класс DTO и native-тип, различающий объект и коллекцию.
+Укажите конкретный класс DTO или объявленные варианты и native-тип, различающий объект и коллекцию.
+
+## Проверка входа перед cast <a id="input-guard"></a>
+
+InputShape проверяет входной контейнер, не преобразуя его. В отличие от Shape,
+его можно сочетать с Cast. Поле ниже принадлежит вашему DTO; ParticipantsCast —
+ваша реализация HydrationCastInterface.
+
+```php
+use ApiSutra\Attributes\DataTransfer\Cast;
+use ApiSutra\Attributes\DataTransfer\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
+
+#[InputShape(ContainerShape::Object)]
+#[Cast(ParticipantsCast::class)]
+public array $participants;
+```
+
+При включённой проверке JSON-формы `{}` попадает в cast, а `[]` даёт
+`invalid_object_shape` до вызова cast. Атрибут эквивалентен FieldRule::inputShape;
+он не проверяет значения словаря и не переиндексирует ключи. RequiredInput и
+ForbidExplicitNull по-прежнему отвечают за missing/null. Guard не включает метаданные
+JSON при выключенной общей настройке. Внешние правила поля и входные атрибуты
+того же свойства по-прежнему конфликтуют.

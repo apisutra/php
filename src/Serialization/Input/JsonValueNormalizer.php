@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ApiSutra\Serialization\Input;
 
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 use stdClass;
 
 /** @internal Нормализует дерево штатного decode, сохраняя только неоднозначные объекты. */
@@ -19,7 +19,7 @@ final readonly class JsonValueNormalizer
             if ($value === []) {
                 // Как у assoc decode: пустые значения разделяют неизменяемый пустой массив.
                 $value = [];
-                return new SourceShapeMap(InputShape::Object);
+                return new SourceShapeMap(ContainerShape::Object);
             }
         }
         if (!is_array($value)) {
@@ -47,6 +47,6 @@ final readonly class JsonValueNormalizer
             }
         }
         return $ambiguousObject || $children !== []
-            ? new SourceShapeMap($object ? InputShape::Object : InputShape::List, $children) : null;
+            ? new SourceShapeMap($object ? ContainerShape::Object : ContainerShape::List, $children) : null;
     }
 }

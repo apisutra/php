@@ -24,7 +24,7 @@ use ApiSutra\Attributes\DataTransfer\RequiredInput;
 use ApiSutra\Attributes\DataTransfer\Extras;
 use ApiSutra\Attributes\DataTransfer\ForbidExplicitNull;
 use ApiSutra\Attributes\DataTransfer\Shape;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 use ApiSutra\Serialization\Rules\ScalarType;
 use ApiSutra\Serialization\Shapes\ListShape;
 use ApiSutra\Serialization\Shapes\VariantsShape;
@@ -101,7 +101,7 @@ final readonly class CatalogItemDto extends AbstractDto
         #[Shape(new ListShape(new VariantsShape('type', [
             'image' => ImageDto::class,
             'video' => VideoDto::class,
-        ], unknown: NestedUnknownVariant::Error), each: 'value'))]
+        ], unknown: UnknownVariant::Error), each: 'value'))]
         public array $media,
         // Provider вычисляет отсутствующее значение по исходным данным DTO.
         #[DefaultValue(provider: DisplayNameProvider::class)]

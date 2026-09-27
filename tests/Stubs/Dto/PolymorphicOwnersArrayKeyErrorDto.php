@@ -6,8 +6,8 @@ namespace ApiSutra\Tests\Stubs\Dto;
 
 use ApiSutra\Attributes\DataTransfer\Nested;
 use ApiSutra\DataTransfer\AbstractDto;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 final readonly class PolymorphicOwnersArrayKeyErrorDto extends AbstractDto
 {
@@ -16,12 +16,12 @@ final readonly class PolymorphicOwnersArrayKeyErrorDto extends AbstractDto
      */
     public function __construct(
         #[Nested(
-            discriminatorMode: NestedDiscriminatorMode::Key,
+            discriminatorMode: DiscriminatorMode::Key,
             map: [
                 'person' => PolymorphicOwnerPersonDto::class,
                 'organization' => PolymorphicOwnerOrganizationDto::class,
             ],
-            unknownVariant: NestedUnknownVariant::Error,
+            unknownVariant: UnknownVariant::Error,
         )]
         public array $owners = [],
     ) {}

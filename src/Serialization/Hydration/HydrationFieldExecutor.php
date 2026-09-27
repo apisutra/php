@@ -43,12 +43,12 @@ final readonly class HydrationFieldExecutor
     private LegacyNestedHydrator $legacyNested;
     private HydrationValueValidator $validator;
 
-    public function __construct(private BuiltinHydrationCaster $builtin)
+    public function __construct(private BuiltinHydrationCaster $builtin, DtoTargetCompiler $targets = new DtoTargetCompiler())
     {
         $this->scalars = new ScalarValues();
         $this->rules = new RuleValueProcessor($this->scalars);
         $this->nestedValues = new NestedValueProcessor($this->rules);
-        $this->nestedTypes = new NestedObjectTypeResolver();
+        $this->nestedTypes = new NestedObjectTypeResolver($targets);
         $this->legacyNested = new LegacyNestedHydrator($this->nestedTypes);
         $this->validator = new HydrationValueValidator();
     }
@@ -238,7 +238,14 @@ final readonly class HydrationFieldExecutor
                 ) {
                     $propertyType = $this->getPrimaryType($field->property);
                     $target = $nested->type ?? $propertyType;
-                    $processed = $this->nestedValues->process($value, $nested, $target, $scope);
+                    $processed = $this->nestedValues->process(
+                        $value,
+                        $nested,
+                        $target,
+                        $scope,
+                        $propertyType,
+                        $field->property->getDeclaringClass()->getName() . '::$' . $field->property->getName(),
+                    );
                     $value = $processed->value;
                     if ($this->legacyNested->isDiscriminated($nested) || ($target !== null && class_exists($target))) {
                         $value = HydrationCollections::wrap($value, $propertyType);

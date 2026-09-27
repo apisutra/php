@@ -18,7 +18,7 @@ final readonly class FieldRule
         public bool $noTransform = false,
         public bool $required = false,
         public bool $forbidExplicitNull = false,
-        public ?InputShape $inputShape = null,
+        public ?ContainerShape $inputShape = null,
         public ?DefaultSpec $default = null,
         public ?RulePolicy $policy = null,
         public bool $constructorValue = false,
@@ -72,7 +72,7 @@ final readonly class FieldRule
         return $this->copy(['forbidExplicitNull' => true]);
     }
 
-    public function inputShape(InputShape $shape): self
+    public function inputShape(ContainerShape $shape): self
     {
         $this->assertUnset($this->inputShape !== null, 'inputShape');
         return $this->copy(['inputShape' => $shape]);

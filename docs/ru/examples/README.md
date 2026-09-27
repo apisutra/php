@@ -6,6 +6,7 @@
 
 | Пример | Что показывает |
 | --- | --- |
+| [HTTP, polling и webhook](../../example/polymorphic-json/run.php) | Одна декларация вариантов, типизированный fallback, guard словаря и ошибки JSON-формы |
 | [Async-результаты](../../example/async-results/run.php) | Типизированные промисы single/batch/pool/consume, вложенный then, FAILED и reject, otherwise — без сети |
 | [Фабрики DTO и ленивые items](../../example/dto-hydrator/run.php) | Private-конструктор, вложенные DTO, контекст гидратации, явная сериализация и ошибка страницы без потери данных |
 | [OAuth2](../../example/oauth2/run.php) | Переиспользование Client Credentials, async-обмен code, неверный callback, refresh после 401 и сохранение ротации — без сети |

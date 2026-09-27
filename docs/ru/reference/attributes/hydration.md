@@ -22,13 +22,15 @@
 | From | PROPERTY | `From(string $name, array $fallback = [])` |
 | Label | PROPERTY | `Label(string $name)` |
 | Map | PROPERTY | `Map(string $name)` |
-| Nested | PROPERTY | `Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, NestedDiscriminatorMode $discriminatorMode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknownVariant = NestedUnknownVariant::KeepRaw)` |
+| Nested | PROPERTY | `Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, DiscriminatorMode $discriminatorMode = DiscriminatorMode::Value, UnknownVariant\|string $unknownVariant = UnknownVariant::KeepRaw)` |
 | To | PROPERTY | `To(string $name)` |
 | Validate | PROPERTY | `Validate(string $rules, ?string $message = null)` |
 | Extras | PROPERTY | `Extras()` |
 | RequiredInput | PROPERTY | `RequiredInput()` |
 | ForbidExplicitNull | PROPERTY | `ForbidExplicitNull()` |
 | ConstructorValue | PROPERTY | `ConstructorValue(bool $allowMissing = false)` |
+| DtoVariants | CLASS | `DtoVariants(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant\|string $unknown = UnknownVariant::Error)` |
+| InputShape | PROPERTY | `InputShape(ContainerShape $value)` |
 | Shape | PROPERTY | `Shape(ScalarType\|ShapeSpec $value)` |
 
 [Новые декларации](../dto/declarations.md): остаток входа, присутствие/null,
@@ -190,8 +192,8 @@ public int $id;
 - `each?: string` — для коллекций
 - `discriminator?: string` — путь к discriminator (для `Value`), либо путь к объекту-обертке (для `Key`)
 - `map?: ?array` — маппинг discriminator -> class-string DTO
-- `discriminatorMode: NestedDiscriminatorMode = Value` — откуда брать discriminator (`Value` | `Key`)
-- `unknownVariant: NestedUnknownVariant = KeepRaw` — политика для неизвестных вариантов (`KeepRaw` | `Skip` | `Error`)
+- `discriminatorMode: DiscriminatorMode = Value` — откуда брать discriminator (`Value` | `Key`)
+- `unknownVariant: UnknownVariant|string = KeepRaw` — политика неизвестного варианта (`KeepRaw`, `Skip`, `Error` или fallback-класс DTO). См. [варианты](../dto/variants.md).
 
 `itemCast` нужен, когда nested-массив уже структурно корректный, но каждый элемент надо дополнительно преобразовать.
 Типовой пример: `list<data-uri-string> -> list<Base64File>`.

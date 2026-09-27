@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ApiSutra\Serialization\Input;
 
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 
 /** @internal Структурный проход только по JSON, уже проверенному штатным decoder. */
 final readonly class JsonShapeReader
@@ -37,7 +37,7 @@ final readonly class JsonShapeReader
             $offset += strspn($json, " \t\r\n", $offset);
             if ($json[$offset] === $end) {
                 $offset++;
-                return new SourceShapeMap($object ? InputShape::Object : InputShape::List, $children);
+                return new SourceShapeMap($object ? ContainerShape::Object : ContainerShape::List, $children);
             }
             $key = $index++;
             if ($object) {

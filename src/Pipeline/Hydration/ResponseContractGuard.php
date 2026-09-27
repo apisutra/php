@@ -13,11 +13,12 @@ use ApiSutra\Core\AbstractRequest;
 use ApiSutra\Localization\Message;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Serialization\ResponseTypeMismatchException;
+use ApiSutra\Serialization\Hydration\DtoTargetCompiler;
 
 /** @internal Проверяет декларацию и конечное значение без создания DTO или его зависимостей. */
 final class ResponseContractGuard
 {
-    public static function validate(RequestInterface $request, ClientConfig $config): void
+    public static function validate(RequestInterface $request, ClientConfig $config, ?DtoTargetCompiler $targets = null): void
     {
         $returns = $request instanceof AbstractRequest ? $request->getReturnsAttribute() : null;
         foreach ([$returns?->mismatchMessage, $config->resultExceptions?->mismatchMessage] as $message) {
@@ -25,10 +26,10 @@ final class ResponseContractGuard
                 throw new ConfigurationException(new Message('result.mismatch_message_must_not_be_empty'));
             }
         }
-        self::validateDeclaration($returns, $request instanceof AbstractRequest ? $request->getResponseType() : null);
+        self::validateDeclaration($returns, $request instanceof AbstractRequest ? $request->getResponseType() : null, $targets ?? new DtoTargetCompiler($config->hydration));
     }
 
-    public static function validateDeclaration(?Returns $returns, ?string $responseType): void
+    public static function validateDeclaration(?Returns $returns, ?string $responseType, DtoTargetCompiler $targets = new DtoTargetCompiler()): void
     {
         // Динамические accessor-ы могут различаться у экземпляров одного класса запроса.
         $classes = array_filter(
@@ -36,7 +37,7 @@ final class ResponseContractGuard
             static fn (?string $class): bool => $class !== null,
         );
         foreach (array_unique($classes) as $class) {
-            self::validateDtoClass($class);
+            $targets->validateDeclaration($class);
         }
         $hydrator = $returns?->hydrator;
         if (is_string($hydrator) && !is_subclass_of($hydrator, DtoHydratorInterface::class)) {
@@ -46,7 +47,7 @@ final class ResponseContractGuard
 
     private static function validateDtoClass(string $class): void
     {
-        if (!class_exists($class)) {
+        if (!class_exists($class) && !interface_exists($class)) {
             throw new ConfigurationException(new Message('result.dto_class_is_unavailable', ['expected' => $class]));
         }
     }

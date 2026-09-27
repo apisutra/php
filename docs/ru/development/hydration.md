@@ -11,6 +11,8 @@ DTO. Атрибуты и внешние правила используют од
 | Компонент | Ответственность |
 | --- | --- |
 | [MetadataCatalog](../../../src/Metadata/MetadataCatalog.php) | Нейтральные Reflection-сведения о классе и области объявления свойства |
+| [DtoTargetCompiler](../../../src/Serialization/Hydration/DtoTargetCompiler.php) | Декларации назначений и проверка map/fallback; доступность для membership отделена от возможности гидратации |
+| [VariantDefinition / VariantSelector](../../../src/Serialization/Variants/VariantSelector.php) | Одно неизменяемое описание и одна операция выбора Value/Key; без создания DTO, callbacks и владения scope |
 | [RuleSetCompiler](../../../src/Serialization/Rules/RuleSetCompiler.php) | Конфликты, применимые правила, политики и receiver; публикация проверенного графа описаний |
 | [HydrationPlanCompiler](../../../src/Serialization/Hydration/HydrationPlanCompiler.php) | Источник/fallback, presence, нормализация, defaults, операция преобразования и constructor slots |
 | [HydrationPlan](../../../src/Serialization/Hydration/HydrationPlan.php) | Поля и рецепты аргументов; bind создаёт значения атрибутов текущего узла |
@@ -44,7 +46,8 @@ bind не портит готовый рецепт; следующий вызо�
 
 ## Порядок стадий <a id="section-4"></a>
 
-1. Проверить доступность DTO и разрешить его декларации.
+1. Проверить объявленное назначение, выбрать конкретный вариант один раз для этого
+   входного узла, затем native/custom-гидратацию. Новый вложенный узел выбирает независимо.
 2. Нормализовать вход; вызвать computed() у Response DTO.
 3. Связать план и материализовать аргументы атрибутов в порядке свойств.
 4. Разрешить профиль. Для каждого поля выбрать primary/fallback и определить
@@ -68,3 +71,7 @@ RuleValueProcessor исполняет ValueShape; NestedValueProcessor сохр�
 Новые правила преобразования добавляют в профильный обработчик. В Hydrator остаются
 корневая область, нормализация источника и сборка фаз. В ObjectFactory не добавляют
 повторное преобразование входа или запись в уже инициализированное readonly-поле.
+
+Декларации вариантов кешируются по назначению и конфигурации, не по payload.
+Выбранный DTO, исходные значения и результат выбора в кеш не попадают. hydrateJson
+использует существующий decoder и scope, не создаёт HTTP-исполнение.

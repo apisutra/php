@@ -11,6 +11,8 @@ explains internal boundaries.
 | Component | Responsibility |
 | --- | --- |
 | [MetadataCatalog](../../../src/Metadata/MetadataCatalog.php) | Neutral Reflection information about classes and property declaration scope |
+| [DtoTargetCompiler](../../../src/Serialization/Hydration/DtoTargetCompiler.php) | Per-configuration target declarations and map/fallback validation; availability for membership is separate from constructibility for hydration |
+| [VariantDefinition / VariantSelector](../../../src/Serialization/Variants/VariantSelector.php) | One immutable declaration and one Value/Key selection operation; no DTO creation, callbacks or scope ownership |
 | [RuleSetCompiler](../../../src/Serialization/Rules/RuleSetCompiler.php) | Conflicts, applicable rules, policies, and receiver; publication of a validated description graph |
 | [HydrationPlanCompiler](../../../src/Serialization/Hydration/HydrationPlanCompiler.php) | Source/fallback, presence, normalization, defaults, transformation operation, and constructor slots |
 | [HydrationPlan](../../../src/Serialization/Hydration/HydrationPlan.php) | Fields and argument recipes; bind creates attribute values for the current node |
@@ -45,7 +47,8 @@ same with and without caching.
 
 ## Stage order <a id="section-4"></a>
 
-1. Check DTO availability and resolve its declarations.
+1. Validate the declared target, select a concrete variant once for this input node,
+   then choose native/custom hydration. A new nested node can select independently.
 2. Normalize the input; call computed() on a Response DTO.
 3. Bind the plan and materialize attribute arguments in property order.
 4. Resolve the profile. For each field, select primary/fallback and determine
@@ -69,3 +72,7 @@ in keys, variants, skip/error, itemCast, and source consumption are intentional.
 Add new transformation rules to the relevant handler. Hydrator retains responsibility
 for root scope, source normalization, and phase orchestration. ObjectFactory must not
 repeat input conversion or write to an already initialized readonly field.
+
+Variant definitions are cached per target and configuration, not per payload. The
+selected DTO, source values and selection result are never cached. hydrateJson uses
+the existing decoder and scope; it does not create an HTTP execution.

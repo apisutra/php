@@ -62,7 +62,7 @@ Shape принимает `ScalarType|ShapeSpec`; узлы лежат в `Seriali
 | ListShape | `ListShape(ScalarType\|ShapeSpec $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)` |
 | NullableShape | `NullableShape(ScalarType\|ShapeSpec $value)` |
 | DtoShape | `DtoShape(string $class, bool $emptyListAsObject = false)` — в том числе plain-класс |
-| VariantsShape | `VariantsShape(string $discriminator, array $map, NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw)` |
+| VariantsShape | `VariantsShape(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant\|string $unknown = UnknownVariant::KeepRaw)` |
 
 Nullable задаётся отдельно для списка и элемента. Например,
 `new NullableShape(new ListShape(new NullableShape(ScalarType::Int)))` допускает

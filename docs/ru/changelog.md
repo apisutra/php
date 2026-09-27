@@ -1,6 +1,31 @@
 <!-- languages --> <a href="../../CHANGELOG.md">English</a> · <a href="changelog.md">Русский</a> <!-- /languages -->
 # История изменений <a id="section-1"></a>
 
+## 0.3.0
+
+- Добавлены публичный `Hydrator::hydrateJson()` и `#[InputShape(ContainerShape::Object)]`
+  для входящего JSON и проверки контейнера перед пользовательским cast.
+- Добавлены DtoVariants на типе и внешние `HydrationRules::withVariants()` для HTTP,
+  webhook, вложенных полей, списков, пагинации и continuation. Неизвестный вариант
+  может гидратироваться в fallback DTO; свободный VariantsShape поддерживает одиночные поля.
+- NestedDiscriminatorMode переименован в DiscriminatorMode, NestedUnknownVariant —
+  в UnknownVariant, enum Serialization\Rules\InputShape — в ContainerShape.
+  Обновите imports и обращения к enum; новый InputShape — атрибут свойства.
+- Value-discriminator теперь принимает только string/int. Boolean, float, array и
+  object дают `invalid_discriminator_type` вместо неявного приведения или unknown-fallback.
+  Списочный default остаётся KeepRaw; у декларации типа default — Error.
+- Объединены выбор вариантов и проверка назначения, сохранены исходная форма и диагностика,
+  добавлен исполняемый пример HTTP/polling/webhook. Новых зависимостей нет.
+- Сохранён ContinuationConfigurationException при неверном finalType; исходная
+  ошибка общей проверки сохранена как причина.
+- Abstract/interface-контракты допустимы для готовых handler/composite-результатов.
+  Объекты composite, уже соответствующие объявленному типу, не гидратируются повторно;
+  остальные объектные источники и массивы по-прежнему гидратируются.
+- Все классы map/fallback проверяются на совместимость с типом элементов коллекции
+  до выбора элемента; ошибка конфигурации вариантов называет недоступный класс.
+  Nested сохраняет default KeepRaw: известные варианты работают в типизированных
+  коллекциях, неизвестные raw-элементы по-прежнему отклоняются проверкой коллекции.
+
 ## 0.2.0
 
 - Сохранено различие JSON object/list при гидратации DTO, вложенных форм,

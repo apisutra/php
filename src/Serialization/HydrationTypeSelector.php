@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace ApiSutra\Serialization;
 
 use ApiSutra\Contracts\Interfaces\DataTransfer\DtoInterface;
+use ApiSutra\Exceptions\Configuration\ConfigurationException;
+use ApiSutra\Localization\Message;
+use ApiSutra\Serialization\Hydration\DtoTargetCompiler;
 use ApiSutra\VO\Files\Base64File;
 use DateTimeInterface;
 use ReflectionProperty;
@@ -18,6 +21,7 @@ final readonly class HydrationTypeSelector
     public function __construct(
         ?PropertyTypeInspector $propertyTypeInspector = null,
         ?SafeScalarHydrationCaster $safeScalarHydrationCaster = null,
+        private DtoTargetCompiler $targets = new DtoTargetCompiler(),
     ) {
         $this->propertyTypeInspector = $propertyTypeInspector ?? new PropertyTypeInspector();
         $this->safeScalarHydrationCaster = $safeScalarHydrationCaster ?? new SafeScalarHydrationCaster();
@@ -38,12 +42,20 @@ final readonly class HydrationTypeSelector
             return $resolved;
         }
 
-        $resolved = array_find(
+        $candidates = array_values(array_filter(
             $types,
             fn (string $type): bool => $this->canHydrateByType($type, $value),
-        );
+        ));
+        if (count($candidates) > 1 && array_any($candidates, fn (string $type): bool => $this->targets->variantsFor($type) !== null)) {
+            throw new ConfigurationException(new Message('serialization.ambiguous_dto_target', ['property' => $property->getName()]));
+        }
 
-        return $resolved ?? $types[0];
+        return $candidates[0] ?? $types[0];
+    }
+
+    public function isDtoType(string $type): bool
+    {
+        return is_subclass_of($type, DtoInterface::class) || $this->targets->variantsFor($type) !== null;
     }
 
     private function canHydrateByType(string $type, mixed $value): bool
@@ -52,7 +64,7 @@ final readonly class HydrationTypeSelector
             $this->safeScalarHydrationCaster->canHydrate($type, $value) => true,
             is_string($value) && is_subclass_of($type, DateTimeInterface::class) => true,
             is_scalar($value) && (enum_exists($type) || is_subclass_of($type, UnitEnum::class)) => true,
-            (is_array($value) || is_object($value)) && is_subclass_of($type, DtoInterface::class) => true,
+            (is_array($value) || is_object($value)) && $this->isDtoType($type) => true,
             is_string($value) && $type === Base64File::class => true,
             default => false,
         };

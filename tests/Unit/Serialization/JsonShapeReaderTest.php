@@ -6,7 +6,7 @@ use ApiSutra\Serialization\Input\JsonDecoder;
 use ApiSutra\Serialization\Input\HydrationInput;
 use ApiSutra\Serialization\Input\JsonShapeReader;
 use ApiSutra\Serialization\Input\SourceShapeMap;
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 use Random\Engine\Mt19937;
 use Random\Randomizer;
 
@@ -22,7 +22,7 @@ function jsonShapeOracle(mixed $value): ?SourceShapeMap
             $children[$key] = $shape;
         }
     }
-    return new SourceShapeMap(is_array($value) ? InputShape::List : InputShape::Object, $children);
+    return new SourceShapeMap(is_array($value) ? ContainerShape::List : ContainerShape::Object, $children);
 }
 
 function assertJsonInputShape(HydrationInput $input, mixed $value): void
@@ -31,7 +31,7 @@ function assertJsonInputShape(HydrationInput $input, mixed $value): void
         expect($input->kind())->toBeNull();
         return;
     }
-    expect($input->kind())->toBe(is_array($value) ? InputShape::List : InputShape::Object);
+    expect($input->kind())->toBe(is_array($value) ? ContainerShape::List : ContainerShape::Object);
     foreach ((array) $value as $key => $child) {
         assertJsonInputShape(new HydrationInput(
             $input->value[$key],
@@ -86,10 +86,10 @@ it('сверяет воспроизводимые комбинации конт�
 it('принимает ведущий NUL и не отключает формы соседнего узла', function (): void {
     $json = '{"\\u0000key":{},"items":{"0":"a","1":"b"},"array":[]}';
     $input = (new JsonDecoder())->decode($json);
-    expect($input->shape->kind)->toBe(InputShape::Object)
-        ->and($input->shape->select(["\0key"])->kind)->toBe(InputShape::Object)
-        ->and($input->select('items')->shape->kind)->toBe(InputShape::Object)
-        ->and($input->select('array')->shape->kind)->toBe(InputShape::List);
+    expect($input->shape->kind)->toBe(ContainerShape::Object)
+        ->and($input->shape->select(["\0key"])->kind)->toBe(ContainerShape::Object)
+        ->and($input->select('items')->shape->kind)->toBe(ContainerShape::Object)
+        ->and($input->select('array')->shape->kind)->toBe(ContainerShape::List);
 
 });
 
@@ -101,8 +101,8 @@ it('не создаёт карту без запроса формы и не пр
 
 it('отделяет отсутствие отметок от неизвестного происхождения и сохраняет копирование значений', function (): void {
     $input = (new JsonDecoder())->decode('{"items":[{"nested":{"value":1},"tags":[]}]}');
-    expect($input->shape)->toBeNull()->and($input->kind())->toBe(InputShape::Object)
-        ->and($input->select('items')->kind())->toBe(InputShape::List)
+    expect($input->shape)->toBeNull()->and($input->kind())->toBe(ContainerShape::Object)
+        ->and($input->select('items')->kind())->toBe(ContainerShape::List)
         ->and(new HydrationInput($input->value)->kind())->toBeNull();
     $copy = $input->value;
     $copy['items'][0]['nested']['value'] = 99;
@@ -117,7 +117,7 @@ it('не удерживает соседние метаданные после �
     $selected = $input->select('data');
     unset($input);
     expect($root->get())->toBeNull()->and($unrelated->get())->toBeNull()
-        ->and($selected->select('child')->kind())->toBe(InputShape::Object);
+        ->and($selected->select('child')->kind())->toBe(ContainerShape::Object);
 });
 
 it('проверяет всё тело повторным decode после ошибки непредставимого имени', function (): void {

@@ -7,7 +7,7 @@ use ApiSutra\Config\HydrationConfig;
 use ApiSutra\Continuation\FinalPathStateResolver;
 use ApiSutra\Continuation\ContinuationState;
 use ApiSutra\Enums\DataTransfer\ValueState;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
 use ApiSutra\Exceptions\Continuation\ContinuationAwaitException;
 use ApiSutra\Serialization\Hydrator;
 use ApiSutra\Serialization\Input\JsonDecoder;
@@ -16,7 +16,7 @@ use ApiSutra\Serialization\Rules\DtoRules;
 use ApiSutra\Serialization\Rules\FieldRule;
 use ApiSutra\Serialization\Rules\HandlerSpec;
 use ApiSutra\Serialization\Rules\HydrationRules;
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 use ApiSutra\Serialization\Rules\ValueShape;
 use ApiSutra\Testing\MockResponse;
 use ApiSutra\Tests\Stubs\Continuation\RecordingStateResolver;
@@ -51,7 +51,7 @@ it('различает missing null object list до defaults и constructor che
     foreach (['{"value":{}}', '{"value":[]}'] as $json) {
         expect($hydrator->hydrateInput((new JsonDecoder())->decode($json), ValueDto::class)->value)->toBeInstanceOf(Node::class);
     }
-    $strictInput = jsonRuleHydrator($rule->inputShape(InputShape::Object));
+    $strictInput = jsonRuleHydrator($rule->inputShape(ContainerShape::Object));
     expect(Fixture::error(fn () => $strictInput->hydrateInput((new JsonDecoder())->decode('{"value":[]}'), ValueDto::class))->reason)->toBe('invalid_object_shape');
     $default = jsonRuleHydrator(FieldRule::create()->shape(ValueShape::dto(Node::class))->default(DefaultSpec::value([], ValueState::Null)));
     expect($default->hydrateInput((new JsonDecoder())->decode('{"value":null}'), ValueDto::class)->value)->toBeInstanceOf(Node::class);
@@ -75,7 +75,7 @@ it('сохраняет формы recursive list и разрешение тол�
 });
 
 it('варианты проверяют выбранный payload и маскируют ключи JSON object', function (): void {
-    $shape = ValueShape::list(ValueShape::variants('', ['node' => Node::class], NestedDiscriminatorMode::Key), normalizeKeys: true);
+    $shape = ValueShape::list(ValueShape::variants('', ['node' => Node::class], DiscriminatorMode::Key), normalizeKeys: true);
     $hydrator = jsonRuleHydrator(FieldRule::create()->shape($shape));
     $input = (new JsonDecoder())->decode('{"value":{"0":{"node":[]}}}');
     $error = Fixture::error(fn () => $hydrator->hydrateInput($input, ValueDto::class));
@@ -141,7 +141,7 @@ it('continuation использует режим клиента даже с яв
 });
 
 it('внешние правила сохраняют guard и маскируют неизвестные числовые ключи при выключении', function (): void {
-    $shape = ValueShape::list(ValueShape::variants('', ['node' => Node::class], NestedDiscriminatorMode::Key), normalizeKeys: true);
+    $shape = ValueShape::list(ValueShape::variants('', ['node' => Node::class], DiscriminatorMode::Key), normalizeKeys: true);
     $rules = HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape($shape)));
     $hydrator = Hydrator::forConfig(new HydrationConfig(rules: $rules, jsonShapeValidation: false));
     $input = (new JsonDecoder())->decode('{"value":{"0":{"node":["lost"]}}}', false);

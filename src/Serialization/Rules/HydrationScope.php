@@ -41,7 +41,7 @@ final class HydrationScope
 
     /**
      * @internal
-     * @param Closure(array|object, string, self): object $hydrate
+     * @param Closure(array|object, string, self, bool): object $hydrate
      */
     public static function bind(Closure $hydrate, ?PipelineContext $context, bool $tracking, ?DtoHydratorInterface $hydrator = null, bool $jsonShapeValidation = true): self
     {
@@ -91,17 +91,17 @@ final class HydrationScope
     }
 
     /** @internal Вход ядра сохраняет известное происхождение дочернего узла. */
-    public function hydrateDto(mixed $data, string $class, bool $emptyListAsObject = false): object
+    public function hydrateDto(mixed $data, string $class, bool $emptyListAsObject = false, bool $selectVariants = true): object
     {
         if ($this->hydrateNode === null) {
             throw new ConfigurationException(new Message('serialization.hydrationscope_must_be_created_by_a_hydrator'));
         }
-        InputShapeGuard::assert($data, InputShape::Object, source: $this->shape($data), emptyListAsObject: $emptyListAsObject);
-        return ($this->hydrateNode)($data, $class, $this);
+        InputShapeGuard::assert($data, ContainerShape::Object, source: $this->shape($data), emptyListAsObject: $emptyListAsObject);
+        return ($this->hydrateNode)($data, $class, $this, $selectVariants);
     }
 
     /** @internal */
-    public function shape(mixed $value): ?InputShape
+    public function shape(mixed $value): ?ContainerShape
     {
         return SourceShapeMap::kindOf($value, $this->shape, $this->jsonSourceKnown);
     }
@@ -109,7 +109,7 @@ final class HydrationScope
     /** @internal Числовое имя свойства JSON object не является безопасным индексом. */
     public function hasListIndices(array $value): bool
     {
-        return $this->jsonSourceKnown ? $this->shape($value) === InputShape::List
+        return $this->jsonSourceKnown ? $this->shape($value) === ContainerShape::List
             : $this->jsonShapeValidation && array_is_list($value);
     }
 

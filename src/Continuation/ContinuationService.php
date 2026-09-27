@@ -17,6 +17,7 @@ use ApiSutra\Core\AbstractRequest;
 use ApiSutra\Enums\Continuation\ContinuationMode;
 use ApiSutra\Enums\Continuation\ContinuationStatus;
 use ApiSutra\Exceptions\Configuration\ContinuationConfigurationException;
+use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Continuation\ContinuationAwaitException;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Execution\ExecutionDispatch;
@@ -424,8 +425,13 @@ final readonly class ContinuationService
             return null;
         }
         $type = trim($type);
-        if ($type === '' || !class_exists($type)) {
-            throw new ContinuationConfigurationException(new Message('continuation.final_dto_class_not_found', ['type' => $type]));
+        try {
+            $this->hydrator->descriptions()->targets()->validate($type);
+        } catch (ConfigurationException $exception) {
+            throw new ContinuationConfigurationException(
+                $exception->messageDefinition() ?? $exception->getMessage(),
+                previous: $exception,
+            );
         }
         return $type;
     }

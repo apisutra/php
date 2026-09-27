@@ -7,19 +7,19 @@ namespace ApiSutra\Tests\Stubs\Dto;
 use ApiSutra\Attributes\DataTransfer\Nested;
 use ApiSutra\Collections\RawCollection;
 use ApiSutra\DataTransfer\AbstractDto;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 final readonly class PolymorphicOwnersRawCollectionKeyKeepRawDto extends AbstractDto
 {
     public function __construct(
         #[Nested(
-            discriminatorMode: NestedDiscriminatorMode::Key,
+            discriminatorMode: DiscriminatorMode::Key,
             map: [
                 'person' => PolymorphicOwnerPersonDto::class,
                 'organization' => PolymorphicOwnerOrganizationDto::class,
             ],
-            unknownVariant: NestedUnknownVariant::KeepRaw,
+            unknownVariant: UnknownVariant::KeepRaw,
         )]
         public RawCollection $owners,
     ) {}

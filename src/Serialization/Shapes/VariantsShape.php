@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ApiSutra\Serialization\Shapes;
 
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 final readonly class VariantsShape implements ShapeSpec
 {
@@ -13,8 +13,8 @@ final readonly class VariantsShape implements ShapeSpec
     public function __construct(
         public string $discriminator,
         public array $map,
-        public NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value,
-        public NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw,
+        public DiscriminatorMode $mode = DiscriminatorMode::Value,
+        public UnknownVariant|string $unknown = UnknownVariant::KeepRaw,
     ) {
     }
 }

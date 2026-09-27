@@ -243,13 +243,14 @@ final readonly class CompositeFlow
         }
 
         $dtoType = $request->getResponseType();
-        if ($dtoType === null) {
+        // Только объект объявленного типа уже готов; прочие объекты остаются источниками гидратации.
+        if ($dtoType === null || $data instanceof $dtoType) {
             return $data;
         }
 
         $context->hydrationSourceTransformed = true;
         try {
-            return $this->hydrator->hydrate($data, $dtoType, $context, $this->dtoHydrators->resolve($request, $context->config));
+            return $this->hydrator->hydrate($data, $dtoType, $context, $this->dtoHydrators->resolve($request, $context->config, $this->hydrator->descriptions()->targets()));
         } catch (HydrationException $exception) {
             if ($exception->reason === 'custom_hydrator_type_mismatch' && $exception->path === '') {
                 throw ResponseContractGuard::mismatch($request, $context->config, $dtoType, $exception->actual ?? 'object');

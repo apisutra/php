@@ -1,6 +1,8 @@
 <!-- languages --> <a href="continuation-await.md">English</a> · <a href="../../../ru/reference/execution/continuation-await.md">Русский</a> <!-- /languages -->
 # Waiting for an operation result <a id="section-1"></a>
 
+finalType/awaitAs accept [declared variants](../dto/variants.md#type-variants) and select a concrete DTO from the retained input with its JSON shape.
+
 ## ContinuationTokenExtractor <a id="section-2"></a>
 ```php
 final class ExampleContinuationTokenExtractor implements ContinuationTokenExtractorInterface

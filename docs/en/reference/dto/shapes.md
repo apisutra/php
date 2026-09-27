@@ -58,16 +58,16 @@ selection, nullable/union rules, and all parameters.
 
 Key-mode example (a case such as `{"person": {...}}`):
 ```php
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 
 #[Nested(
-    discriminatorMode: NestedDiscriminatorMode::Key,
+    discriminatorMode: DiscriminatorMode::Key,
     map: [
         'person' => PersonOwnerDto::class,
         'organization' => OrganizationOwnerDto::class,
     ],
-    unknownVariant: NestedUnknownVariant::KeepRaw,
+    unknownVariant: UnknownVariant::KeepRaw,
 )]
 public array $owners = [];
 ```
@@ -96,7 +96,8 @@ Rule:
 `mixed()`, `scalars(ScalarType ...$types)`, `nullable(ValueShape $shape)`, `dto(string $class, bool $emptyListAsObject = false)`,
 `list(ValueShape $item, ?string $each = null, ?HandlerSpec $itemCast = null, bool $normalizeKeys = false)`.
 Lists may be nested. PHPDoc `list<int>` and bare array do not themselves validate items.
-A plain native class without `dto()`, Nested, or DtoInterface is not hydrated automatically.
+A native type with [DtoVariants](variants.md#type-variants) is also recognized automatically.
+Other plain native classes without `dto()`, Nested, or DtoInterface are not hydrated automatically.
 
 `list()` requires dense keys 0..n−1; a dictionary or sparse array produces `invalid_list_shape`.
 `normalizeKeys: true` allows a dictionary and reindexes the result while preserving
@@ -131,7 +132,7 @@ The same option exists on `ValueShape::dto()` and [Returns](../attributes/respon
 It permits **only an empty list for that DTO**. Required fields are still checked;
 nonempty lists, null, children, and siblings do not inherit permission. With Returns,
 the option applies to the selected DTO after unwrap/type. An explicit
-`FieldRule::inputShape(InputShape::Object)` checks the original input first and can
+`FieldRule::inputShape(ContainerShape::Object)` checks the original input first and can
 still reject `[]`; a cast's result shape still requires an actual DTO. Use Shape
 instead of single-object Nested when this local exception is needed.
 
@@ -157,8 +158,8 @@ The hydrator selects the target from the property declaration before parsing dat
 | --- | --- |
 | `#[Nested] AddressDto` or `?AddressDto` | Single DTO of the specified class |
 | `#[Nested(type: AddressDto::class)] AddressDto` | Single DTO; a concrete subtype is also allowed |
-| Interface or abstract property class | A single object requires a compatible concrete Nested.type |
-| `object` | A single object requires a concrete `Nested.type` |
+| Interface or abstract property class | With DtoVariants, the declared type is sufficient; otherwise a compatible concrete Nested.type is required |
+| `object` | A single object requires `Nested.type` (concrete class or declared variants) |
 | `array`, `iterable`, `mixed`, no native type | Retains array-of-items processing; type defines the item class |
 | Traversable class, including AbstractCollection / AbstractTypedCollection | Collection; type defines the item class, map the variant classes |
 | Custom wrapper and a separate incompatible item type | Collection if callable fromArray() exists, or a public constructor takes an array as its first argument with no other required arguments |
@@ -191,4 +192,27 @@ and scalar items require explicit checks. An item error contains its sequential
 index. A whole-property `#[Cast]` does not run when Nested is present.
 
 A single-object error contains the child field path without a list index.
-Use a concrete DTO class and a native type that distinguishes an object from a collection.
+Use a concrete DTO class or declared variants, and a native type that distinguishes an object from a collection.
+
+## Input guard before a cast <a id="input-guard"></a>
+
+Use InputShape to check the incoming container without transforming it. Unlike
+Shape, it can accompany Cast. The following property belongs to your DTO;
+ParticipantsCast is your HydrationCastInterface implementation.
+
+```php
+use ApiSutra\Attributes\DataTransfer\Cast;
+use ApiSutra\Attributes\DataTransfer\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
+
+#[InputShape(ContainerShape::Object)]
+#[Cast(ParticipantsCast::class)]
+public array $participants;
+```
+
+With JSON validation enabled, `{}` reaches the cast, whereas `[]` fails with
+`invalid_object_shape` before the cast runs. The guard is the attribute equivalent
+of FieldRule::inputShape; it does not validate dictionary values or reindex keys.
+RequiredInput/ForbidExplicitNull still govern missing/null. It does not re-enable
+JSON metadata when the global setting is false. External field rules and input
+attributes on the same property still conflict.

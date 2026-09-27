@@ -55,6 +55,12 @@ final class UserProfileComposite extends AbstractRequest implements CompositeReq
 - Результаты дочерних запросов доступны в `ExecutionResult::$nested`,
   мета‑информация — в `ExecutionResult::$meta` (BatchMeta).
 
+Объект aggregate, который уже соответствует объявленному типу ответа через instanceof,
+возвращается без повторного вызова конструкторов DTO или custom-гидратора. Остальные
+объектные источники, включая stdClass и JsonSerializable, и массивы гидратируются
+в объявленный тип. Поэтому abstract-тип или интерфейс
+ответа без декларации вариантов допустим, если агрегатор сам создаёт конкретный объект.
+
 ## DependsOnRequest <a id="section-5"></a>
 **Задача:** выполнить зависимости, затем основной запрос.
 

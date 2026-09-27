@@ -12,6 +12,9 @@ use ApiSutra\Exceptions\Transport\ExecutionDeadlineException;
 use ApiSutra\Serialization\Context\HydrationContext;
 use ApiSutra\DataTransfer\AbstractResponseDto;
 use ApiSutra\Serialization\Input\HydrationInput;
+use ApiSutra\Serialization\Input\JsonDecoder;
+use ApiSutra\Serialization\Variants\VariantSelector;
+use JsonException;
 use ReflectionMethod;
 use Throwable;
 use ApiSutra\Localization\Message;
@@ -63,10 +66,10 @@ final class Hydrator
             $this->plans = new HydrationPlanCompiler($cache, $catalog);
             $this->objects = new HydrationObjectFactory();
             $this->fields = new HydrationFieldExecutor(new BuiltinHydrationCaster(
-                typeSelector: new HydrationTypeSelector(),
+                typeSelector: new HydrationTypeSelector(targets: $this->descriptions->targets()),
                 dtoHydrator: fn (mixed $nestedValue, string $dtoClass, ?PipelineContext $nestedContext): object
                     => $this->hydrate($nestedValue, $dtoClass, $nestedContext),
-            ));
+            ), $this->descriptions->targets());
         } catch (LocalizableExceptionInterface $exception) {
             throw $exception->localized($this->localization);
         }
@@ -92,7 +95,8 @@ final class Hydrator
     /** @internal Возможности объявленного DTO для ошибок до начала гидратации. */
     public function tracksSource(?string $class): bool
     {
-        return $this->config !== null || $class !== null && $this->descriptions->hasCapabilities($class);
+        return $this->config !== null || $class !== null
+            && ($this->descriptions->targets()->variantsFor($class) !== null || $this->descriptions->hasCapabilities($class));
     }
 
     public static function forRules(HydrationRules $rules): self
@@ -103,6 +107,27 @@ final class Hydrator
     public static function forConfig(HydrationConfig $config, LocalizationConfig $localization = new LocalizationConfig()): self
     {
         return new self(new CastRegistry(), new AttributeMetadataCache(), config: $config, localization: $localization);
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $dtoClass
+     * @return T
+     */
+    public function hydrateJson(string $json, string $dtoClass): object
+    {
+        try {
+            $input = (new JsonDecoder())->decode($json, $this->config->jsonShapeValidation ?? true);
+        } catch (JsonException $exception) {
+            throw HydrationException::invalidValue('invalid_json', 'valid JSON', 'string', previous: $exception)
+                ->localized($this->localization);
+        }
+        $result = $this->hydrateInput($input, $dtoClass);
+        if (!$result instanceof $dtoClass) {
+            throw HydrationException::invalidValue('invalid_field_type', $dtoClass, get_debug_type($result))
+                ->localized($this->localization);
+        }
+        return $result;
     }
 
     public function hydrate(
@@ -134,8 +159,8 @@ final class Hydrator
     {
         $selected = $hydrator === false ? null : ($hydrator ?? $this->config?->hydrator);
         return HydrationScope::bind(
-            fn (array|object $data, string $class, HydrationScope $scope): object
-                => $this->hydrateNode($data, $class, $scope),
+            fn (array|object $data, string $class, HydrationScope $scope, bool $selectVariants): object
+                => $this->hydrateNode($data, $class, $scope, $selectVariants),
             $context,
             $this->config !== null || $selected !== null,
             $selected,
@@ -143,8 +168,31 @@ final class Hydrator
         );
     }
 
-    private function hydrateNode(array|object $data, string $dtoClass, HydrationScope $scope): object
+    private function hydrateNode(array|object $data, string $dtoClass, HydrationScope $scope, bool $selectVariants = true): object
     {
+        if ($selectVariants) {
+            $this->descriptions->targets()->validate($dtoClass);
+            $definition = $this->descriptions->targets()->variantsFor($dtoClass);
+            if ($definition !== null) {
+                if ($data instanceof $dtoClass) {
+                    return $data;
+                }
+                $selected = VariantSelector::select($data, $definition);
+                $class = $selected->class ?? throw new ConfigurationException(new Message(
+                    'serialization.variant_policy_not_allowed',
+                    ['position' => 'DTO type ' . $dtoClass, 'policy' => $definition->unknown->name],
+                ));
+                $result = $scope->descend($selected->segments, fn (): object => $scope->hydrateDto(
+                    $selected->payload,
+                    $class,
+                    selectVariants: false,
+                ));
+                if (!$result instanceof $dtoClass) {
+                    throw HydrationException::invalidValue('invalid_field_type', $dtoClass, get_debug_type($result));
+                }
+                return $result;
+            }
+        }
         $hydrator = $scope->hydrator();
         if ($hydrator !== null) {
             if (!class_exists($dtoClass) || (new ReflectionClass($dtoClass))->isAbstract() || enum_exists($dtoClass)) {

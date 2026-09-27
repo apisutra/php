@@ -22,13 +22,15 @@ attribute is allowed. Behavior and priorities are covered in the topic links bel
 | From | PROPERTY | `From(string $name, array $fallback = [])` |
 | Label | PROPERTY | `Label(string $name)` |
 | Map | PROPERTY | `Map(string $name)` |
-| Nested | PROPERTY | `Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, NestedDiscriminatorMode $discriminatorMode = NestedDiscriminatorMode::Value, NestedUnknownVariant $unknownVariant = NestedUnknownVariant::KeepRaw)` |
+| Nested | PROPERTY | `Nested(?string $type = null, ?string $itemCast = null, ?string $from = null, array $fallback = [], ?string $each = null, ?string $discriminator = null, ?array $map = null, DiscriminatorMode $discriminatorMode = DiscriminatorMode::Value, UnknownVariant\|string $unknownVariant = UnknownVariant::KeepRaw)` |
 | To | PROPERTY | `To(string $name)` |
 | Validate | PROPERTY | `Validate(string $rules, ?string $message = null)` |
 | Extras | PROPERTY | `Extras()` |
 | RequiredInput | PROPERTY | `RequiredInput()` |
 | ForbidExplicitNull | PROPERTY | `ForbidExplicitNull()` |
 | ConstructorValue | PROPERTY | `ConstructorValue(bool $allowMissing = false)` |
+| DtoVariants | CLASS | `DtoVariants(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant\|string $unknown = UnknownVariant::Error)` |
+| InputShape | PROPERTY | `InputShape(ContainerShape $value)` |
 | Shape | PROPERTY | `Shape(ScalarType\|ShapeSpec $value)` |
 
 [New declarations](../dto/declarations.md) cover input remainder, presence/null,
@@ -187,8 +189,8 @@ public int $id;
 - `each?: string` — for collections.
 - `discriminator?: string` — discriminator path for `Value`, or wrapper object path for `Key`.
 - `map?: ?array` — discriminator -> DTO class-string mapping.
-- `discriminatorMode: NestedDiscriminatorMode = Value` — discriminator source (`Value` or `Key`).
-- `unknownVariant: NestedUnknownVariant = KeepRaw` — unknown variant policy (`KeepRaw`, `Skip`, or `Error`).
+- `discriminatorMode: DiscriminatorMode = Value` — discriminator source (`Value` or `Key`).
+- `unknownVariant: UnknownVariant|string = KeepRaw` — unknown variant policy (`KeepRaw`, `Skip`, `Error`, or a fallback DTO class). See [variants](../dto/variants.md).
 
 `itemCast` is useful when a nested array is structurally correct but every item needs
 additional transformation, such as `list<data-uri-string> -> list<Base64File>`.

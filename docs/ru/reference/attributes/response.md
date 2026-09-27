@@ -1,6 +1,8 @@
 <!-- languages --> <a href="../../../en/reference/attributes/response.md">English</a> · <a href="response.md">Русский</a> <!-- /languages -->
 # Атрибуты ответа <a id="section-1"></a>
 
+Returns принимает [объявленные варианты](../dto/variants.md#type-variants), в том числе после unwrap. Вся map и fallback проверяются до HTTP.
+
 ## Сигнатуры и targets <a id="section-2"></a>
 
 Имена классов относятся к `ApiSutra\Attributes\Response`.

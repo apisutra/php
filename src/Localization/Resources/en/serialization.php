@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'serialization.ambiguous_dto_target' => 'Ambiguous DTO target for {property}; declare an explicit shape',
+    'serialization.duplicate_dto_variants' => 'DTO variants are declared more than once for {type}',
+    'serialization.variants_empty_map' => 'Variants at {position} require a non-empty map',
+    'serialization.variant_policy_not_allowed' => 'Variant policy {policy} is not allowed at {position}; specify Error or a fallback DTO class',
+    'serialization.variant_class_unavailable' => 'Variant class {class} at {position} must be concrete and available',
+    'serialization.variant_class_incompatible' => 'Variant {class} at {position} must implement or extend {target}',
     'serialization.invalid_dto_hydrator' => 'Cannot resolve DTO hydrator: {class}',
     'serialization.absolute_url_is_incompatible_with_additional_query_parameters' => 'Absolute URL is incompatible with additional query parameters',
     'serialization.ambiguous_nested_cardinality' => 'Ambiguous Nested cardinality: {value0}',
@@ -52,18 +58,15 @@ return [
     'serialization.invalid_declaration_of' => 'Invalid declaration of {attribute}',
     'serialization.invalid_or_unresolved_path_placeholder' => 'Invalid or unresolved path placeholder',
     'serialization.invalid_rule_handler_for_is_required' => 'Invalid rule handler: {value0} for {target}; {interface} is required',
-    'serialization.keepraw_is_incompatible_with_a_typed_dto_collection' => 'KeepRaw is incompatible with a typed DTO collection',
     'serialization.missing_or_invalid_path_parameter' => 'Missing or invalid path parameter: {value0}',
     'serialization.more_than_one_bodyroot_found_in_the_request' => 'More than one BodyRoot found in the request',
     'serialization.multipart_payload_expects_an_array_body' => 'Multipart payload expects an array body',
     'serialization.multipartstream_is_unavailable_guzzlehttp_psr7' => 'MultipartStream is unavailable (guzzlehttp/psr7)',
-    'serialization.nested_class_is_unavailable_for_hydration' => 'Nested class is unavailable for hydration: {type}',
     'serialization.nested_does_not_support_intersection_types' => 'Nested does not support intersection types: {value0}',
     'serialization.nested_itemcast_class_not_found' => 'Nested.itemCast class not found: {castClass}',
     'serialization.nested_itemcast_must_implement_hydrationcastinterface' => 'Nested.itemCast must implement HydrationCastInterface: {castClass}',
     'serialization.nested_itemcast_must_implement_hydrationcastinterface.nestedvalueprocessor' => 'Nested.itemCast must implement HydrationCastInterface: {class}',
     'serialization.nested_list_parameters_cannot_be_used_for_a_single' => 'Nested list parameters cannot be used for a single object: {value0}',
-    'serialization.nested_map_must_contain_available_dto_classes' => 'Nested.map must contain available DTO classes',
     'serialization.nested_type_is_incompatible_with_the_property_type' => 'Nested.type is incompatible with the property type: {value0}',
     'serialization.parent_not_found_for_nested' => 'Parent not found for Nested: {value0}',
     'serialization.path_parameter_cannot_be_empty_or' => 'Path parameter cannot be empty, . or ..: {value0}',
@@ -89,6 +92,5 @@ return [
     'serialization.valueshape_dto_requires_a_class' => 'ValueShape.dto requires a class',
     'serialization.valueshape_scalars_requires_at_least_one_type' => 'ValueShape.scalars requires at least one type',
     'serialization.variants_map_requires_dto_classes' => 'Variants.map requires DTO classes',
-    'serialization.variants_requires_a_non_empty_map_and_a_list' => 'Variants requires a non-empty map and a list item position',
     'serialization.withdownloadto_requires_download' => 'withDownloadTo requires #[Download]',
 ];

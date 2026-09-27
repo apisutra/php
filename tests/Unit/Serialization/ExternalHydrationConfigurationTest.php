@@ -47,7 +47,7 @@ it('отклоняет повторные декларации и неверны
         'unknown-field' => fn () => Hydrator::forRules(HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('unknown', FieldRule::create()))),
         'empty-path' => fn () => Hydrator::forRules(HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->from('')))),
         'handler' => fn () => Hydrator::forRules(HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->cast(new HandlerSpec(stdClass::class))))),
-        'variants' => fn () => Hydrator::forRules(HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape(ValueShape::variants('type', ['known' => RecordDto::class]))))),
+        'variants' => fn () => Hydrator::forRules(HydrationRules::create()->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape(ValueShape::variants('type', []))))),
     };
     expect($operation)->toThrow(ConfigurationException::class);
 })->with(['class', 'field', 'receiver', 'mapping', 'default', 'policy', 'transform', 'casts', 'unknown-class', 'unknown-field', 'empty-path', 'handler', 'variants']);

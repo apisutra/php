@@ -7,12 +7,12 @@ namespace ApiSutra\Serialization\Rules;
 use ApiSutra\Localization\Message;
 use ApiSutra\Attributes\DataTransfer\Nested;
 use ApiSutra\Contracts\Interfaces\Casting\HydrationCastInterface;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Support\ArrayPath;
+use ApiSutra\Serialization\Hydration\HydrationCollections;
 use ApiSutra\VO\Files\Base64File;
-use ReflectionClass;
 
 /** @internal Сохраняет происхождение атрибутного списка и прежний срок жизни itemCast. */
 final readonly class NestedValueProcessor
@@ -21,20 +21,26 @@ final readonly class NestedValueProcessor
     {
     }
 
-    public function process(array $input, Nested $nested, ?string $target, HydrationScope $scope): ShapeResult
-    {
+    public function process(
+        array $input,
+        Nested $nested,
+        ?string $target,
+        HydrationScope $scope,
+        ?string $collectionClass,
+        string $position,
+    ): ShapeResult {
         $variants = $nested->map !== null
-            && ($nested->discriminator !== null || $nested->discriminatorMode === NestedDiscriminatorMode::Key);
+            && ($nested->discriminator !== null || $nested->discriminatorMode === DiscriminatorMode::Key);
         $shape = $variants ? ValueShape::variants(
             $nested->discriminator ?? '',
             $nested->map,
             $nested->discriminatorMode,
             $nested->unknownVariant,
         ) : null;
-        foreach ($nested->map ?? [] as $class) {
-            if (!is_string($class) || !class_exists($class) || (new ReflectionClass($class))->isAbstract() || enum_exists($class)) {
-                throw new ConfigurationException(new Message('serialization.nested_map_must_contain_available_dto_classes'));
-            }
+        if ($shape !== null) {
+            $itemClass = HydrationCollections::itemClass($collectionClass);
+            // Nested сохраняет KeepRaw: неизвестный сырой элемент проверяет сама коллекция.
+            $shape->variants->validate($position, allowSkip: true, allowRaw: true, target: $itemClass);
         }
         $cast = null;
         if ($nested->itemCast !== null && trim($nested->itemCast) !== '') {
@@ -67,11 +73,11 @@ final readonly class NestedValueProcessor
                         if ($cast !== null) {
                             $value = $scope->cast($cast, $value);
                         }
-                        $operation = function () use ($value, $target, $shape, $scope): ShapeResult {
+                        $operation = function () use ($value, $target, $shape, $scope, $cast): ShapeResult {
                             if ($shape !== null) {
-                                return $this->values->transform($value, $shape, new RulePolicy(), $scope);
+                                return $this->values->transform($value, $shape, new RulePolicy(), $scope, readyDto: $cast !== null);
                             }
-                            if ($target !== null && class_exists($target)) {
+                            if ($target !== null && (class_exists($target) || interface_exists($target))) {
                                 if ($value instanceof $target) {
                                     return new ShapeResult($value, SourceConsumption::all());
                                 }
@@ -94,7 +100,7 @@ final readonly class NestedValueProcessor
                     $consumed->mergeAt([$key], SourceConsumption::all());
                 } else {
                     $consumed->mergeAt([$key, ...$segments], $cast === null ? $processed->consumed : SourceConsumption::all());
-                    if ($shape !== null || ($target !== null && class_exists($target))) {
+                    if ($shape !== null || ($target !== null && (class_exists($target) || interface_exists($target)))) {
                         $result[] = $processed->value;
                     } else {
                         $result[$key] = $processed->value;

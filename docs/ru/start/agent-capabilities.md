@@ -1,9 +1,8 @@
 <!-- languages --> <a href="../../en/start/agent-capabilities.md">English</a> · <a href="agent-capabilities.md">Русский</a> <!-- /languages -->
 # Карта возможностей для агента <a id="section-1"></a>
 
-Ориентир для [агента — пользователя пакета](agent.md). Каждая строка связывает
-потребность с подходящим механизмом и условием выбора. Подключать все механизмы
-не требуется; полный контракт находится по ссылке в строке.
+Карта для [агента — пользователя](agent.md). Выбирайте механизм по задаче;
+полный контракт — по ссылке. Подключать всё не требуется.
 
 - [Устройство SDK](#section-2)
 - [Подключение и конфигурация](#section-3)
@@ -55,7 +54,8 @@
 | Сопоставить имена и пути полей | [From, To, Map](../reference/attributes/hydration.md), [FieldRule](../reference/dto/field-rules.md). Входное сопоставление и исходящее имя выбираются отдельно; пересечение деклараций имеет явные правила. |
 | Отличать отсутствующее поле, null и default | [Defaults и providers](../reference/dto/defaults.md), [RequiredInput](../reference/dto/declarations.md), [ConstructorValue](../reference/dto/constructor-values.md). Обязательное присутствие, допустимость null и проверка значения конструктора — отдельные условия. |
 | Контролировать типы, enum, даты и общую политику | [Скаляры](../reference/dto/scalars.md), [формы значений](../reference/dto/shapes.md), [профили](../reference/dto/profiles.md). Strict выбирается явно; преобразование не должно терять значимые данные API. |
-| Разобрать вложенный объект, список или вариант ответа | [Коллекции и Nested](../reference/dto/collections.md), [варианты и discriminator](../reference/dto/variants.md), [формы](../reference/dto/shapes.md). Форма объекта, списка и словаря задаётся по реальному payload. |
+| Получить DTO из JSON webhook | [hydrateJson](../reference/dto/configuration.md#json-input): исходное тело и общий HydrationConfig; [InputShape](../reference/dto/shapes.md#input-guard): проверка словаря до cast. |
+| Разобрать объект, список или вариант | [Коллекции и Nested](../reference/dto/collections.md), [формы](../reference/dto/shapes.md), [DtoVariants](../reference/dto/variants.md): единая map на типе и типизированный fallback; ошибки известной модели остаются ошибками. |
 | Сохранить неописанные входные данные | [Extras](../reference/dto/extras.md), [исходящий receiver](../reference/serialization/receiver-output.md). Receiver объявляется в модели явно; имя `_extra` само по себе ничего не включает. DX-вывод и исключение из запроса имеют разные контракты. |
 | Выполнить нестандартное преобразование | [Casts и providers с контекстом](../reference/dto/scope.md). Вложенные преобразования через контекст сохраняют текущие правила; контекст нельзя использовать после возврата обработчика. |
 

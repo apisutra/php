@@ -1,6 +1,31 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.3.0
+
+- Add public `Hydrator::hydrateJson()` and `#[InputShape(ContainerShape::Object)]`
+  for incoming JSON and container validation before custom casts.
+- Add type-level `DtoVariants` and external `HydrationRules::withVariants()` for
+  HTTP, webhook, nested fields, lists, pagination and continuation. Unknown variants
+  can hydrate a typed fallback; free VariantsShape also supports single fields.
+- Rename NestedDiscriminatorMode to DiscriminatorMode, NestedUnknownVariant to
+  UnknownVariant, and the Serialization\Rules\InputShape enum to ContainerShape.
+  Update imports and enum references; the new InputShape is a property attribute.
+- Value discriminator tags now accept only string/int. Boolean, float, array and
+  object values fail with `invalid_discriminator_type` rather than implicit conversion
+  or unknown fallback. Existing list defaults remain KeepRaw; type declarations default to Error.
+- Unify variant selection and target validation, preserve source shape and diagnostics,
+  and add a runnable HTTP/polling/webhook example. No new dependencies.
+- Preserve ContinuationConfigurationException for invalid finalType declarations,
+  with the shared validation error retained as the cause.
+- Keep abstract/interface contracts valid for ready handler/composite results.
+  Composite objects already matching the declared type skip rehydration;
+  other object sources and arrays still hydrate.
+- Validate all map/fallback classes against a typed collection’s item type before
+  item selection, and include the unavailable class in variant configuration errors.
+  Nested retains default KeepRaw: known variants work in typed collections,
+  while unknown raw items still fail collection validation.
+
 ## 0.2.0
 
 - Preserve JSON object/list identity through DTO hydration, nested shapes, cached and

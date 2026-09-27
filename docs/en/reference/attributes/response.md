@@ -1,6 +1,8 @@
 <!-- languages --> <a href="response.md">English</a> · <a href="../../../ru/reference/attributes/response.md">Русский</a> <!-- /languages -->
 # Response attributes <a id="section-1"></a>
 
+Returns accepts [declared variants](../dto/variants.md#type-variants), including after unwrap. The whole map and fallback are validated before HTTP.
+
 ## Signatures and targets <a id="section-2"></a>
 
 Class names belong to `ApiSutra\Attributes\Response`.

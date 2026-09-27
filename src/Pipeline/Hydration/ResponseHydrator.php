@@ -139,7 +139,7 @@ final readonly class ResponseHydrator
 
         $dtoClass = $this->resolveDtoClass($request);
         $returns = $this->resolveReturnsAttribute($request);
-        $hydrator = $this->dtoHydrators->resolve($request, $this->config);
+        $hydrator = $this->dtoHydrators->resolve($request, $this->config, $this->hydrator->descriptions()->targets());
 
         if ($request instanceof AbstractRequest && $request instanceof PaginableInterface) {
             if (!is_array($data)) {

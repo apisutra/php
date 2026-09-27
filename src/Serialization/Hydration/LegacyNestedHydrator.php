@@ -7,21 +7,20 @@ namespace ApiSutra\Serialization\Hydration;
 use ApiSutra\Localization\Message;
 use ApiSutra\Attributes\DataTransfer\Nested;
 use ApiSutra\Contracts\Interfaces\Casting\HydrationCastInterface;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Serialization\Variants\VariantDefinition;
+use ApiSutra\Serialization\Variants\VariantSelector;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\Serialization\Concerns\ReflectionHelperTrait;
 use ApiSutra\Serialization\NestedObjectTypeResolver;
 use ApiSutra\Serialization\Rules\HydrationScope;
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 use ApiSutra\Serialization\Rules\NestedValueProcessor;
 use ApiSutra\Serialization\Rules\RuleValueProcessor;
 use ApiSutra\Support\ArrayPath;
 use ApiSutra\VO\Files\Base64File;
-use ReflectionClass;
 use ReflectionProperty;
-use Stringable;
 
 /** @internal Прежняя операция Nested без подмены её контракта строгой Shape. */
 final readonly class LegacyNestedHydrator
@@ -48,7 +47,7 @@ final readonly class LegacyNestedHydrator
             $kind = $scope->shape($value);
             if (
                 (!is_array($value) && !is_object($value))
-                || $kind === InputShape::List
+                || $kind === ContainerShape::List
                 || ($kind === null && is_array($value) && $value !== [] && array_is_list($value))
             ) {
                 throw HydrationException::invalidValue(
@@ -61,12 +60,22 @@ final readonly class LegacyNestedHydrator
             return $scope->hydrateDto($value, $objectType);
         }
 
+        $position = $property->getDeclaringClass()->getName() . '::$' . $property->getName();
         if (is_array($value) && $scope->shape($value) !== null) {
             $propertyType = $this->getPrimaryType($property);
             $target = $nested->type ?? $propertyType;
-            $processed = (new NestedValueProcessor(new RuleValueProcessor()))->process($value, $nested, $target, $scope);
-            return $this->isDiscriminated($nested) || $target !== null && class_exists($target)
+            $processed = (new NestedValueProcessor(new RuleValueProcessor()))->process($value, $nested, $target, $scope, $propertyType, $position);
+            return $this->isDiscriminated($nested) || $target !== null && (class_exists($target) || interface_exists($target))
                 ? HydrationCollections::wrap($processed->value, $propertyType) : $processed->value;
+        }
+
+        $propertyType = $this->getPrimaryType($property);
+        $definition = null;
+        if (is_array($value) && $this->isDiscriminated($nested)) {
+            $definition = new VariantDefinition($nested->discriminator ?? '', $nested->map ?? [], $nested->discriminatorMode, $nested->unknownVariant);
+            $itemClass = HydrationCollections::itemClass($propertyType);
+            // Nested сохраняет KeepRaw: неизвестный сырой элемент проверяет сама коллекция.
+            $definition->validate($position, allowSkip: true, allowRaw: true, target: $itemClass);
         }
 
         if ($nested->each !== null && is_array($value)) {
@@ -80,20 +89,20 @@ final readonly class LegacyNestedHydrator
             $value = $this->applyNestedItemCast($value, $nested, $scope);
         }
 
-        $propertyType = $this->getPrimaryType($property);
         $targetType = $nested->type ?? $propertyType;
 
-        if (is_array($value) && $this->isDiscriminated($nested)) {
+        if (is_array($value) && $definition !== null) {
             return $this->hydrateDiscriminatedNested(
                 value: $value,
-                nested: $nested,
+                definition: $definition,
+                readyItems: $nested->itemCast !== null,
                 propertyType: $propertyType,
                 scope: $scope,
             );
         }
 
         if (is_array($value)) {
-            if ($targetType !== null && class_exists($targetType)) {
+            if ($targetType !== null && (class_exists($targetType) || interface_exists($targetType))) {
                 $items = [];
                 foreach ($value as $item) {
                     if (is_object($item) && is_a($item, $targetType)) {
@@ -115,7 +124,7 @@ final readonly class LegacyNestedHydrator
             return $value;
         }
 
-        if ($targetType !== null && class_exists($targetType)) {
+        if ($targetType !== null && (class_exists($targetType) || interface_exists($targetType))) {
             if (!is_object($value)) {
                 throw HydrationException::invalidValue(
                     'unexpected_response_shape',
@@ -173,7 +182,7 @@ final readonly class LegacyNestedHydrator
             return false;
         }
 
-        if ($nested->discriminatorMode === NestedDiscriminatorMode::Key) {
+        if ($nested->discriminatorMode === DiscriminatorMode::Key) {
             return true;
         }
 
@@ -182,96 +191,30 @@ final readonly class LegacyNestedHydrator
 
     private function hydrateDiscriminatedNested(
         array $value,
-        Nested $nested,
+        VariantDefinition $definition,
+        bool $readyItems,
         ?string $propertyType,
         HydrationScope $scope,
     ): mixed {
         $items = [];
         $index = -1;
-
-        foreach ($nested->map ?? [] as $class) {
-            if (!is_string($class) || !class_exists($class) || (new ReflectionClass($class))->isAbstract() || enum_exists($class)) {
-                throw new ConfigurationException(new Message('serialization.nested_map_must_contain_available_dto_classes'));
-            }
-        }
-
         foreach ($value as $item) {
             $index++;
-            [$discriminator, $payload, $rawItem] = $this->resolveDiscriminatorPayload($item, $nested);
-            $class = $this->resolveDiscriminatorClass($nested, $discriminator);
-
-            if ($class === null) {
-                if ($nested->unknownVariant === NestedUnknownVariant::Skip) {
-                    continue;
-                }
-
-                if ($nested->unknownVariant === NestedUnknownVariant::Error) {
-                    throw HydrationException::invalidValue(
-                        'unknown_nested_variant',
-                        'variant: ' . implode('|', array_keys($nested->map ?? [])),
-                        $discriminator === null ? 'missing' : 'string',
-                        '[' . $index . ']',
-                    );
-                }
-
-                $items[] = $rawItem;
+            if ($readyItems && is_object($item) && $definition->accepts($item)) {
+                $items[] = $item;
                 continue;
             }
-
-            $items[] = HydrationCollections::item($payload, $class, $index, $scope);
-        }
-
-        return HydrationCollections::wrap($items, $propertyType);
-    }
-
-    /** @return array{?string, mixed, mixed} */
-    private function resolveDiscriminatorPayload(mixed $item, Nested $nested): array
-    {
-        return $nested->discriminatorMode === NestedDiscriminatorMode::Key
-            ? $this->resolveKeyDiscriminatorPayload($item, $nested)
-            : $this->resolveValueDiscriminatorPayload($item, $nested);
-    }
-
-    /** @return array{?string, mixed, mixed} */
-    private function resolveValueDiscriminatorPayload(mixed $item, Nested $nested): array
-    {
-        $discriminator = null;
-        if ($nested->discriminator !== null) {
-            $resolved = ArrayPath::getByPath($item, $nested->discriminator);
-            if (is_scalar($resolved) || $resolved instanceof Stringable) {
-                $discriminator = (string) $resolved;
+            try {
+                $selection = VariantSelector::select($item, $definition);
+            } catch (HydrationException $exception) {
+                throw $exception->prependPath('[' . $index . ']');
             }
+            if ($selection->skip) {
+                continue;
+            }
+            $items[] = $selection->class === null ? $selection->payload
+                : HydrationCollections::item($selection->payload, $selection->class, $index, $scope, selectVariants: false);
         }
-
-        return [$discriminator, $item, $item];
-    }
-
-    /** @return array{?string, mixed, mixed} */
-    private function resolveKeyDiscriminatorPayload(mixed $item, Nested $nested): array
-    {
-        $rawItem = $item;
-        $source = $item;
-
-        if ($nested->discriminator !== null && $nested->discriminator !== '') {
-            $source = ArrayPath::getByPath($item, $nested->discriminator);
-        }
-
-        if (!is_array($source) || $source === []) {
-            return [null, $source, $rawItem];
-        }
-
-        $key = array_key_first($source);
-        return [(string) $key, $source[$key], $rawItem];
-    }
-
-    private function resolveDiscriminatorClass(Nested $nested, ?string $discriminator): ?string
-    {
-        if ($discriminator === null || !is_array($nested->map)) {
-            return null;
-        }
-
-        $class = $nested->map[$discriminator] ?? null;
-
-        return is_string($class) ? $class : null;
+        return HydrationCollections::wrap($items, $propertyType);
     }
 }

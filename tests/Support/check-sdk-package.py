@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory(prefix='apisutra-sdk-install-') as temporary:
     manifest = {
         'name': 'apisutra/standalone-sdk-check', 'type': 'project', 'license': 'proprietary',
         'require': {'example/records-sdk': 'dev-main'},
-        'repositories': [repository(sdk, 'example/records-sdk', 'dev-main'), repository(core, 'apisutra/php', '0.1.0')],
+        'repositories': [repository(sdk, 'example/records-sdk', 'dev-main'), repository(core, 'apisutra/php', '0.3.0')],
         'minimum-stability': 'dev', 'prefer-stable': True,
     }
     (plain / 'composer.json').write_text(json.dumps(manifest, indent=2) + '\n')

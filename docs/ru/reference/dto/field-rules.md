@@ -1,6 +1,8 @@
 <!-- languages --> <a href="../../../en/reference/dto/field-rules.md">English</a> · <a href="field-rules.md">Русский</a> <!-- /languages -->
 # Внешние правила и конфликты деклараций <a id="section-1"></a>
 
+[HydrationRules::withVariants()](variants.md#type-variants) задаёт варианты стороннего типа без добавления атрибутов.
+
 ## HydrationRules <a id="section-2"></a>
 
 `ClientConfig::hydration` имеет тип `?HydrationConfig` и по умолчанию равен null.
@@ -31,7 +33,7 @@
 | `noTransform()` | Явное отсутствие преобразования; native-тип всё равно проверяется |
 | `constructorValue(bool $allowMissing = false)` | [Проверка значения конструктора без повторной записи](constructor-values.md) |
 | `required()`, `forbidExplicitNull()` | Присутствие ключа и запрет исходного null |
-| `inputShape(InputShape $shape)` | Проверка Object/List перед cast или noTransform |
+| `inputShape(ContainerShape $shape)` | Проверка Object/List перед cast или noTransform |
 | `default(DefaultSpec $default)`, `policy(RulePolicy $policy)` | Default и policy поля |
 
 Повторные field/receiver, повтор группы from/default/policy или сочетание нескольких

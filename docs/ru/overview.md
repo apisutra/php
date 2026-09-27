@@ -166,9 +166,10 @@ foreach ($request->paginate()->items() as $item) {
 | Маппинг полей | [Входные имена, вложенные пути и fallback](reference/dto/profiles.md); независимые выходные имена, профили гидратации и [общая политика](reference/dto/configuration.md). |
 | Контракты полей | [Отсутствие и null, обязательное присутствие, запрет null, defaults и пустые строки](reference/dto/defaults.md); [проверка значений, заданных конструктором](reference/dto/constructor-values.md). |
 | Типы и точность | [Преобразование скаляров, явно включаемый Strict, unions и большие целочисленные ID без потери цифр](reference/dto/scalars.md); enum, [форматы дат и часовые пояса](reference/dto/profiles.md). |
-| Сложные структуры | [Вложенные DTO, строгие списки и проверка JSON object/array](reference/dto/shapes.md), [типизированные коллекции](reference/dto/collections.md), [варианты элементов по discriminator](reference/dto/variants.md). |
+| Сложные структуры | [DTO, списки, JSON-форма](reference/dto/shapes.md), [коллекции](reference/dto/collections.md), [типизированные варианты/fallback](reference/dto/variants.md). |
+| JSON / webhook | [JSON → DTO](reference/dto/configuration.md#json-input); [guard перед cast](reference/dto/shapes.md#input-guard). |
 | Дополнительные данные | [Сохранение непрочитанных полей через `Extras`](reference/dto/extras.md), включение в `toArray()` и [исключение приёмника из исходящих запросов](reference/serialization/receiver-output.md). |
-| Свои преобразования | [Входные/выходные casts и вложенные преобразования с контекстом, в том числе без HTTP](reference/dto/scope.md), [вычисляемые значения](reference/dto/lifecycle.md); [свои гидраторы с DI и штатным fallback](reference/dto/hydrators.md). |
+| Свои преобразования | [Входные/выходные casts с контекстом, включая вложенные и standalone](reference/dto/scope.md), [вычисляемые значения](reference/dto/lifecycle.md); [свои гидраторы с DI и штатным fallback](reference/dto/hydrators.md). |
 
 ### Управлять исполнением, нагрузкой и кешем <a id="capabilities-execution"></a>
 

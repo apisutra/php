@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace ApiSutra\Serialization\Rules;
 
+use ApiSutra\Serialization\Variants\VariantDefinition;
 use ApiSutra\Localization\Message;
-use ApiSutra\Enums\DataTransfer\NestedDiscriminatorMode;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\DiscriminatorMode;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 
 final readonly class ValueShape
 {
     /**
      * @param list<string> $types
-     * @param array<int|string, class-string> $map
      */
     private function __construct(
         public string $kind,
@@ -23,10 +23,7 @@ final readonly class ValueShape
         public ?string $each = null,
         public ?HandlerSpec $itemCast = null,
         public bool $normalizeKeys = false,
-        public ?string $discriminator = null,
-        public array $map = [],
-        public NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value,
-        public NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw,
+        public ?VariantDefinition $variants = null,
         public bool $emptyListAsObject = false,
     ) {
     }
@@ -100,9 +97,9 @@ final readonly class ValueShape
     public static function variants(
         string $discriminator,
         array $map,
-        NestedDiscriminatorMode $mode = NestedDiscriminatorMode::Value,
-        NestedUnknownVariant $unknown = NestedUnknownVariant::KeepRaw,
+        DiscriminatorMode $mode = DiscriminatorMode::Value,
+        UnknownVariant|string $unknown = UnknownVariant::KeepRaw,
     ): self {
-        return new self('variants', discriminator: $discriminator, map: $map, mode: $mode, unknown: $unknown);
+        return new self('variants', variants: new VariantDefinition($discriminator, $map, $mode, $unknown));
     }
 }

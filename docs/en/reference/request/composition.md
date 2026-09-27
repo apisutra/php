@@ -54,6 +54,12 @@ final class UserProfileComposite extends AbstractRequest implements CompositeReq
 - Child results are available in `ExecutionResult::$nested`; metadata is in
   `ExecutionResult::$meta` (BatchMeta).
 
+An aggregate object that already satisfies the declared response type (`instanceof`) is
+returned without calling DTO constructors or a custom hydrator again. Other object
+sources, including stdClass and JsonSerializable, and arrays are hydrated into that type. This also
+allows an abstract/interface response type without a variants declaration when
+the aggregator itself creates the concrete object.
+
 ## DependsOnRequest <a id="section-5"></a>
 **Purpose:** execute dependencies, then the main request.
 

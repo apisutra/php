@@ -16,7 +16,6 @@ return [
     'continuation.failed_to_convert_token_to_int_for_parameter' => 'Failed to convert token to int for parameter: {parameter}',
     'continuation.failed_to_hydrate_the_ready_continuation_result' => 'Failed to hydrate the ready continuation result',
     'continuation.failed_to_prepare_poll_request_constructor_arguments' => 'Failed to prepare poll request constructor arguments: {class}',
-    'continuation.final_dto_class_not_found' => 'Final DTO class not found: {type}',
     'continuation.final_result_is_not_ready_in_sync_mode' => 'Final result is not ready in Sync mode',
     'continuation.finalpathstateresolver_requires_a_non_empty_unwrap' => 'FinalPathStateResolver requires a non-empty unwrap',
     'continuation.invalid_stateresolver_class' => 'Invalid stateResolver class: {class}',

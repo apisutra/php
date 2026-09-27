@@ -41,7 +41,9 @@
 | <a id="rulepolicy"></a> RulePolicy | A partial policy for scalars, empty strings, names, dates, and casts. | [Contract](../reference/dto/field-rules.md) |
 | <a id="scalarpolicy"></a> ScalarPolicy | Legacy or Strict mode for scalar value validation. | [Contract](../reference/dto/scalars.md) |
 | <a id="scalartype"></a> ScalarType | Identifies a scalar branch of ValueShape. | [Contract](../reference/dto/scalars.md) |
-| <a id="inputshape"></a> InputShape | An Object or List precondition for the field's source value. | [Contract](../reference/dto/shapes.md) |
+| <a id="inputshape"></a> ContainerShape | An Object or List precondition for the field's source value. | [Contract](../reference/dto/shapes.md) |
+| <a id="input-shape-attribute"></a> InputShape | A property attribute that checks ContainerShape before a cast. | [Contract](../reference/dto/shapes.md#input-guard) |
+| <a id="dto-variants"></a> DtoVariants | Declares a discriminator map and unknown policy once on a DTO type. | [Contract](../reference/dto/variants.md#type-variants) |
 | <a id="handlerspec"></a> HandlerSpec | A handler class specification with arguments restricted to allowed values. | [Contract](../reference/dto/field-rules.md) |
 | <a id="defaultspec"></a> DefaultSpec | A literal default or provider specification for selected value states. | [Contract](../reference/dto/field-rules.md) |
 | <a id="sourcepathkind"></a> SourcePathKind | The precision of the source-data path in a hydration error. | [Contract](../reference/dto/diagnostics.md) |

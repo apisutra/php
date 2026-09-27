@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ApiSutra\Tests\Stubs\PolymorphicInput;
+
+use ApiSutra\Contracts\Interfaces\Casting\HydrationCastInterface;
+use ApiSutra\Serialization\Context\HydrationContext;
+use Override;
+
+final class RawDtoCast implements HydrationCastInterface
+{
+    #[Override]
+    public function hydrate(mixed $value, HydrationContext $context): mixed
+    {
+        return new RawDto($value);
+    }
+}

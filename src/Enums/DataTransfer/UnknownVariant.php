@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ApiSutra\Enums\DataTransfer;
 
 /**
- * Политика обработки неизвестного discriminator в Nested.
+ * Политика обработки неизвестного варианта DTO.
  */
-enum NestedUnknownVariant: string
+enum UnknownVariant: string
 {
     /**
      * Оставить элемент в raw-виде.

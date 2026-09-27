@@ -41,7 +41,9 @@
 | <a id="rulepolicy"></a> RulePolicy | Частичная policy скаляров, пустых строк, имён, дат и casts. | [Контракт](../reference/dto/field-rules.md) |
 | <a id="scalarpolicy"></a> ScalarPolicy | Режим Legacy либо Strict проверки скалярных значений. | [Контракт](../reference/dto/scalars.md) |
 | <a id="scalartype"></a> ScalarType | Обозначение скалярной ветки ValueShape. | [Контракт](../reference/dto/scalars.md) |
-| <a id="inputshape"></a> InputShape | Предусловие Object либо List для исходного значения поля. | [Контракт](../reference/dto/shapes.md) |
+| <a id="inputshape"></a> ContainerShape | Предусловие Object либо List для исходного значения поля. | [Контракт](../reference/dto/shapes.md) |
+| <a id="input-shape-attribute"></a> InputShape | Атрибут свойства, проверяющий ContainerShape перед cast. | [Контракт](../reference/dto/shapes.md#input-guard) |
+| <a id="dto-variants"></a> DtoVariants | Однократная декларация map discriminator и unknown-политики на типе DTO. | [Контракт](../reference/dto/variants.md#type-variants) |
 | <a id="handlerspec"></a> HandlerSpec | Описание класса обработчика и аргументов из допустимых значений. | [Контракт](../reference/dto/field-rules.md) |
 | <a id="defaultspec"></a> DefaultSpec | Описание literal default либо provider для выбранных состояний значения. | [Контракт](../reference/dto/field-rules.md) |
 | <a id="sourcepathkind"></a> SourcePathKind | Степень точности пути к исходным данным в ошибке гидратации. | [Контракт](../reference/dto/diagnostics.md) |

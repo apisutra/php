@@ -5,7 +5,7 @@ declare(strict_types=1);
 use ApiSutra\Config\HydrationConfig;
 use ApiSutra\Casts\JsonCast;
 use ApiSutra\Enums\DataTransfer\ValueState;
-use ApiSutra\Enums\DataTransfer\NestedUnknownVariant;
+use ApiSutra\Enums\DataTransfer\UnknownVariant;
 use ApiSutra\Tests\Stubs\HydrationRules\ComputedRecordDto;
 use ApiSutra\Tests\Stubs\HydrationRules\ArrayReceiverDto;
 use ApiSutra\Serialization\Rules\DefaultSpec;
@@ -146,7 +146,7 @@ it('дополняет ошибки unwrap и формы до входа в ги
 it('сохраняет source после Skip и маскирует исходный ключ словаря', function (): void {
     $rules = HydrationRules::create(new RulePolicy(scalars: ScalarPolicy::Strict))
         ->withDto(ValueDto::class, DtoRules::create()->field('value', FieldRule::create()->shape(ValueShape::list(
-            ValueShape::variants('type', ['known' => RecordDto::class], unknown: NestedUnknownVariant::Skip), normalizeKeys: true,
+            ValueShape::variants('type', ['known' => RecordDto::class], unknown: UnknownVariant::Skip), normalizeKeys: true,
         ))));
     $error = HydrationRulesFixture::error(fn () => Hydrator::forRules($rules)->hydrate([
         'value' => ['skipped' => ['type' => 'unknown'], 'secret' => ['type' => 'known', 'id' => 'bad']],

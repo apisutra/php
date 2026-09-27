@@ -1,6 +1,8 @@
 <!-- languages --> <a href="pagination.md">English</a> · <a href="../../../ru/reference/execution/pagination.md">Русский</a> <!-- /languages -->
 # Pagination <a id="section-1"></a>
 
+itemsType accepts [declared variants](../dto/variants.md#type-variants): each item can become a known model or typed fallback, in both sequential and concurrent traversal.
+
 Default pagination rules are configured in `ClientConfig::paginationRule`.
 
 ## Basic configuration <a id="section-2"></a>

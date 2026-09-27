@@ -13,15 +13,16 @@ use ApiSutra\Exceptions\ControlFlow\ControlFlowException;
 use ApiSutra\Exceptions\Transport\ExecutionDeadlineException;
 use ApiSutra\Localization\Message;
 use ApiSutra\Support\ContainerProviderRegistry;
+use ApiSutra\Serialization\Hydration\DtoTargetCompiler;
 use Throwable;
 
 /** @internal Разрешает прикладной обработчик один раз на ответ, вне вычислений DTO. */
 final readonly class ResponseDtoHydratorResolver
 {
-    public function resolve(RequestInterface $request, ClientConfig $config): DtoHydratorInterface|false|null
+    public function resolve(RequestInterface $request, ClientConfig $config, ?DtoTargetCompiler $targets = null): DtoHydratorInterface|false|null
     {
         $returns = $request instanceof AbstractRequest ? $request->getReturnsAttribute() : null;
-        ResponseContractGuard::validateDeclaration($returns, $request instanceof AbstractRequest ? $request->getResponseType() : null);
+        ResponseContractGuard::validateDeclaration($returns, $request instanceof AbstractRequest ? $request->getResponseType() : null, $targets ?? new DtoTargetCompiler($config->hydration));
         $selection = $returns?->hydrator;
         if ($selection === null || $selection === false) {
             return $selection;

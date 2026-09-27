@@ -15,7 +15,7 @@ use ApiSutra\Enums\DataTransfer\EmptyStringBehavior;
 use ApiSutra\Serialization\Rules\DefaultSpec;
 use ApiSutra\Serialization\Rules\FieldRule;
 use ApiSutra\Serialization\Rules\HandlerSpec;
-use ApiSutra\Serialization\Rules\InputShape;
+use ApiSutra\Serialization\Rules\ContainerShape;
 use ApiSutra\Serialization\Rules\RulePolicy;
 use ApiSutra\Serialization\Rules\ValueShape;
 use ReflectionParameter;
@@ -37,7 +37,7 @@ final readonly class HydrationFieldPlan
     public ?DefaultSpec $externalDefault;
     public ?HandlerSpec $handler;
     public ?ValueShape $shape;
-    public ?InputShape $inputShape;
+    public ?ContainerShape $inputShape;
     public bool $normalizeKeys;
     public bool $emptyListAsObject;
     public bool $collectionShape;
@@ -90,8 +90,8 @@ final readonly class HydrationFieldPlan
             $shape = $shape->item;
         }
         $this->inputShape = $rule->inputShape ?? match ($shape?->kind) {
-            'dto' => InputShape::Object,
-            'list' => InputShape::List,
+            'dto' => ContainerShape::Object,
+            'list' => ContainerShape::List,
             default => null,
         };
         $this->normalizeKeys = $shape->normalizeKeys ?? false;

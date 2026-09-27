@@ -1,6 +1,8 @@
 <!-- languages --> <a href="hydrators.md">English</a> · <a href="../../../ru/reference/dto/hydrators.md">Русский</a> <!-- /languages -->
 # Custom DTO hydration <a id="section-1"></a>
 
+For [declared variants](variants.md#type-variants), supports()/hydrate() receive the selected concrete class. Map validation does not call the custom hydrator.
+
 Use `DtoHydratorInterface` when an existing application factory or mapper should
 construct response objects, including classes with private constructors. No handler
 is required for ordinary attribute-based DTOs. Serialization is a separate direction.

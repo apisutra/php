@@ -5,6 +5,7 @@ Examples ship with the package. They require Composer autoload; local fixtures a
 
 | Example | Demonstrates |
 | --- | --- |
+| [HTTP, polling and webhook](../../example/polymorphic-json/run.php) | One variant declaration, typed fallback, dictionary guard and JSON shape failures |
 | [Async results](../../example/async-results/run.php) | Typed single/batch/pool/consume promises, nested then, FAILED versus rejection and otherwise, without network access |
 | [Custom DTO factories and lazy items](../../example/dto-hydrator/run.php) | Private constructors, nested DTOs, scoped hydration, explicit serialization and a failed page without data loss |
 | [OAuth2](../../example/oauth2/run.php) | Client Credentials reuse, async code exchange, invalid callback, refresh after 401 and saving rotated tokens, without network access |
