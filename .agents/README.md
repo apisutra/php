@@ -31,6 +31,8 @@ source, and tests. A local change does not require reading the entire documentat
   without new evidence, or ask again to perform already authorized work.
 - Update the document that owns the affected contract and dependent examples.
   Run checks appropriate to the risks. Report results, commands, and verification limits.
+- Before releasing new DTO parsing or hydration capabilities, complete the required
+  [documentation, DTO catalog, and runnable SDK updates](documentation.md#dto-hydration-release-requirement).
 - Keep useful decisions and results in existing task materials when available; a concise
   chat summary is sufficient otherwise. A requested plan does not require a separate
   audit, discussion, or completion report. New evidence may justify revising the approach.

@@ -30,6 +30,23 @@ Content ownership and size limits are in [documentation maintenance](../docs/en/
 
 See [verification](testing.md) for applicable commands.
 
+## DTO hydration release requirement
+
+Before publishing a release that adds or expands DTO parsing or hydration capabilities,
+complete all of the following:
+
+- Update the affected reference pages and guides in both English and Russian, including
+  configuration, defaults, limitations, and error behavior.
+- Update the DTO capability catalog in
+  [English](../docs/en/examples/dto-showcase.md) and
+  [Russian](../docs/ru/examples/dto-showcase.md) with explained examples of the new behavior.
+- Demonstrate the capability in the runnable [Records SDK](../docs/example/sdk/run.php):
+  update its DTOs, fixtures, and scenarios, covering successful use and relevant failures.
+  Keep its English and Russian walkthroughs consistent with the executable example.
+
+These updates are required before the release, not deferred to a later documentation
+release. Verify the published examples using the applicable [checks](testing.md).
+
 ## Language editions
 
 English is the default edition; English and Russian are required. Keep page pairs
