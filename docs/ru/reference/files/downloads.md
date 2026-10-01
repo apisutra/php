@@ -166,3 +166,5 @@ public ?Base64File $photo = null;
 - понимает и чистый base64
 - и data-uri с префиксом `data:...;base64,`
 - в `Base64File` передаёт уже нормализованный base64 payload
+
+[Прогресс передачи](../execution/transfer-progress.md) поддерживает потоковые скачивания и неизвестный total; завершение определяется результатом.

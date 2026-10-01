@@ -34,3 +34,5 @@ body DTO, BodyRoot, oneOf/discriminator и runtime-опции. Параметр�
 [ResultHandle/resolved](../reference/results/handles.md).
 
 Добавление операции целиком — [отдельный маршрут](../start/add-operation.md).
+
+Наблюдайте байты upload/download через [withTransferProgress()](../reference/execution/transfer-progress.md); сохраняйте последний снимок без I/O в callback.

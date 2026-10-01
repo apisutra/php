@@ -1,8 +1,7 @@
 <!-- languages --> <a href="../../en/start/agent-capabilities.md">English</a> · <a href="agent-capabilities.md">Русский</a> <!-- /languages -->
 # Карта возможностей для агента <a id="section-1"></a>
 
-Карта для [агента — пользователя](agent.md). Выбирайте механизм по задаче;
-полный контракт — по ссылке. Подключать всё не требуется.
+[Агенту](agent.md): выбирайте механизм по задаче; контракт — по ссылке.
 
 - [Устройство SDK](#section-2)
 - [Подключение и конфигурация](#section-3)
@@ -43,6 +42,7 @@
 | Проверить данные до отправки | [Валидация](../reference/client/validation.md), [полиморфный body](../reference/request/declaration.md). Для Validate нужен подключённый валидатор; гидратация ответа решает другую задачу. |
 | Отделить удобное представление DTO от формата API | [DX и wire-сериализация](../reference/serialization/dto-output.md). Результат `toArray()` не обязательно совпадает с HTTP-payload. |
 | Передать или получить файл | [Multipart, binary и Base64](../reference/files/uploads.md), [скачивание в файл/поток](../reference/files/downloads.md), [архивы](../reference/files/archives.md). Формат и способ хранения выбираются под API и объём данных; есть [исполняемый пример](../guides/recipes/files.md). |
+| Прогресс HTTP | [Callback и ограничения](../reference/execution/transfer-progress.md). |
 
 ## DTO и гидратация <a id="section-5"></a>
 

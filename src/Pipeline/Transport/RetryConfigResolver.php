@@ -27,42 +27,38 @@ final readonly class RetryConfigResolver
         $attribute = $request->getRetryAttribute();
         if ($attribute !== null) {
             $base = $retry ?? new RetryConfig();
-            $retry = new RetryConfig(
+            $retry = $base->withOverrides(
                 attempts: $attribute->attempts,
                 baseDelay: $attribute->baseDelay,
                 maxDelay: $attribute->maxDelay,
                 backoff: $attribute->backoff,
                 jitter: $attribute->jitter,
                 retryOn: $attribute->retryOn,
-                retryExceptions: $base->retryExceptions,
-                totalTimeoutMs: $retry?->totalTimeoutMs,
-                safeMethods: $base->safeMethods,
             );
         }
 
-        $override = $options?->getRetryOverride() ?? $request->getRetryOverride();
+        // Один источник runtime-опций: null поля не возвращают настройки другого источника.
+        $source = $options ?? $request;
+        $override = $source->getRetryOverride();
         $overrideEnabled = $override['enabled'] ?? null;
         if ($overrideEnabled === false || ($overrideEnabled === null && $attribute?->enabled === false)) {
             return null;
         }
 
-        if (($override['attempts'] ?? null) !== null) {
-            $attempts = (int) $override['attempts'];
-            $retry = $retry === null
-                ? new RetryConfig(attempts: $attempts)
-                : new RetryConfig(
-                    attempts: $attempts,
-                    baseDelay: $retry->baseDelay,
-                    maxDelay: $retry->maxDelay,
-                    backoff: $retry->backoff,
-                    jitter: $retry->jitter,
-                    retryOn: $retry->retryOn,
-                    retryExceptions: $retry->retryExceptions,
-                    totalTimeoutMs: $retry->totalTimeoutMs,
-                    safeMethods: $retry->safeMethods,
-                );
-        } elseif ($overrideEnabled === true && $retry === null) {
+        $attempts = isset($override['attempts']) ? (int) $override['attempts'] : null;
+        if ($retry === null && ($attempts !== null || $overrideEnabled === true)) {
             $retry = new RetryConfig();
+        }
+
+        $delay = $source->getRetryDelayOverride();
+        if ($retry !== null && ($attempts !== null || $delay !== null)) {
+            $retry = $retry->withOverrides(
+                attempts: $attempts,
+                baseDelay: $delay?->baseDelay,
+                maxDelay: $delay?->maxDelay,
+                backoff: $delay?->backoff,
+                jitter: $delay?->jitter,
+            );
         }
 
         return $retry;

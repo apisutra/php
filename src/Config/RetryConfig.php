@@ -32,8 +32,33 @@ final readonly class RetryConfig
     }
 
     /**
-     * Валидировать параметры retry.
+     * Копирование полей, доступных атрибуту и runtime-опциям; остальные сохраняются.
+     *
+     * @internal
+     * @param array<int>|null $retryOn
      */
+    public function withOverrides(
+        ?int $attempts = null,
+        ?int $baseDelay = null,
+        ?int $maxDelay = null,
+        ?BackoffStrategy $backoff = null,
+        ?bool $jitter = null,
+        ?array $retryOn = null,
+    ): self {
+        return new self(
+            attempts: $attempts ?? $this->attempts,
+            baseDelay: $baseDelay ?? $this->baseDelay,
+            maxDelay: $maxDelay ?? $this->maxDelay,
+            backoff: $backoff ?? $this->backoff,
+            jitter: $jitter ?? $this->jitter,
+            retryOn: $retryOn ?? $this->retryOn,
+            retryExceptions: $this->retryExceptions,
+            totalTimeoutMs: $this->totalTimeoutMs,
+            safeMethods: $this->safeMethods,
+        );
+    }
+
+    /** Валидировать параметры retry. */
     private function validate(): void
     {
         foreach ($this->safeMethods as $method) {

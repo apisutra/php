@@ -221,6 +221,9 @@ All these options apply to a new execution without mutating the original request
 safety. Safety is determined by client configuration, optional `#[Retry(safe: true/false)]`,
 and an optional RetrySafetyPolicyInterface; omitted safe and null are equivalent.
 See [retry safety](../execution/retry.md#section-6).
+`withRetryDelay(jitter: false)` changes only the retry delay settings for this
+execution; `withoutRetryDelay()` restores inheritance. See
+[per-execution delays, priorities, and validation](../execution/retry.md#runtime-delay).
 For credentials enrichment, see the section above.
 
 ## Sending and results <a id="section-15"></a>
@@ -285,3 +288,5 @@ Typical `violations.code` values:
 
 For successful oneOf requests, `requestDebug()` also provides a `oneOf` block
 with brief diagnostics for the selected variant.
+
+`withTransferProgress(callable)` and `withoutTransferProgress()` control [byte progress](../execution/transfer-progress.md) for one execution.

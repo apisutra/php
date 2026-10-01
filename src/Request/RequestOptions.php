@@ -13,12 +13,16 @@ use ApiSutra\Enums\Cache\CacheMode;
 use ApiSutra\Enums\Continuation\ContinuationMode;
 use ApiSutra\Enums\Execution\RequestRole;
 use ApiSutra\Enums\RateLimiting\RateLimitBehavior;
+use ApiSutra\Enums\RateLimiting\BackoffStrategy;
 use ApiSutra\Enums\Request\CredentialsMergeMode;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Pagination\PaginationRule;
 use ApiSutra\VO\Cache\CacheOverride;
 use ApiSutra\VO\Files\DownloadTarget;
+use ApiSutra\VO\Retry\RetryDelayOverride;
 use Psr\Http\Message\StreamInterface;
+use ApiSutra\VO\Http\TransferProgress;
+use Closure;
 
 /**
  * Набор runtime-опций запроса.
@@ -43,6 +47,7 @@ final readonly class RequestOptions
      * Сервисный конструктор (предпочтительнее использовать factory/with*).
      *
      * @param array<string, string> $headersOverride
+     * @param Closure(TransferProgress): void|null $transferProgress
      */
     public function __construct(
         private ?string $baseUrlOverride,
@@ -73,6 +78,8 @@ final readonly class RequestOptions
         private ?ExecutionDeadline $deadline = null,
         private ?bool $rawResponseOverride = null,
         private ?CooldownConfig $cooldownOverride = null,
+        private ?RetryDelayOverride $retryDelayOverride = null,
+        private ?Closure $transferProgress = null,
     ) {
         if ($cacheScopeOverride !== null && trim($cacheScopeOverride) === '') {
             throw new ConfigurationException(new Message('request.cache_scope_must_not_be_empty'));
@@ -117,11 +124,15 @@ final readonly class RequestOptions
     private function with(array $overrides): self
     {
         return new self(
+            transferProgress: array_key_exists('transferProgress', $overrides)
+                ? $overrides['transferProgress'] : $this->transferProgress,
             baseUrlOverride: $overrides['baseUrlOverride'] ?? $this->baseUrlOverride,
             cacheTtlOverride: $overrides['cacheTtlOverride'] ?? $this->cacheTtlOverride,
             cacheModeOverride: $overrides['cacheModeOverride'] ?? $this->cacheModeOverride,
             retryEnabledOverride: $overrides['retryEnabledOverride'] ?? $this->retryEnabledOverride,
             retryAttemptsOverride: $overrides['retryAttemptsOverride'] ?? $this->retryAttemptsOverride,
+            retryDelayOverride: array_key_exists('retryDelayOverride', $overrides)
+                ? $overrides['retryDelayOverride'] : $this->retryDelayOverride,
             authOverride: $overrides['authOverride'] ?? $this->authOverride,
             authScopeOverride: array_key_exists('authScopeOverride', $overrides)
                 ? $overrides['authScopeOverride']
@@ -150,6 +161,27 @@ final readonly class RequestOptions
             rawResponseOverride: array_key_exists('rawResponseOverride', $overrides)
                 ? $overrides['rawResponseOverride'] : $this->rawResponseOverride,
         );
+    }
+
+    /**
+     * Наблюдение передачи без I/O, вызовов SDK/event loop и приостановки Fiber.
+     * Ошибка получателя отключает его до конца исполнения, не меняя исход запроса.
+     * @param callable(TransferProgress): void $callback
+     */
+    public function withTransferProgress(callable $callback): self
+    {
+        return $this->with(['transferProgress' => Closure::fromCallable($callback)]);
+    }
+
+    public function withoutTransferProgress(): self
+    {
+        return $this->with(['transferProgress' => null]);
+    }
+
+    /** @return Closure(TransferProgress): void|null */
+    public function getTransferProgress(): ?Closure
+    {
+        return $this->transferProgress;
     }
 
     public function withCooldown(CooldownConfig $config): self
@@ -309,6 +341,26 @@ final readonly class RequestOptions
     public function withoutRetry(): self
     {
         return $this->with(['retryEnabledOverride' => false]);
+    }
+
+    /** Заменить частичную настройку задержки retry (мс), не включая retry. */
+    public function withRetryDelay(
+        ?int $baseDelay = null,
+        ?int $maxDelay = null,
+        ?BackoffStrategy $backoff = null,
+        ?bool $jitter = null,
+    ): self {
+        return $this->with(['retryDelayOverride' => new RetryDelayOverride($baseDelay, $maxDelay, $backoff, $jitter)]);
+    }
+
+    public function withoutRetryDelay(): self
+    {
+        return $this->with(['retryDelayOverride' => null]);
+    }
+
+    public function getRetryDelayOverride(): ?RetryDelayOverride
+    {
+        return $this->retryDelayOverride;
     }
 
     /**

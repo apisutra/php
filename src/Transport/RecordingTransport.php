@@ -10,6 +10,8 @@ use ApiSutra\Execution\Async\GuzzlePromiseBridge;
 use ApiSutra\Localization\Message;
 use ApiSutra\Contracts\Interfaces\Core\DestinationAwareInterface;
 use ApiSutra\Contracts\Interfaces\Core\FileStreamingInterface;
+use ApiSutra\Contracts\Interfaces\Core\TransferProgressInterface;
+use ApiSutra\Http\TransferProgressGuard;
 use ApiSutra\Contracts\Interfaces\Core\TimeoutAwareTransportInterface;
 use ApiSutra\Contracts\Interfaces\Core\TransportInterface;
 use ApiSutra\Diagnostics\RedactionPolicy;
@@ -32,11 +34,16 @@ use Throwable;
 use Override;
 use GuzzleHttp\Promise\RejectedPromise;
 
-final class RecordingTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface
+final class RecordingTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface, TransferProgressInterface
 {
     public function assertSupportsConcurrency(): void
     {
         TransportExecution::assertConcurrent($this->transport);
+    }
+
+    public function assertSupportsTransferProgress(): void
+    {
+        TransferProgressGuard::checkCapability($this->transport);
     }
 
     public function assertSupportsFileTransfer(FileTransferOptions $options): void
@@ -76,6 +83,9 @@ final class RecordingTransport implements TimeoutAwareTransportInterface, Concur
     #[Override]
     public function send(PreparedRequest $request): ProviderResponse
     {
+        if ($request->transportOptions?->transferProgress !== null) {
+            $this->assertSupportsTransferProgress();
+        }
         DestinationGuard::checkRequest($request);
         FileTransferGuard::checkCapability($this, FileTransferGuard::options($request));
         DestinationGuard::checkCapability($this, $request->destination);
@@ -93,6 +103,9 @@ final class RecordingTransport implements TimeoutAwareTransportInterface, Concur
     {
         try {
             $this->assertSupportsConcurrency();
+            if ($request->transportOptions?->transferProgress !== null) {
+                $this->assertSupportsTransferProgress();
+            }
             DestinationGuard::checkRequest($request);
             FileTransferGuard::checkCapability($this, FileTransferGuard::options($request));
             DestinationGuard::checkCapability($this, $request->destination);

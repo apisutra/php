@@ -11,8 +11,10 @@ use ApiSutra\Enums\Continuation\ContinuationMode;
 use ApiSutra\Enums\Execution\RequestRole;
 use ApiSutra\Enums\Request\CredentialsMergeMode;
 use ApiSutra\Enums\RateLimiting\RateLimitBehavior;
+use ApiSutra\Enums\RateLimiting\BackoffStrategy;
 use ApiSutra\Pagination\PaginationRule;
 use Psr\Http\Message\StreamInterface;
+use ApiSutra\VO\Http\TransferProgress;
 
 /**
  * Цепочка runtime-опций запроса.
@@ -165,6 +167,33 @@ trait RequestOptionsChainTrait
         return $this->executionFromOptions(
             $this->currentOptions()->withRetry($attempts),
         );
+    }
+
+    /** @param callable(TransferProgress): void $callback */
+    public function withTransferProgress(callable $callback): RequestExecutionInterface
+    {
+        return $this->executionFromOptions($this->currentOptions()->withTransferProgress($callback));
+    }
+
+    public function withoutTransferProgress(): RequestExecutionInterface
+    {
+        return $this->executionFromOptions($this->currentOptions()->withoutTransferProgress());
+    }
+
+    public function withRetryDelay(
+        ?int $baseDelay = null,
+        ?int $maxDelay = null,
+        ?BackoffStrategy $backoff = null,
+        ?bool $jitter = null,
+    ): RequestExecutionInterface {
+        return $this->executionFromOptions(
+            $this->currentOptions()->withRetryDelay($baseDelay, $maxDelay, $backoff, $jitter),
+        );
+    }
+
+    public function withoutRetryDelay(): RequestExecutionInterface
+    {
+        return $this->executionFromOptions($this->currentOptions()->withoutRetryDelay());
     }
 
     /**

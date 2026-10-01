@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'transport.transfer_progress_unsupported' => 'Adapter {adapter} does not support transfer progress.',
+    'transport.curl_overrides_incompatible_with_progress' => 'Low-level cURL overrides are incompatible with SDK transfer progress.',
     'transport.async_dns_required' => 'Concurrent Guzzle requests require cURL with AsynchDNS. Enable an asynchronous DNS resolver in cURL or use send().',
     'transport.concurrent_execution_unsupported' => 'Adapter {adapter} does not support concurrent execution. Use send() or a concurrent transport such as HttpTransport::createDefault().',
     'transport.body_cannot_be_represented_in_the_utf_8_fixture' => 'Body cannot be represented in the UTF-8 fixture format',

@@ -19,3 +19,5 @@ hooks, hydration and nested auth). Concurrent child sums cannot be subtracted th
 Roots have parentExecutionId === null; pages with role Root still have a parent.
 PSR logging, audit and debug keep their existing contracts.
 [Laravel events and delivery](https://github.com/apisutra/laravel/blob/master/docs/en/reference/integrations/observability.md) belong to the adapter.
+
+For byte counters use the separate [transfer progress callback](../execution/transfer-progress.md); lifecycle events do not collect its snapshots.

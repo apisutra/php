@@ -157,6 +157,7 @@ The [item stream](docs/en/reference/execution/pagination-items.md) loads pages s
 | Serialization | Separate [DTO `toArray()` rules](docs/en/reference/serialization/dto-output.md) and [HTTP naming, array and boolean formats](docs/en/reference/serialization/request-parts.md); dates, enums, JSON/forms, [JSON within a field](docs/en/reference/serialization/casts.md), [root bodies for JSON Patch/bulk](docs/en/reference/serialization/body.md). |
 | Response formats | [DTOs with explicit `unwrap`, or `RawResponse`](docs/en/reference/attributes/response.md); [JSON arrays, scalars, null and text without a DTO](docs/en/reference/results/handles.md#section-3). `raw()` reads execution details; `RawResponse` selects an undecoded body. |
 | Files and archives | [Streaming multipart/binary uploads and Base64](docs/en/reference/files/uploads.md), [DTO file fields](docs/en/guides/dto/showcase.md#section-7), [downloads to files or streams](docs/en/reference/files/downloads.md), [listing, reading and extracting archives](docs/en/reference/files/archives.md). Base64 materializes the contents. |
+| Transfer progress | Opt-in [upload/download byte counters](docs/en/reference/execution/transfer-progress.md) for sync/async, separate attempts, trace and unknown totals. |
 
 ### Transform responses and DTOs <a id="capabilities-dto"></a>
 
@@ -175,7 +176,7 @@ The [item stream](docs/en/reference/execution/pagination-items.md) loads pages s
 
 | Need | What ApiSutra provides |
 | --- | --- |
-| Safe retries | [Retry policies, backoff, Retry-After and idempotency](docs/en/reference/execution/retry.md), request overrides, and replay checks for file operations. |
+| Safe retries | [Retry policies, backoff, Retry-After and idempotency](docs/en/reference/execution/retry.md); per-call delay overrides via `withRetryDelay()` and replay checks for file operations. |
 | Time limits | [Per-attempt timeouts, total execution budgets and shared deadlines](docs/en/reference/execution/deadlines.md) across retries, authentication and dependent calls. |
 | Request quotas | [Joint client and operation quotas, waiting or refusal](docs/en/reference/execution/rate-limit.md); local accounting or an optional [atomic Redis backend](docs/en/reference/integrations/redis.md). |
 | Server cooldown | [Coordinate Retry-After prohibitions after 429](docs/en/reference/execution/cooldown.md) by operation/group, origin and credentials; budget-aware waits or refusal, optional sharing across clients/processes. |

@@ -3473,7 +3473,8 @@
         "reference/request/composition",
         "reference/request/declaration",
         "reference/serialization/uri-query",
-        "guides/client/showcase"
+        "guides/client/showcase",
+        "reference/execution/transfer-progress"
       ],
       "methods": {
         "send": {
@@ -4061,6 +4062,57 @@
         "getContinuationModeOverride": {
           "return": "?ApiSutra\\Enums\\Continuation\\ContinuationMode",
           "parameters": []
+        },
+        "withRetryDelay": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": {
+            "baseDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "maxDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "backoff": {
+              "type": "?ApiSutra\\Enums\\RateLimiting\\BackoffStrategy",
+              "optional": true,
+              "variadic": false
+            },
+            "jitter": {
+              "type": "?bool",
+              "optional": true,
+              "variadic": false
+            }
+          }
+        },
+        "withoutRetryDelay": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": []
+        },
+        "getRetryDelayOverride": {
+          "return": "?ApiSutra\\VO\\Retry\\RetryDelayOverride",
+          "parameters": []
+        },
+        "withTransferProgress": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": {
+            "callback": {
+              "type": "callable",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        },
+        "withoutTransferProgress": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": {}
+        },
+        "getTransferProgress": {
+          "return": "?Closure",
+          "parameters": {}
         }
       }
     },
@@ -6850,7 +6902,8 @@
     {
       "class": "ApiSutra\\Request\\RequestExecution",
       "docs": [
-        "reference/results/handles"
+        "reference/results/handles",
+        "reference/execution/transfer-progress"
       ],
       "methods": {
         "send": {
@@ -6864,6 +6917,20 @@
         "resolvedAsync": {
           "return": "ApiSutra\\Contracts\\Interfaces\\Execution\\ResultPromiseInterface",
           "parameters": []
+        },
+        "withTransferProgress": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": {
+            "callback": {
+              "type": "callable",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        },
+        "withoutTransferProgress": {
+          "return": "ApiSutra\\Contracts\\Interfaces\\Core\\RequestExecutionInterface",
+          "parameters": {}
         }
       }
     },
@@ -7183,7 +7250,9 @@
     {
       "class": "ApiSutra\\Request\\RequestOptions",
       "docs": [
-        "reference/execution/cooldown"
+        "reference/execution/cooldown",
+        "reference/execution/retry",
+        "reference/execution/transfer-progress"
       ],
       "methods": {
         "withCooldown": {
@@ -7198,6 +7267,57 @@
         },
         "getCooldownOverride": {
           "return": "?ApiSutra\\Config\\CooldownConfig",
+          "parameters": {}
+        },
+        "withRetryDelay": {
+          "return": "self",
+          "parameters": {
+            "baseDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "maxDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "backoff": {
+              "type": "?ApiSutra\\Enums\\RateLimiting\\BackoffStrategy",
+              "optional": true,
+              "variadic": false
+            },
+            "jitter": {
+              "type": "?bool",
+              "optional": true,
+              "variadic": false
+            }
+          }
+        },
+        "withoutRetryDelay": {
+          "return": "self",
+          "parameters": []
+        },
+        "getRetryDelayOverride": {
+          "return": "?ApiSutra\\VO\\Retry\\RetryDelayOverride",
+          "parameters": []
+        },
+        "withTransferProgress": {
+          "return": "self",
+          "parameters": {
+            "callback": {
+              "type": "callable",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        },
+        "withoutTransferProgress": {
+          "return": "self",
+          "parameters": {}
+        },
+        "getTransferProgress": {
+          "return": "?Closure",
           "parameters": {}
         }
       }
@@ -7409,6 +7529,116 @@
       "constructor_source": "DtoVariants(string $discriminator, array $map, DiscriminatorMode $mode = DiscriminatorMode::Value, UnknownVariant|string $unknown = UnknownVariant::Error)",
       "source": "src/Attributes/DataTransfer/DtoVariants.php",
       "signature_doc": "reference/attributes/hydration"
+    },
+    {
+      "class": "ApiSutra\\VO\\Retry\\RetryDelayOverride",
+      "docs": [
+        "reference/execution/retry"
+      ],
+      "methods": {
+        "__construct": {
+          "return": "",
+          "parameters": {
+            "baseDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "maxDelay": {
+              "type": "?int",
+              "optional": true,
+              "variadic": false
+            },
+            "backoff": {
+              "type": "?ApiSutra\\Enums\\RateLimiting\\BackoffStrategy",
+              "optional": true,
+              "variadic": false
+            },
+            "jitter": {
+              "type": "?bool",
+              "optional": true,
+              "variadic": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "class": "ApiSutra\\VO\\Http\\TransferProgress",
+      "docs": [
+        "reference/execution/transfer-progress"
+      ],
+      "methods": {
+        "__construct": {
+          "return": "",
+          "parameters": {
+            "trace": {
+              "type": "ApiSutra\\Diagnostics\\ExecutionTrace",
+              "optional": false,
+              "variadic": false
+            },
+            "attempt": {
+              "type": "int",
+              "optional": false,
+              "variadic": false
+            },
+            "uploaded": {
+              "type": "int",
+              "optional": false,
+              "variadic": false
+            },
+            "uploadTotal": {
+              "type": "?int",
+              "optional": false,
+              "variadic": false
+            },
+            "downloaded": {
+              "type": "int",
+              "optional": false,
+              "variadic": false
+            },
+            "downloadTotal": {
+              "type": "?int",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "class": "ApiSutra\\Contracts\\Interfaces\\Core\\TransferProgressInterface",
+      "docs": [
+        "reference/execution/transfer-progress"
+      ],
+      "methods": {
+        "assertSupportsTransferProgress": {
+          "return": "void",
+          "parameters": {}
+        }
+      }
+    },
+    {
+      "class": "ApiSutra\\VO\\Http\\TransportOptions",
+      "docs": [
+        "reference/execution/transfer-progress"
+      ],
+      "methods": {
+        "withTransferProgress": {
+          "return": "self",
+          "parameters": {
+            "callback": {
+              "type": "Closure",
+              "optional": false,
+              "variadic": false
+            }
+          }
+        },
+        "effective": {
+          "return": "self",
+          "parameters": {}
+        }
+      }
     }
   ]
 }

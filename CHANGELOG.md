@@ -1,6 +1,16 @@
 <!-- languages --> <a href="CHANGELOG.md">English</a> · <a href="docs/ru/changelog.md">Русский</a> <!-- /languages -->
 # Changelog <a id="section-1"></a>
 
+## 0.4.0
+
+- Add opt-in transfer progress for sync/async HTTP with per-attempt trace and byte counters, isolated callback failures, capability checks and support for protected external URLs. Built-in fakes accept the option without events.
+- Add a runnable local HTTP example covering upload, download, retry and unknown totals.
+- Add per-execution `withRetryDelay()` / `withoutRetryDelay()` for partial backoff
+  settings without changing retry safety, attempt limits, or server Retry-After.
+- Document and regression-test response provenance after retry failures: transport
+  failures clear the prior response; deadline and admission failures may retain it
+  as context. Result semantics are unchanged.
+
 ## 0.3.1
 
 - Update the runnable Records SDK to use a shared DtoVariants declaration for list,

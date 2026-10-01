@@ -65,6 +65,14 @@ with tempfile.TemporaryDirectory(prefix='apisutra-dist-') as temporary:
         print(f'{kind}: installed SDK without Laravel', flush=True)
         sdk_report = folder / f'{kind}-sdk.json'
         run(['python3', str(ROOT / 'tests/Support/check-sdk-package.py'), '--root', str(checkout), '--report', str(sdk_report)])
+        # Реальный HTTP-пример явно требует опциональный Guzzle, а не dev-зависимости ядра.
+        print(f'{kind}: transfer progress example with optional Guzzle', flush=True)
+        manifest_path = checkout / 'composer.json'
+        manifest = json.loads(manifest_path.read_text())
+        manifest.get('require-dev', {}).pop('guzzlehttp/guzzle', None)
+        manifest_path.write_text(json.dumps(manifest, indent=4) + '\n')
+        run(['composer', 'require', 'guzzlehttp/guzzle:^7.0', '--update-no-dev', '--no-interaction', '--no-scripts', '--no-progress'], checkout)
+        run([PHP, str(ROOT / 'tests/Support/http-transfer-progress-smoke.php'), str(checkout)])
         report['archives'][kind] = {'bytes': archive_path.stat().st_size,
                                     'files': len(contents[kind]), 'standalone_smokes': len(smokes),
                                     'sdk_installations': json.loads(sdk_report.read_text()),

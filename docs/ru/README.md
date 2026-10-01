@@ -49,3 +49,5 @@
 Для ИИ-агента — [правила разработки ApiSutra](https://github.com/apisutra/php/blob/master/.agents/README.md).
 Этот раздел предназначен для изменения самой ApiSutra. Подключение поддержанных
 casts, hooks и extensions относится к пользовательским маршрутам выше.
+
+- [Наблюдать прогресс upload/download](reference/execution/transfer-progress.md).

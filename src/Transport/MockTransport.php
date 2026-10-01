@@ -10,6 +10,7 @@ use ApiSutra\Exceptions\Core\RuntimeException;
 use ApiSutra\Localization\Message;
 use ApiSutra\Contracts\Interfaces\Core\DestinationAwareInterface;
 use ApiSutra\Contracts\Interfaces\Core\FileStreamingInterface;
+use ApiSutra\Contracts\Interfaces\Core\TransferProgressInterface;
 use ApiSutra\Contracts\Interfaces\Core\TimeoutAwareTransportInterface;
 use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Testing\MissingFixtureException;
@@ -31,13 +32,18 @@ use GuzzleHttp\Promise\PromiseInterface;
 use Override;
 use Throwable;
 
-final class MockTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface
+final class MockTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface, TransferProgressInterface
 {
     public function assertSupportsConcurrency(): void
     {
     }
 
     /** Fake не добавляет credentials и не выполняет redirects. */
+    public function assertSupportsTransferProgress(): void
+    {
+        // Без реальной передачи fake не создаёт уведомлений.
+    }
+
     public function assertSupportsFileTransfer(FileTransferOptions $options): void
     {
     }

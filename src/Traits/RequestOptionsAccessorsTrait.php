@@ -12,6 +12,9 @@ use ApiSutra\Enums\Execution\RequestRole;
 use ApiSutra\Enums\Request\CredentialsMergeMode;
 use ApiSutra\Request\RequestOptions;
 use ApiSutra\VO\Cache\CacheOverride;
+use ApiSutra\VO\Retry\RetryDelayOverride;
+use ApiSutra\VO\Http\TransferProgress;
+use Closure;
 
 /**
  * Доступ к runtime‑override опциям запроса.
@@ -36,6 +39,17 @@ trait RequestOptionsAccessorsTrait
     public function getRetryOverride(): array
     {
         return $this->options()->getRetryOverride();
+    }
+
+    public function getRetryDelayOverride(): ?RetryDelayOverride
+    {
+        return $this->options()->getRetryDelayOverride();
+    }
+
+    /** @return Closure(TransferProgress): void|null */
+    public function getTransferProgress(): ?Closure
+    {
+        return $this->options()->getTransferProgress();
     }
 
     public function getAuthOverride(): ?AuthOverride

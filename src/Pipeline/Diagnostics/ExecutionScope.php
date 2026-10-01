@@ -24,6 +24,7 @@ use ApiSutra\VO\Http\ProviderResponse;
 use Throwable;
 use ApiSutra\Exceptions\ControlFlow\AdmissionRefused;
 use Closure;
+use ApiSutra\VO\Http\TransferProgress;
 use ApiSutra\Execution\ExecutionActivity;
 use ApiSutra\Exceptions\Serialization\HydrationException;
 use ApiSutra\VO\Http\PreparedRequest;
@@ -35,6 +36,7 @@ final class ExecutionScope
     private int $startedMs;
     private ?ExecutionResult $result = null;
     private int $attempts = 0;
+    private ?TransferObservation $transferObservation;
     private float $httpDurationMs = 0;
     private ?int $httpStartedMs = null;
     private ?string $httpMethod = null;
@@ -50,6 +52,7 @@ final class ExecutionScope
     /** @var list<PipelineEvent> */
     public private(set) array $audit = [];
 
+    /** @param Closure(TransferProgress): void|null $transferProgress */
     public function __construct(
         public readonly ExecutionTrace $trace,
         private readonly AuditLogger $logger,
@@ -58,8 +61,10 @@ final class ExecutionScope
         private readonly RequestRole $role = RequestRole::Root,
         private readonly ?ExecutionObservation $observation = null,
         private readonly ?ExecutionActivity $activity = null,
+        ?Closure $transferProgress = null,
     ) {
         $this->startedMs = $clock->monotonicMs();
+        $this->transferObservation = $transferProgress === null ? null : new TransferObservation($transferProgress);
     }
 
     public function start(): void
@@ -102,10 +107,11 @@ final class ExecutionScope
         );
     }
 
-    /** @param callable(): ProviderResponse $send */
+    /** @param callable(?Closure): ProviderResponse $send */
     public function http(callable $send, ?PreparedRequest $request = null): ProviderResponse
     {
         $attempt = ++$this->attempts;
+        $progress = $this->transferObservation?->attempt($this->trace, $attempt);
         $this->record(PipelineStage::HttpRequest, ['attempt' => $attempt]);
         if ($this->observation !== null) {
             $this->httpStartedMs = $this->clock->monotonicMs();
@@ -114,12 +120,13 @@ final class ExecutionScope
         }
         $status = null;
         try {
-            $response = $send();
+            $response = $send($progress === null ? null : $progress->notify(...));
             $status = $response->status;
         } catch (Throwable $exception) {
             $this->record(PipelineStage::HttpResponse, ['attempt' => $attempt, 'exception' => $exception::class]);
             throw $exception;
         } finally {
+            $progress?->close();
             if ($this->httpStartedMs !== null) {
                 $duration = max(0, $this->clock->monotonicMs() - $this->httpStartedMs);
                 $this->httpDurationMs += $duration;
@@ -219,6 +226,7 @@ final class ExecutionScope
 
     private function unsubscribe(): void
     {
+        $this->transferObservation?->close();
         ($this->unsubscribeCancellation)?->__invoke();
         $this->unsubscribeCancellation = null;
     }

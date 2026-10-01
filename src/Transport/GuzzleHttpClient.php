@@ -9,6 +9,7 @@ use GuzzleHttp\Promise\PromiseInterface;
 use ApiSutra\Localization\Message;
 use ApiSutra\Contracts\Interfaces\Core\DestinationAwareInterface;
 use ApiSutra\Contracts\Interfaces\Core\FileStreamingInterface;
+use ApiSutra\Contracts\Interfaces\Core\TransferProgressInterface;
 use ApiSutra\VO\Files\FileTransferOptions;
 use ApiSutra\Http\RequestDestination;
 use ApiSutra\Http\Origin;
@@ -22,8 +23,15 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /** Штатный адаптер с известным cURL handler; Guzzle остаётся опциональной зависимостью. */
-final class GuzzleHttpClient implements ClientInterface, AsyncHttpClientInterface, DestinationAwareInterface, FileStreamingInterface
+final class GuzzleHttpClient implements ClientInterface, AsyncHttpClientInterface, DestinationAwareInterface, FileStreamingInterface, TransferProgressInterface
 {
+    public function assertSupportsTransferProgress(): void
+    {
+        if ($this->customCurl) {
+            throw new ConfigurationException(new Message('transport.curl_overrides_incompatible_with_progress'));
+        }
+    }
+
     public function assertSupportsFileTransfer(FileTransferOptions $options): void
     {
         if ($this->customCurl) {
@@ -108,9 +116,13 @@ final class GuzzleHttpClient implements ClientInterface, AsyncHttpClientInterfac
         $effective = $options->effective();
         $destination = $effective->destination;
         $fileOptions = [];
+        if ($effective->transferProgress !== null) {
+            $this->assertSupportsTransferProgress();
+            $fileOptions['progress'] = $effective->transferProgress;
+        }
         if ($effective->fileTransfer !== null) {
             $this->assertSupportsFileTransfer($effective->fileTransfer);
-            $fileOptions = [
+            $fileOptions += [
                 'sink' => $effective->sink,
                 'debug' => false,
                 'body' => null,

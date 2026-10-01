@@ -225,6 +225,9 @@ $result = $request
 `#[Retry(safe: true/false)]` и опциональным RetrySafetyPolicyInterface;
 неуказанный safe и null равнозначны. Подробнее:
 [безопасность повторов](../execution/retry.md#section-6).
+`withRetryDelay(jitter: false)` меняет только настройки задержки retry для этого
+исполнения; `withoutRetryDelay()` возвращает наследование. Подробнее:
+[задержки исполнения, приоритеты и валидация](../execution/retry.md#runtime-delay).
 Для credentials enrichment см. блок выше.
 
 ## Отправка и результат <a id="section-15"></a>
@@ -288,3 +291,5 @@ SDK возвращает ошибку `ErrorCode::RequestContractViolation` до
 
 Для успешных запросов с oneOf в `requestDebug()` дополнительно доступен блок `oneOf`
 с краткой диагностикой выбранного варианта.
+
+`withTransferProgress(callable)` и `withoutTransferProgress()` управляют [прогрессом байтов](../execution/transfer-progress.md) одного исполнения.

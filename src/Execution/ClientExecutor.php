@@ -99,6 +99,7 @@ final class ClientExecutor implements ClientExecutorInterface
                 $context->role,
                 ExecutionObservation::forConfig($this->config),
                 $this->activity,
+                $context->options?->getTransferProgress(),
             );
             $context->scope = $scope;
             $scope->start();

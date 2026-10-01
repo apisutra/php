@@ -39,8 +39,11 @@ it('сохраняет локальный подтип через RetrySender и
         ->and($result->exception->retryAfter)->toBe(2)
         ->and($result->exception->response)->toBeNull()
         ->and($result->exception->lastResponse?->status)->toBe($previous ? 500 : null)
+        ->and($result->response?->status)->toBe($previous ? 500 : null)
+        ->and($result->errors->first()->response)->toBe($result->response)
         ->and($result->errors->first()->code)->toBe(ErrorCode::RateLimited)
         ->and($result->errors->first()->context['reason'])->toBe('server_cooldown_active')
+        ->and($result->errors->first()->context['stage'])->toBe('cooldown')
         ->and($transport->entries)->toBe($previous ? ['sync'] : []);
     expect(fn () => $handle->dataOrFail())->toThrow(CooldownException::class)
         ->and($result->exception->getMessage())->toContain('Действует запрет');

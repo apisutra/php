@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'request.retry_delay_override_must_not_be_empty' => 'Укажите хотя бы один параметр задержки retry; для снятия настройки используйте withoutRetryDelay()',
+    'request.retry_delay_must_be_non_negative' => 'baseDelay и maxDelay retry должны быть неотрицательными миллисекундами',
     'request.cache_scope_must_not_be_empty' => 'Пространство кеша не должно быть пустым',
     'request.meta_resolver_class_not_found' => 'Класс meta-resolver \'{resolver}\' не найден',
     'request.meta_resolver_must_implement_paginationmetaresolverinterface' => 'Meta-resolver должен реализовывать PaginationMetaResolverInterface',

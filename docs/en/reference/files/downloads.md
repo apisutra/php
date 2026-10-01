@@ -167,3 +167,5 @@ public ?Base64File $photo = null;
 - Accepts plain base64.
 - Also accepts data URIs with the `data:...;base64,` prefix.
 - Passes an already normalized base64 payload to `Base64File`.
+
+[Transfer progress](../execution/transfer-progress.md) supports streaming downloads and unknown totals; result success determines completion.

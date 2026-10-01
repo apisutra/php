@@ -47,6 +47,8 @@ use ApiSutra\Timing\CooperativeSleeper;
 use ApiSutra\Timing\ExecutionBudget;
 use ApiSutra\Timing\SystemClock;
 use ApiSutra\Transport\TransportCapabilities;
+use ApiSutra\Http\TransferProgressGuard;
+use Closure;
 use ApiSutra\Transport\TransportExceptionNormalizer;
 use ApiSutra\Transport\TransportExecution;
 use ApiSutra\VO\Http\ProviderResponse;
@@ -103,7 +105,7 @@ final readonly class RetrySender
     }
 
     /** Проверка поддержки до auth/refresh и любых HTTP-попыток этого исполнения. */
-    public function assertDestinationSupported(PipelineContext $context): void
+    public function assertCapabilities(PipelineContext $context): void
     {
         DestinationGuard::checkContext($context);
         FileTransferGuard::checkContext($context);
@@ -111,11 +113,14 @@ final readonly class RetrySender
         $transfer = $context->preparedRequest !== null
             ? FileTransferGuard::options($context->preparedRequest) : $context->fileTransfer;
         FileTransferGuard::checkCapability($this->transport, $transfer);
+        if ($context->options?->getTransferProgress() !== null) {
+            TransferProgressGuard::checkCapability($this->transport);
+        }
     }
 
     public function sendWithRetry(RequestInterface $request, PipelineContext $context): ProviderResponse
     {
-        $this->assertDestinationSupported($context);
+        $this->assertCapabilities($context);
         $retryConfig = $this->retryConfigResolver->resolve($request, $context->options);
         $attempts = $retryConfig->attempts ?? 1;
 
@@ -366,7 +371,13 @@ final readonly class RetrySender
         $previousTransmission = $context->transmissionState;
         $context->sentAuthTokenVersion = $context->authTokenVersion;
         $context->transmissionState = TransmissionState::Unknown;
-        $send = fn (): ProviderResponse => TransportExecution::send($this->transport, $context->preparedRequest);
+        $send = function (?Closure $progress = null) use ($context): ProviderResponse {
+            $request = $context->preparedRequest;
+            if ($progress !== null) {
+                $request = $request->with(transportOptions: $request->transportOptions->withTransferProgress($progress));
+            }
+            return TransportExecution::send($this->transport, $request);
+        };
         try {
             return $context->scope !== null ? $context->scope->http($send, $context->preparedRequest) : $send();
         } catch (Throwable $exception) {

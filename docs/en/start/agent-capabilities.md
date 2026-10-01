@@ -44,6 +44,7 @@ follow the links for the full contract.
 | Validate data before sending | [Validation](../reference/client/validation.md), [polymorphic body](../reference/request/declaration.md). Validate needs a configured validator; response hydration serves a different purpose. |
 | Separate a convenient DTO representation from the API format | [DX and wire serialization](../reference/serialization/dto-output.md). The result of `toArray()` need not match the HTTP payload. |
 | Send or receive a file | [Multipart, binary, and Base64](../reference/files/uploads.md), [download to a file or stream](../reference/files/downloads.md), [archives](../reference/files/archives.md). Choose format and storage for the API and data volume; an [executable example](../guides/recipes/files.md) is available. |
+| Observe HTTP progress | [Callback and limitations](../reference/execution/transfer-progress.md). |
 
 ## DTOs and hydration <a id="section-5"></a>
 

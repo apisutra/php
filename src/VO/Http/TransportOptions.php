@@ -11,9 +11,15 @@ use ApiSutra\Exceptions\Configuration\ConfigurationException;
 use ApiSutra\Exceptions\Transport\ExecutionDeadlineException;
 use ApiSutra\Timing\ExecutionBudget;
 use Psr\Http\Message\StreamInterface;
+use Closure;
 
 final readonly class TransportOptions
 {
+    /**
+     * @param Closure(float, float, float, float): void|null $transferProgress
+     * Сырые счётчики: download total, downloaded, upload total, uploaded (байты).
+     * Нулевой total означает неизвестный размер; callback вызывается внутри передачи.
+     */
     public function __construct(
         public int $timeoutMs = 0,
         public int $connectTimeoutMs = 0,
@@ -21,6 +27,7 @@ final readonly class TransportOptions
         public ?RequestDestination $destination = null,
         public ?FileTransferOptions $fileTransfer = null,
         public ?StreamInterface $sink = null,
+        public ?Closure $transferProgress = null,
     ) {
         if ($timeoutMs < 0 || $connectTimeoutMs < 0) {
             throw new ConfigurationException(new Message('vo.transport_timeouts_must_be_0'));
@@ -40,7 +47,21 @@ final readonly class TransportOptions
         if ($timeout > 0 && $connect > 0) {
             $connect = min($connect, $timeout);
         }
-        return new self($timeout, $connect, $this->budget, $this->destination, $this->fileTransfer, $this->sink);
+        return new self($timeout, $connect, $this->budget, $this->destination, $this->fileTransfer, $this->sink, $this->transferProgress);
+    }
+
+    /** @param Closure(float, float, float, float): void $callback */
+    public function withTransferProgress(Closure $callback): self
+    {
+        return new self(
+            $this->timeoutMs,
+            $this->connectTimeoutMs,
+            $this->budget,
+            $this->destination,
+            $this->fileTransfer,
+            $this->sink,
+            $callback,
+        );
     }
 
     public function hasLimits(): bool

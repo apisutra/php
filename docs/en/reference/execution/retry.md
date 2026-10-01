@@ -57,24 +57,59 @@ Without `retry` in `ClientConfig`, retries are disabled by default.
 Retry repeats failed requests; Rate Limit limits call frequency.
 Rate Limit applies independently of operation idempotency.
 
-## Client-level retry <a id="section-5"></a>
+### Delay for one execution <a id="runtime-delay"></a>
+
+This override is optional. Without `withRetryDelay()`, delays come from the request
+attribute or client settings; existing calls need no changes.
+
+For an existing `$request`, enable up to three attempts with a fixed 1-second pause:
+
 ```php
-use ApiSutra\Config\ClientConfig;
-use ApiSutra\Config\RetryConfig;
 use ApiSutra\Enums\RateLimiting\BackoffStrategy;
 
-$config = new ClientConfig(
-    baseUrl: 'https://api.example',
-    retry: new RetryConfig(
-        attempts: 3,
-        baseDelay: 200,
-        maxDelay: 5000,
-        backoff: BackoffStrategy::Exponential,
-        jitter: true,
-        retryOn: [408, 429, 500, 502, 503, 504],
-    ),
-);
+$result = $request->withRetry(3)->withRetryDelay(
+    baseDelay: 1000,
+    maxDelay: 1000,
+    backoff: BackoffStrategy::Constant,
+    jitter: false,
+)->send()->raw();
+
+// Inherit delays and strategy, overriding only jitter.
+$execution = $request->withRetryDelay(jitter: false);
+$inherited = $execution->withoutRetryDelay();
 ```
+
+`withRetryDelay(?int $baseDelay = null, ?int $maxDelay = null,
+?BackoffStrategy $backoff = null, ?bool $jitter = null)` is available on
+RequestOptions and the request/execution fluent API. Delays are milliseconds;
+null inherits the request attribute or client, while 0 and false are explicit values.
+Priority is runtime → `#[Retry]` → ClientConfig. The attribute still supplies all
+of its delay fields. The partial value is exposed by
+`RequestOptions::getRetryDelayOverride()` as `?RetryDelayOverride` from `VO\Retry`.
+
+- This setter does not enable retry or grant permission to repeat an unsafe operation.
+- Each call replaces the entire delay override: omitted fields inherit again.
+- `withRetry()` and `withoutRetry()` preserve it; `withoutRetryDelay()` clears only it.
+- Each operation returns a new snapshot, leaving the original request unchanged.
+- Explicit execution options are the single runtime source for enabled, attempts,
+  and delay, even when empty or cleared. The request's runtime getters are used only
+  when execution options are absent; fields do not fall back between these two sources.
+
+An empty/all-null call or a negative baseDelay/maxDelay throws ConfigurationException
+immediately from the setter, independently of throwOnErrors. Use withoutRetryDelay()
+to clear the override. Final `maxDelay >= baseDelay` validation occurs only when
+resolving enabled retry. An invalid combination, including one with inherited values,
+yields `configuration_error` (or an exception under throwOnErrors) before the original
+request's HTTP send; authentication may already have run. MaxDelay is never silently
+raised. The existing `withRetry(0)` retains its validation during execution.
+
+Retry status/exception lists, safety, auth retries, and the total budget are unchanged.
+A custom RetryDelayPolicyInterface receives the resolved RetryConfig. Retry-After
+remains a server minimum: maxDelay caps backoff, not Retry-After. Cooldown and the
+execution budget still constrain waiting. `withDelay()` is a separate request delay.
+
+## Client-level retry <a id="section-5"></a>
+The configuration example above sets client defaults.
 
 Additional options:
 - `retryExceptions`: retry on exceptions, such as ConnectionException.

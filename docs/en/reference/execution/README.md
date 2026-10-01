@@ -20,3 +20,5 @@ related restrictions are documented with the contract that owns them.
 - [Shared server cooldown after HTTP 429](cooldown.md).
 
 - [Lazy elements, collections and lossless aggregation](pagination-items.md).
+
+- [Observe HTTP upload/download progress](transfer-progress.md).

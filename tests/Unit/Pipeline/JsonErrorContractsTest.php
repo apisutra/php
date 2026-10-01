@@ -8,6 +8,8 @@ use ApiSutra\Contracts\Interfaces\Hooks\HookInterface;
 use ApiSutra\Contracts\Interfaces\DataTransfer\DtoInterface;
 use ApiSutra\Enums\Configuration\Environment;
 use ApiSutra\Enums\Hooks\Hook;
+use ApiSutra\Exceptions\Transport\ExecutionDeadlineException;
+use ApiSutra\Tests\Support\VirtualClock;
 use ApiSutra\Testing\MockResponse;
 use ApiSutra\Tests\Stubs\Requests\CacheProbeRequest;
 use ApiSutra\Tests\Stubs\Requests\JsonPayloadRequest;
@@ -70,9 +72,9 @@ it('сохраняет последний HTTP-ответ после исчер�
     [500, 'server_error'], [502, 'bad_gateway'], [503, 'service_unavailable'], [504, 'gateway_timeout'],
 ]);
 
-it('сетевая ошибка после HTTP не сохраняет прежний ответ как текущий', function (): void {
+it('сетевая ошибка после HTTP не сохраняет прежний ответ как текущий', function (bool $timeout): void {
     $calls = 0;
-    $original = new ConnectException('fixture network', new Request('GET', 'https://api.test'));
+    $original = new ConnectException('fixture network', new Request('GET', 'https://api.test'), handlerContext: $timeout ? ['errno' => 28] : []);
     $this->transport->fake(['*' => static function () use (&$calls, $original): MockResponse {
         if (++$calls === 1) {
             return MockResponse::serverError();
@@ -81,11 +83,40 @@ it('сетевая ошибка после HTTP не сохраняет преж
     }]);
     $result = (new CacheProbeRequest())->setClient($this->client)->send()->raw();
     expect($result->isFailed())->toBeTrue()
-        ->and($result->errors->first()->code->value)->toBe('connection_failed')
+        ->and($result->errors->first()->code->value)->toBe($timeout ? 'timeout' : 'connection_failed')
         ->and($result->response)->toBeNull()
+        ->and($result->errors->first()->response)->toBeNull()
+        ->and($result->errors->first()->context['reason'] ?? null)->toBeNull()
         ->and($result->exception->getPrevious())->toBe($original)
         ->and($calls)->toBe(2);
-});
+})->with([false, true]);
+
+it('сохраняет предыдущий HTTP как контекст общего deadline, а не как его причину', function (bool $duringHttp): void {
+    $clock = new VirtualClock();
+    $calls = 0;
+    $original = new ConnectException('fixture timeout', new Request('GET', 'https://api.test'), handlerContext: ['errno' => 28]);
+    $this->transport->fake(['*' => static function () use (&$calls, $clock, $original): MockResponse {
+        if (++$calls === 1) {
+            return MockResponse::serverError();
+        }
+        $clock->advance(100);
+        throw $original;
+    }]);
+    $client = new TestClient($this->config->with(retry: new RetryConfig(
+        attempts: 2, baseDelay: $duringHttp ? 0 : 100, jitter: false, totalTimeoutMs: 100,
+    )), $this->transport, $clock, $clock);
+    $result = (new CacheProbeRequest())->setClient($client)->send()->raw();
+    expect($result->exception)->toBeInstanceOf(ExecutionDeadlineException::class)
+        ->and($result->response->status)->toBe(500)
+        ->and($result->errors->first()->response)->toBe($result->response)
+        ->and($result->errors->first()->code->value)->toBe('timeout')
+        ->and($result->errors->first()->context)->toMatchArray([
+            'reason' => 'execution_deadline_exceeded', 'stage' => $duringHttp ? 'http' : 'retry_wait',
+        ])->and($calls)->toBe($duringHttp ? 2 : 1)->and($clock->waits)->toBe([]);
+    if ($duringHttp) {
+        expect($result->exception->getPrevious()->getPrevious())->toBe($original);
+    }
+})->with([false, true]);
 
 it('HTTP после сетевой ошибки определяет итог выполнения', function (): void {
     $calls = 0;

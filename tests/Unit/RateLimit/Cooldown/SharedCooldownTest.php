@@ -76,6 +76,32 @@ it('ошибка чтения или некорректный ответ ост�
     expect($terminal)->toHaveCount(1)->and($terminal[0]['context'])->toMatchArray(['reason' => 'cooldown_backend_error', 'stage' => 'cooldown_read']);
 })->with([[false, false], [true, false], [false, true]]);
 
+it('сохраняет HTTP 500 при последующем отказе чтения backend и исходную причину', function (): void {
+    $received = false;
+    $original = new RuntimeException('fixture backend failure');
+    $backend = new ScriptedCooldownBackend(static function () use (&$received, $original): int {
+        if ($received) {
+            throw $original;
+        }
+        return 0;
+    });
+    $clock = new VirtualClock();
+    $transport = new MockTransport();
+    $transport->fake(['*' => static function () use (&$received): MockResponse {
+        $received = true;
+        return MockResponse::serverError();
+    }]);
+    $client = new TestClient(new ClientConfig(baseUrl: 'https://fixture.test', cooldownBackend: $backend,
+        retry: new RetryConfig(attempts: 2, baseDelay: 0, jitter: false)), $transport, $clock, $clock);
+    $result = $client->send(new RetryPolicyRequest())->raw();
+    expect($result->response->status)->toBe(500)
+        ->and($result->errors->first()->response)->toBe($result->response)
+        ->and($result->errors->first()->code)->toBe(ErrorCode::ExecutionError)
+        ->and($result->errors->first()->context)->toMatchArray(['reason' => 'cooldown_backend_error', 'stage' => 'cooldown_read'])
+        ->and($result->exception->getPrevious())->toBe($original)
+        ->and($transport->getRecorded())->toHaveCount(1)->and($clock->waits)->toBe([]);
+});
+
 it('сохраняет полученный 429 при сбое публикации без ordinary retry', function (bool $recording): void {
     $backend = new ScriptedCooldownBackend(static fn (): int => 0, static fn () => throw new RuntimeException('publish secret'));
     $s = new CooldownScenario(new ClientConfig(baseUrl: 'https://fixture.test', debug: true, cooldownBackend: $backend,

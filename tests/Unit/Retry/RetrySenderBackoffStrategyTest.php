@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use ApiSutra\Config\ClientConfig;
+use ApiSutra\Contracts\Interfaces\Retry\RetryDelayPolicyInterface;
+use ApiSutra\Request\RequestOptions;
 use ApiSutra\Config\RetryConfig;
 use ApiSutra\Enums\Configuration\Environment;
 use ApiSutra\Enums\Http\HttpMethod;
@@ -27,6 +29,7 @@ describe('RetrySender backoff strategies', function () {
     it('использует стратегию backoff при повторных попытках', function (
         BackoffStrategy $strategy,
         array $expectedDelays,
+        bool $override,
     ) {
         $transport = new MockTransport();
         $transport->fake([
@@ -43,7 +46,7 @@ describe('RetrySender backoff strategies', function () {
                 attempts: 3,
                 baseDelay: 100,
                 maxDelay: 1000,
-                backoff: $strategy,
+                backoff: $override ? BackoffStrategy::Exponential : $strategy,
                 jitter: false,
                 retryOn: [500],
             ),
@@ -65,6 +68,7 @@ describe('RetrySender backoff strategies', function () {
             config: $config,
             traceId: 'trace',
             preparedRequest: $prepared,
+            options: $override ? RequestOptions::empty()->withRetryDelay(backoff: $strategy, jitter: false) : null,
         );
 
         $clock = new VirtualClock();
@@ -72,7 +76,16 @@ describe('RetrySender backoff strategies', function () {
         $retrySender = new RetrySender(
             config: $config,
             transport: $transport,
-            retryDelayPolicy: new RetryDelayCalculator(),
+            retryDelayPolicy: new class($strategy) implements RetryDelayPolicyInterface {
+                public function __construct(private BackoffStrategy $expected) {}
+
+                public function delayMs(RetryConfig $config, int $retryNumber): int
+                {
+                    expect($config->backoff)->toBe($this->expected)->and($config->jitter)->toBeFalse()
+                        ->and($config->retryOn)->toBe([500])->and($config->attempts)->toBe(3);
+                    return (new RetryDelayCalculator())->delayMs($config, $retryNumber);
+                }
+            },
             sleeper: $clock,
             rateLimiter: new RateLimiter(),
             hookRunner: new HookRunner(new HookRegistry()),
@@ -90,5 +103,5 @@ describe('RetrySender backoff strategies', function () {
         'constant' => [BackoffStrategy::Constant, [100, 100]],
         'linear' => [BackoffStrategy::Linear, [100, 200]],
         'exponential' => [BackoffStrategy::Exponential, [100, 200]],
-    ]);
+    ])->with([false, true]);
 });

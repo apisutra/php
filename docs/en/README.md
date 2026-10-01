@@ -49,3 +49,5 @@ covers checkout setup, architecture, source code, and package checks.
 For AI agents: [ApiSutra development rules](https://github.com/apisutra/php/blob/master/.agents/README.md).
 This section concerns changes to ApiSutra itself. Using supported casts, hooks,
 and extensions belongs to the user task guides above.
+
+- [Observe upload/download progress](reference/execution/transfer-progress.md).

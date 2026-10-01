@@ -19,3 +19,5 @@ role, status, reason/stage, durationMs, attemptCount/httpDurationMs, method/orig
 детей так вычитать нельзя. Root определяется по parentExecutionId === null; страницы
 с ролью Root всё равно имеют родителя. PSR-логгер, audit и debug сохраняют прежние контракты.
 [События и доставка Laravel](https://github.com/apisutra/laravel/blob/master/docs/ru/reference/integrations/observability.md) описаны в адаптере.
+
+Для счётчиков байтов используйте отдельный [callback прогресса передачи](../execution/transfer-progress.md); lifecycle-события не накапливают его снимки.

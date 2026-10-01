@@ -314,3 +314,5 @@ contract, or accesses the network itself. Destination checking is not an SSRF fi
 DNS policy, or address allowlist.
 
 User API: [external URLs](../serialization/uri-query.md).
+
+[Transfer progress](transfer-progress.md).

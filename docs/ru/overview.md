@@ -16,7 +16,7 @@
 <!-- languages --> <a href="../../README.md">English</a> · <a href="overview.md">Русский</a> <!-- /languages -->
 </p>
 
-ApiSutra — PHP-библиотека для SDK внешних API: декларации запросов и DTO, настройки авторизации и исполнения, типизированные результаты и диагностика. **PHP 8.4+.** Работает самостоятельно; [интеграция с Laravel 13](#section-6) — отдельный пакет.
+ApiSutra — SDK внешних API: запросы и DTO, авторизация, исполнение, типизированные результаты и диагностика. **PHP 8.4+.** Ядро независимо; [Laravel 13](#section-6) — отдельный пакет.
 
 [Быстрый старт](guides/quickstart.md) · [Карта возможностей](#section-5) · [Документация](README.md)
 
@@ -157,6 +157,7 @@ foreach ($request->paginate()->items() as $item) {
 | Сериализация | Раздельные [правила DTO `toArray()`](reference/serialization/dto-output.md) и [HTTP-именования, форматов массивов и boolean](reference/serialization/request-parts.md); даты, enum, JSON/формы, [JSON внутри поля](reference/serialization/casts.md), [корневое тело для JSON Patch/bulk](reference/serialization/body.md). |
 | Форматы ответа | [DTO с явным `unwrap` или `RawResponse`](reference/attributes/response.md); [JSON-массивы, скаляры, null и текст без DTO](reference/results/handles.md#section-3). `raw()` читает детали исполнения; `RawResponse` выбирает тело без декодирования. |
 | Файлы и архивы | [Потоковые multipart/binary и Base64](reference/files/uploads.md), [файловые поля DTO](guides/dto/showcase.md#section-7), [скачивание в файл или поток](reference/files/downloads.md), [просмотр, чтение и извлечение архивов](reference/files/archives.md). Base64 загружает содержимое целиком. |
+| Прогресс HTTP | [Upload/download на попытку](reference/execution/transfer-progress.md), sync/async; включается callback. |
 
 ### Преобразовать ответы и DTO <a id="capabilities-dto"></a>
 
@@ -175,7 +176,7 @@ foreach ($request->paginate()->items() as $item) {
 
 | Задача | Что даёт ApiSutra |
 | --- | --- |
-| Безопасные повторы | [Политики retry, backoff, Retry-After и идемпотентность](reference/execution/retry.md), переопределения запроса и проверка повторной отправки файлов. |
+| Безопасные повторы | [Retry, backoff, Retry-After, идемпотентность](reference/execution/retry.md); `withRetryDelay()` на вызов, проверка повторной отправки файлов. |
 | Ограничение времени | [Таймаут попытки, общий бюджет и общие дедлайны](reference/execution/deadlines.md) для повторов, авторизации и зависимых вызовов. |
 | Квоты запросов | [Совместные квоты клиента и операции, ожидание или отказ](reference/execution/rate-limit.md); локальный учёт или необязательный [атомарный Redis-backend](reference/integrations/redis.md). |
 | Серверный cooldown | [Общий запрет Retry-After после 429](reference/execution/cooldown.md) с учётом операции/группы, origin и credentials; ожидание в пределах бюджета или отказ, общий backend для клиентов/процессов по выбору. |

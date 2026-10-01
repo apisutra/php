@@ -266,13 +266,10 @@ exception is available in `previous`; an explicitly configured original class in
 the SDK supports its own `TimeoutException`, the total retry budget, and confirmed
 cURL errno 28 in Guzzle ConnectException. Other transports do not require Guzzle HTTP Client.
 
-After retries are exhausted, the last HTTP response goes through normal error mapping.
-For example, 503 remains `service_unavailable`, including HTML or malformed JSON
-responses. Status 400 uses `bad_request`; other unmapped 4xx statuses use `client_error`.
-The response and its raw body are preserved. A string `message` from JSON becomes
-the message; otherwise `HTTP <status>` is used. If the last HTTP attempt ends in a
-network failure, the previous attempt's response is not substituted for the missing
-current response.
+HTTP failures retain the actual response and mapped status code. A later connection
+failure or transport timeout clears the previous response; a total deadline or
+admission failure may retain it as context. Classify by code/reason/stage, not solely
+by the stored HTTP status. See [response provenance and examples](response-context.md).
 
 An arbitrary hook exception does not become a network error or trigger network retry.
 It remains in `ExecutionResult::exception` as the original object. Typed HTTP/configuration

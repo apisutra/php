@@ -65,7 +65,7 @@ final readonly class RequestFlowRunner
         float $startTime,
         PreparedRequest $prepared,
     ): ExecutionResult {
-        $this->retrySender->assertDestinationSupported($context);
+        $this->retrySender->assertCapabilities($context);
         $this->cacheManager->prepareExecution($request, $context);
         $context->budget?->check('cache_prepare');
         $prepared = $this->applyBeforeSendStages($request, $context, $prepared);

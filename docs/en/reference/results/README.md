@@ -5,6 +5,7 @@ Each page covers a separate task and contract. Start with the topic you need;
 related restrictions are documented with the contract that owns them.
 
 - [Errors and delivery policy](errors.md).
+- [Response context after failure](response-context.md).
 - [Result types, messages, and custom exceptions](exceptions.md).
 - [ResultHandle and result representations](handles.md).
 - [Logs, traces, and debug](observability.md).

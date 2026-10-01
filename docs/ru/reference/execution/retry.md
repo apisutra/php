@@ -58,24 +58,60 @@ runtime может явно переопределить это значение
 Retry повторяет запросы при ошибках, Rate Limit ограничивает скорость вызовов.
 Rate Limit применяется независимо от идемпотентности операции.
 
-## Retry (уровень клиента) <a id="section-5"></a>
+### Задержка для одного исполнения <a id="runtime-delay"></a>
+
+Настройка необязательна. Без `withRetryDelay()` задержки берутся из атрибута запроса
+или настроек клиента; существующие вызовы менять не нужно.
+
+Для существующего `$request` включите до трёх попыток с постоянной паузой в 1 секунду:
+
 ```php
-use ApiSutra\Config\ClientConfig;
-use ApiSutra\Config\RetryConfig;
 use ApiSutra\Enums\RateLimiting\BackoffStrategy;
 
-$config = new ClientConfig(
-    baseUrl: 'https://api.example',
-    retry: new RetryConfig(
-        attempts: 3,
-        baseDelay: 200,
-        maxDelay: 5000,
-        backoff: BackoffStrategy::Exponential,
-        jitter: true,
-        retryOn: [408, 429, 500, 502, 503, 504],
-    ),
-);
+$result = $request->withRetry(3)->withRetryDelay(
+    baseDelay: 1000,
+    maxDelay: 1000,
+    backoff: BackoffStrategy::Constant,
+    jitter: false,
+)->send()->raw();
+
+// Наследовать задержки и стратегию, переопределив только jitter.
+$execution = $request->withRetryDelay(jitter: false);
+$inherited = $execution->withoutRetryDelay();
 ```
+
+`withRetryDelay(?int $baseDelay = null, ?int $maxDelay = null,
+?BackoffStrategy $backoff = null, ?bool $jitter = null)` доступен в RequestOptions
+и fluent API запроса/исполнения. Задержки задаются в миллисекундах; null наследует
+атрибут запроса или клиент, а 0 и false — явные значения.
+Приоритет: runtime → `#[Retry]` → ClientConfig. Атрибут по-прежнему задаёт все свои
+поля задержки. Частичная настройка доступна через
+`RequestOptions::getRetryDelayOverride()` как `?RetryDelayOverride` из `VO\Retry`.
+
+- Setter не включает retry и не разрешает повтор небезопасной операции.
+- Каждый вызов заменяет override задержки целиком: пропущенные поля снова наследуются.
+- `withRetry()` и `withoutRetry()` сохраняют его; `withoutRetryDelay()` снимает только его.
+- Каждая операция возвращает новый снимок, не изменяя исходный запрос.
+- Явные опции исполнения — единый runtime-источник enabled, attempts и задержки,
+  даже если они пусты или очищены. Runtime-getters запроса используются только
+  при отсутствии опций исполнения; fallback между полями этих источников отсутствует.
+
+Пустой вызов/все null или отрицательные baseDelay/maxDelay бросают ConfigurationException
+непосредственно из setter, независимо от throwOnErrors. Для очистки используется
+withoutRetryDelay(). Итоговое `maxDelay >= baseDelay` проверяется только при разрешении
+включённого retry. Некорректная комбинация, в том числе с унаследованными значениями,
+даёт `configuration_error` (или исключение при throwOnErrors) до HTTP-отправки исходного
+запроса; авторизация к этому моменту могла выполниться. MaxDelay не увеличивается
+автоматически. Существующий `withRetry(0)` сохраняет проверку при исполнении.
+
+Списки статусов/исключений retry, безопасность, auth retries и общий бюджет не меняются.
+Пользовательский RetryDelayPolicyInterface получает итоговый RetryConfig. Retry-After
+остаётся серверным минимумом: maxDelay ограничивает backoff, но не Retry-After.
+Cooldown и бюджет исполнения по-прежнему ограничивают ожидание.
+`withDelay()` — отдельная задержка запроса.
+
+## Retry (уровень клиента) <a id="section-5"></a>
+Пример конфигурации выше задаёт значения клиента по умолчанию.
 
 Дополнительно:
 - `retryExceptions` — повтор при исключениях (например, ConnectionException)

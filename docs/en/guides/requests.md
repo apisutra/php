@@ -34,3 +34,5 @@ and return a DTO or an explainable error. Read results through
 [ResultHandle/resolved](../reference/results/handles.md).
 
 The full process of adding an operation has a [separate route](../start/add-operation.md).
+
+Track upload/download bytes with [withTransferProgress()](../reference/execution/transfer-progress.md); store the latest snapshot without I/O in the callback.

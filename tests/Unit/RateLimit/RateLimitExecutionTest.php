@@ -101,7 +101,7 @@ it('сохраняет фактический ответ при локально
     $client = new TestClient(new ClientConfig(
         baseUrl: 'https://fixture.test', throwOnErrors: $throw, auth: new BearerAuthenticator('fixture-token'),
         rateLimit: new RateLimitConfig(limit: $failure === 'quota' ? 1 : 2, behavior: RateLimitBehavior::Throw, store: $store),
-        retry: new RetryConfig(attempts: 3, baseDelay: 0, maxDelay: 0, retryOn: [401, 503], retryExceptions: [Throwable::class]),
+        retry: new RetryConfig(attempts: 3, baseDelay: 0, maxDelay: 0, retryOn: [401, 500, 503], retryExceptions: [Throwable::class]),
     ), $transport, $clock, $clock);
     try {
         if ($mode === 'batch' || $mode === 'parallel') {
@@ -124,11 +124,12 @@ it('сохраняет фактический ответ при локально
         ->and($error?->context['httpStatus'])->toBe($status)
         ->and($error?->code)->toBe($failure === 'quota' ? ErrorCode::RateLimited : ErrorCode::ExecutionError)
         ->and($error?->context['reason'])->toBe($failure === 'quota' ? 'local_rate_limit_exceeded' : 'rate_limit_backend_error')
+        ->and($error?->context['stage'])->toBe($failure === 'quota' ? 'rate_limit' : 'rate_limit_store')
         ->and($transport->getRecorded())->toHaveCount(1)->and($store->reads)->toBe(2)->and($clock->waits)->toBe([]);
     if ($failure === 'quota') {
         expect($result->exception->response)->toBeNull()->and($error?->context['retryAfter'])->toBe(60);
     }
-})->with(['sync', 'batch', 'parallel', 'pool'])->with([false, true])->with(['quota', 'read', 'write', 'false'])->with([503, 401]);
+})->with(['sync', 'batch', 'parallel', 'pool'])->with([false, true])->with(['quota', 'read', 'write', 'false'])->with([503, 401, 500]);
 
 it('проверяет атрибут до HTTP и записи квоты', function (): void {
     $transport = new MockTransport();

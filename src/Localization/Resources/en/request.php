@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'request.retry_delay_override_must_not_be_empty' => 'Specify at least one retry delay option; use withoutRetryDelay() to clear the override',
+    'request.retry_delay_must_be_non_negative' => 'Retry baseDelay and maxDelay must be non-negative milliseconds',
     'request.cache_scope_must_not_be_empty' => 'Cache scope must not be empty',
     'request.meta_resolver_class_not_found' => 'Meta-resolver class \'{resolver}\' not found',
     'request.meta_resolver_must_implement_paginationmetaresolverinterface' => 'Meta-resolver must implement PaginationMetaResolverInterface',

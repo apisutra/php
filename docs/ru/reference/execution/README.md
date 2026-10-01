@@ -20,3 +20,5 @@
 - [Общий серверный запрет после HTTP 429](cooldown.md).
 
 - [Ленивые элементы, коллекции и объединение без потерь](pagination-items.md).
+
+- [Наблюдение прогресса upload/download](transfer-progress.md).

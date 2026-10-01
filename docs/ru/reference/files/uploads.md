@@ -88,3 +88,5 @@ public array $files;
   через `fromStream()` поток не закрывается. Копии `withMimeType()` и `withFilename()` разделяют ручку.
 
 Для пути, приходящего от пользователя/формы, используйте `tryFromPath()` и при `null` добавляйте `ValidationError` в `validateCustom()`.
+
+Наблюдайте транспортные байты через [прогресс передачи](../execution/transfer-progress.md), включая multipart/chunked-разметку.

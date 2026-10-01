@@ -91,3 +91,5 @@ An array containing several `FileInput` objects is sent as a set of files.
 
 For a path supplied by a user/form, use `tryFromPath()` and add a `ValidationError`
 in `validateCustom()` if it returns `null`.
+
+Observe transport bytes with [transfer progress](../execution/transfer-progress.md), including multipart/chunked framing.

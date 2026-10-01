@@ -12,6 +12,8 @@ use GuzzleHttp\Promise\RejectedPromise;
 use ApiSutra\Localization\Message;
 use ApiSutra\Contracts\Interfaces\Core\DestinationAwareInterface;
 use ApiSutra\Contracts\Interfaces\Core\FileStreamingInterface;
+use ApiSutra\Contracts\Interfaces\Core\TransferProgressInterface;
+use ApiSutra\Http\TransferProgressGuard;
 use ApiSutra\VO\Files\FileTransferOptions;
 use ApiSutra\Http\RequestDestination;
 use ApiSutra\Http\DestinationGuard;
@@ -36,7 +38,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Throwable;
 
-final class HttpTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface
+final class HttpTransport implements TimeoutAwareTransportInterface, ConcurrentTransportInterface, DestinationAwareInterface, FileStreamingInterface, TransferProgressInterface
 {
     public function assertSupportsConcurrency(): void
     {
@@ -49,6 +51,16 @@ final class HttpTransport implements TimeoutAwareTransportInterface, ConcurrentT
             throw new ConfigurationException(new Message('transport.concurrent_execution_unsupported', ['adapter' => $this->httpClient::class]));
         }
         return $this->httpClient;
+    }
+
+    public function assertSupportsTransferProgress(): void
+    {
+        TransferProgressGuard::checkCapability($this->httpClient);
+        if (!$this->httpClient instanceof HttpClientOptionsInterface) {
+            throw new ConfigurationException(new Message('transport.transfer_progress_unsupported', [
+                'adapter' => $this->httpClient::class,
+            ]));
+        }
     }
 
     public function assertSupportsFileTransfer(FileTransferOptions $options): void
@@ -151,6 +163,9 @@ final class HttpTransport implements TimeoutAwareTransportInterface, ConcurrentT
 
     private function prepare(PreparedRequest $request): HttpExchange
     {
+        if ($request->transportOptions?->transferProgress !== null) {
+            $this->assertSupportsTransferProgress();
+        }
         RequestBodyGuard::check($request);
         DestinationGuard::checkRequest($request);
         FileTransferGuard::checkCapability($this, FileTransferGuard::options($request));
@@ -168,6 +183,7 @@ final class HttpTransport implements TimeoutAwareTransportInterface, ConcurrentT
                 $request->destination,
                 $transfer,
                 $sink === null ? null : new BorrowedStream($sink),
+                $options?->transferProgress,
             );
         }
         if ($options !== null) {

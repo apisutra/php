@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "apisutra/php": "^0.3"
+        "apisutra/php": "^0.3 || ^0.4"
     },
     "suggest": {
         "apisutra/laravel": "Optional Laravel 13 integration: configuration, client and request DI"

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 return [
+    'transport.transfer_progress_unsupported' => 'Адаптер {adapter} не поддерживает прогресс передачи.',
+    'transport.curl_overrides_incompatible_with_progress' => 'Низкоуровневые настройки cURL несовместимы с прогрессом передачи SDK.',
     'transport.async_dns_required' => 'Конкурентным запросам Guzzle требуется cURL с AsynchDNS. Подключите асинхронный DNS в cURL или используйте send().',
     'transport.concurrent_execution_unsupported' => 'Адаптер {adapter} не поддерживает конкурентное выполнение. Используйте send() или конкурентный транспорт, например HttpTransport::createDefault().',
     'transport.body_cannot_be_represented_in_the_utf_8_fixture' => 'Тело не представимо в UTF-8 формате fixture',

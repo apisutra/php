@@ -301,7 +301,7 @@ recorder делегирует проверку вложенному трансп
 настройки verify, proxy, force_ip_resolve, version и таймаутов. Auth, cookies, произвольные
 headers/query/body defaults, callbacks/debug и клиентские TLS cert/ssl_key не наследуются.
 Непустые низкоуровневые `curl` overrides дают ошибку для защищаемого вызова;
-их совместимость нельзя предполагать. Для обычной отправки исходная конфигурация сохранена.
+их совместимость нельзя предполагать. Обычная отправка сохраняет конфигурацию.
 `ExactTargetCurlFactory` сохраняет path и пустой query delimiter на cURL-границе,
 включая absolute-form при HTTP proxy. Redirects автоматически не выполняются.
 
@@ -310,4 +310,4 @@ Hooks и собственный PHP-код остаются доверенным
 удаляет контракт назначения или обращается к сети. Проверка destination не является
 SSRF-фильтром, DNS-политикой или ограничением доступных адресов.
 
-Пользовательский API: [внешние URL](../serialization/uri-query.md).
+[Внешние URL](../serialization/uri-query.md) · [Прогресс передачи](transfer-progress.md).

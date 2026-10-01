@@ -51,6 +51,22 @@ while (($socket = stream_socket_accept($server, -1)) !== false) {
         fgets($socket);
     }
     $counts[$path] = ($counts[$path] ?? 0) + 1;
+    if (in_array($path, ['/refresh', '/auth-retry', '/paginated', '/json', '/continuation/start', '/continuation/poll'], true)) {
+        $status = $path === '/auth-retry' && $counts[$path] === 1 ? 401 : 200;
+        $data = match ($path) {
+            '/refresh' => ['token' => 'fresh-fixture'],
+            '/continuation/start' => ['operationToken' => 'fixture-token'],
+            '/continuation/poll' => ['data' => ['value' => 'done']],
+            '/paginated' => ['data' => [['id' => (int) ($query['page'] ?? 1)]], 'meta' => [
+                'total' => 3, 'per_page' => 1, 'current_page' => (int) ($query['page'] ?? 1), 'last_page' => 3,
+            ]],
+            default => ['ok' => true],
+        };
+        $body = json_encode($data, JSON_THROW_ON_ERROR);
+        fwrite($socket, "HTTP/1.1 $status Test\r\nContent-Type: application/json\r\nConnection: close\r\nContent-Length: " . strlen($body) . "\r\n\r\n" . $body);
+        fclose($socket);
+        continue;
+    }
     $status = str_starts_with((string) $path, '/retry-') && $counts[$path] === 1 ? 503 : 200;
     $size = (int) ($query['size'] ?? 64);
     if (str_contains((string) $path, 'upload')) {
@@ -75,6 +91,9 @@ while (($socket = stream_socket_accept($server, -1)) !== false) {
                 break;
             }
             $remaining -= $sent;
+            if ($path === '/slow') {
+                usleep(10000);
+            }
         }
     }
     fclose($socket);
